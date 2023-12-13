@@ -18,5 +18,5 @@ class LowercaseCharField(serializers.CharField):
     def __init__(self,queryset,max_length,min_length=None,*args, **kwargs):
         kwargs['max_length'] = max_length 
         kwargs['min_length'] = min_length  if min_length else 4
-        kwargs['validators'] = [RegexValidator(regex='^[a-z]*$',message='Only lowercase letters are allowed.'),UniqueValidator(queryset=queryset)]
+        kwargs['validators'] = [RegexValidator(regex='^[a-z ]+$',message='Only lowercase letters are allowed.'),UniqueValidator(queryset=queryset)]
         super().__init__(*args, **kwargs)
