@@ -5,6 +5,7 @@ from .models import (
     Brand,
     Size,
     Color,
+    Cart,
 )
 # Register your models here.
 # admin.site.register(Categoery)
@@ -19,7 +20,7 @@ class CategoeryAdmin(admin.ModelAdmin):
 admin.site.register(Brand)
 admin.site.register(Color)
 admin.site.register(Size)
-
+admin.site.register(Cart)
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
 

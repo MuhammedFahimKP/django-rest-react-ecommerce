@@ -7,7 +7,7 @@ from django.db import models
 from django.contrib.auth.models import  AbstractBaseUser,PermissionsMixin
 from .managers import MyUserManger
 from rest_framework_simplejwt.tokens import RefreshToken
-
+from BaseModels.models import BaseModel
 
 
 
@@ -101,6 +101,8 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
 
         refresh = RefreshToken.for_user(self)
         return {'refresh': str(refresh), 'access': str(refresh.access_token)}
+
+
 
 
 

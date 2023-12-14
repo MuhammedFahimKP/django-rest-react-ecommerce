@@ -1,7 +1,9 @@
+
 from typing import Any
 from django.db import models
 from django.utils.safestring import mark_safe
 from BaseModels.models import BaseModel
+from accounts.models import MyUser
 
 
 
@@ -82,6 +84,9 @@ class Product(BaseModel):
     def __str__(self) -> str:
         return f"{self.name}"
     
+
+    
+
     @property
     def img_tag(self):
         return mark_safe('<img  style="width:100px;  height:100px;" src="%s" />' % self.img.url )
@@ -104,3 +109,28 @@ class ProductVariant(BaseModel):
     def __str__(self) -> str:
         return f"{self.name}"
     
+class Cart(BaseModel):
+
+    user      = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+
+    def __str__(self)-> str:
+        return f"{self.user}'s cart"
+
+
+class CartItem(BaseModel):
+
+    cart      = models.ForeignKey(Cart,on_delete=models.CASCADE)
+    product   = models.ForeignKey(Product,on_delete=models.CASCADE)
+    quantity  = models.PositiveIntegerField(default=1)
+    is_active = models.BooleanField(default=False)
+
+    def __str__(self)-> str:
+        return f"{self.product} and {self.cart.user}"
+
+
+
+    
+
+
+
+

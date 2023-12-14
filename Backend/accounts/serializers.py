@@ -214,10 +214,31 @@ class UserEmailActivationSerializer(serializers.Serializer):
             user.is_active = True
             user.save()
             return {
+        
                 'user':user
             }
         else:
             raise serializers.ValidationError('Invalid Token or Expired Token')
+
+
+class UserViewSerailizer(serializers.ModelSerializer):
+
+    email      = serializers.EmailField(read_only=True)
+    first_name = serializers.CharField(read_only=True)
+    last_name  = serializers.CharField(read_only=True)
+
+
+
+    class Meta:
+        model = MyUser
+        fields = [
+            'email',
+            'first_name',
+            'last_name',
+        ]
+
+
+
 
     
 

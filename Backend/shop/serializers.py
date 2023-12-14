@@ -1,5 +1,5 @@
 from rest_framework import serializers
-
+from accounts.serializers import UserViewSerailizer
 
 from .models import (
     Categoery,
@@ -7,10 +7,16 @@ from .models import (
     Size,
     Color,
     Product,
-    ProductVariant,
+    Cart,
+    CartItem,
 )
 
+
+from accounts.models import MyUser
 from . import serializerfields 
+
+
+
 
 
 
@@ -18,8 +24,6 @@ class CategoerySerializer(serializers.ModelSerializer[Categoery]):
 
     name      = serializerfields.LowercaseCharField(max_length=50,min_length=5,queryset=Categoery.objects.all()) 
     img       = serializers.ImageField(required=True)
-    
-
     
 
 
@@ -104,6 +108,44 @@ class ProductSerilizer(serializers.ModelSerializer):
             'img',
             'discription',
         ]
+
+ 
+
+class CartSerializer(serializers.ModelSerializer[Cart]):
+
+    user  = UserViewSerailizer(read_only=True)
+
+
+    def validate(self,data):
+
+        request = self.context['request']  
+                
+        if Cart.objects.filter(user=request.user).exists():
+            raise serializers.ValidationError('you already had a cart u can took the cart from this end point using get method')
+
+        return data 
+                   
+
+
+
+    def create(self,attrs):
+
+        request = self.context['request']    
+        instance = Cart.objects.create(user=request.user)  
+            
+        return instance
+    
+
+
+    class Meta:
+        model  = Cart
+        fields = [
+            'user',
+            'created',
+            'updated',
+        ]
+
+
 
     
 
