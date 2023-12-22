@@ -35,6 +35,7 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     last_name      = models.CharField(max_length=150,null=True)
 
 
+
  
     """
     required fields 
@@ -72,6 +73,9 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     auth_provider = models.CharField(max_length=6,default=AUTH_PROVIDERS.get('email'))
 
 
+     
+
+
     objects = MyUserManger() 
 
     """
@@ -93,10 +97,13 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         return f"{self.first_name} {self.last_name}"
     
 
+
+
+
     @property
-    def tokens(self) -> dict[str, str]:
+    def tokens(self) -> dict[str : str]:
         
-        """Allow us to get a user's token by calling user.token."""
+        """Allow us to get a user's json web token by calling user.token."""
 
 
         refresh = RefreshToken.for_user(self)
@@ -105,4 +112,25 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
 
 
 
+
+
+class Profile(BaseModel):
+    
+    """
+        profile model for user picture and stor another  user data if we need to store in future for this project
+    """
+    
+    """
+        user  
+    """
+    user   = models.OneToOneField(MyUser,null=True,on_delete=models.CASCADE)
+
+
+    # avatar image field ? 
+
+    avatar = models.ImageField(upload_to='profiles/avatars',null=True,blank=True)
+
+    def __str__(self) -> str:
+        return f"{self.user.email}'s profile"
+    
 

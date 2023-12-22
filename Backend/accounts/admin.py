@@ -13,7 +13,8 @@ class MyUserAdminConf(UserAdmin):
         'last_name',
         'last_login',
         'is_superuser',
-        'is_active'
+        'is_active',
+        
     )
 
     list_display_links = (

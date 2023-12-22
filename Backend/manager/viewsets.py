@@ -1,5 +1,7 @@
 from ecom.mixins import JWTPermission
+from rest_framework import generics
 from rest_framework import viewsets,response,status
+from rest_framework.parsers import MultiPartParser,FormParser
 from .serializers import (   
 
     AdminCategoerySerializer,
@@ -15,7 +17,9 @@ from shop.models import (
     Size,
     Product,
 )
+
 from .permissions import AdminOnly
+from rest_framework.response import Response
 
 
 class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
@@ -58,11 +62,26 @@ class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
     lookup_field       ='pk'    
 
 
-class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
+# class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
 
-    permission_classes = [AdminOnly]
+#     permission_classes = [AdminOnly]
+#     queryset           = Product.objects.all()
+#     serializer_class   = AdminProductSerializer
+#     lookup_field       = 'pk'
+
+
+
+
+class AdminProductCreate(generics.ListCreateAPIView):
+    
+    # parser_classes = (MultiPartParser,FormParser)
+   
     queryset           = Product.objects.all()
     serializer_class   = AdminProductSerializer
-    lookup_field       = 'pk'
+    
+
+
+  
+
 
     

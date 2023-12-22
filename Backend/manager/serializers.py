@@ -10,10 +10,10 @@ from rest_framework import serializers
 
 class AdminCategoerySerializer(CategoerySerializer):
      
-    is_active = serializers.BooleanField() 
+    is_active = serializers.BooleanField(required=False) 
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-
+    img       = serializers.ImageField(read_only=True)
     
 
 
@@ -21,13 +21,13 @@ class AdminCategoerySerializer(CategoerySerializer):
         model          = CategoerySerializer.Meta.model 
         current_fields = CategoerySerializer.Meta.fields.copy()
         current_fields.insert(0,'id') 
-        fields        = current_fields + ['is_active','created','updated']
+        fields         = current_fields + ['is_active','created','updated']
     
 
 
 class AdminBrandSerializer(BrandSerializer):
 
-    is_active = serializers.BooleanField()
+    is_active = serializers.BooleanField(required=False)
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
 
@@ -65,38 +65,74 @@ class AdminSizeSerializer(SizeSerializer):
 
 class AdminProductSerializer(ProductSerilizer):
     
-    is_active = serializers.BooleanField()
-    #only read fields
-    categoery = AdminCategoerySerializer(read_only=True)
-    brand     = AdminBrandSerializer(read_only=True)
-    
-    #only write fields 
-    Brand     = serializers.PrimaryKeyRelatedField(queryset=Brand.objects.all(),write_only=True)
-    Categoery = serializers.PrimaryKeyRelatedField(queryset=Categoery.objects.all(),write_only=True)
-
+    is_active = serializers.BooleanField(required=False)
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
 
+    brand     = AdminBrandSerializer()
+    categoery = AdminCategoerySerializer()
+
+    def validate(self,data):
+        print(data) 
+
+        try:
+
+            categoery  = Categoery.objects.get(name=data['categoery']['name'])
+            
+            data['categoery'] = categoery
 
 
+        except:
+
+            raise serializers.ValidationError(
+
+                'theres is no categoery in our db',
+                
+            )
+
+        
+        try:
+            brand       = Brand.objects.get(name= data['brand']['name'])
+            data['brand'] = brand
+        except:
+            raise serializers.ValidationError('there is no brand exist in our db')
+
+
+
+        return data
+
+
+
+    
 
     class Meta:
 
         model          = ProductSerilizer.Meta.model
         current_fields = ProductSerilizer.Meta.fields.copy()
         current_fields.insert(0,'id')
-        fields         = current_fields + ['Categoery','Brand','discription','is_active','created','updated'] 
+        fields         = current_fields + ['discription','is_active','created','updated'] 
+
+
+   
+    
+
 
     def create(self,validated_data):
+
         active  = validated_data.get('is_active',None)
         discription = validated_data.get('discription',None)
-        instance = Product.objects.create(
+        img         = validated_data['img']
+
+
+        instance = Product(
             name      = validated_data['name'],
-            img       = validated_data['img'],
-            categoery = validated_data['Categoery'],
-            brand     = validated_data['Brand'],
+            img       = img if img else None,
+            categoery = validated_data['categoery'],
+            brand     = validated_data['brand'],
             discription = discription,
             is_active = active if active else False 
         )
-
+        
+        instance.save()
+       
         return instance

@@ -17,6 +17,7 @@ class Categoery(BaseModel):
 
     name      = models.CharField(max_length=50,unique=True)
     img       = models.ImageField(upload_to="cat/",null=True,blank=True)
+    slug      = models.SlugField(max_length=200,unique=True,null=True)
     is_active = models.BooleanField(default=False)
 
 
@@ -25,7 +26,11 @@ class Categoery(BaseModel):
     
     @property
     def img_tag(self):
-        return mark_safe('<img  style="width:100px;  height:100px;" src="%s" />' % self.img.url )
+        
+        if self.img:
+            return mark_safe('<img  style="width:100px;  height:100px;" src="%s" />' % self.img.url )
+        else:
+            return None
     
 
     class Meta:
@@ -40,6 +45,8 @@ class Categoery(BaseModel):
 class Brand(BaseModel):
 
     name      = models.CharField(max_length=200,unique=True)
+
+    slug      = models.SlugField(max_length=200,unique=True,null=True)
     
     is_active = models.BooleanField(default=False)
 
@@ -50,6 +57,7 @@ class Brand(BaseModel):
 class Color(BaseModel):
 
     name      = models.CharField(max_length=200,unique=True)
+    slug      = models.SlugField(max_length=200,unique=True,null=True)
     is_active = models.BooleanField(default=False)
     
     def __str__(self) -> str:
@@ -68,18 +76,22 @@ class Size(BaseModel):
 
 
 
-
+ 
 
 
 
 class Product(BaseModel):
 
     name        = models.CharField(max_length=200,unique=True)
+    slug        = models.SlugField(max_length=200,unique=True,null=True)
     categoery   = models.ForeignKey(Categoery,on_delete=models.CASCADE)
     img         = models.ImageField(upload_to='product/',blank=True,null=True)
     brand       = models.ForeignKey(Brand,on_delete=models.CASCADE)
     discription = models.TextField(max_length=500,null=True)
     is_active   = models.BooleanField(default=False) 
+    
+
+
 
     def __str__(self) -> str:
         return f"{self.name}"
@@ -89,12 +101,15 @@ class Product(BaseModel):
 
     @property
     def img_tag(self):
-        return mark_safe('<img  style="width:100px;  height:100px;" src="%s" />' % self.img.url )
+        if self.img:
+            return mark_safe('<img  style="width:100px;  height:100px;" src="%s" />' % self.img.url )
+        else:
+            return None
 
 
 
 class ProductVariant(BaseModel):
-
+    slug      = models.SlugField(max_length=200,unique=True,null=True)
     product   = models.ForeignKey(Product,on_delete=models.CASCADE)
     color     = models.ForeignKey(Color,on_delete=models.CASCADE)
     size      = models.ManyToManyField(Size)
@@ -106,31 +121,60 @@ class ProductVariant(BaseModel):
     is_active = models.BooleanField(default=False)
 
 
-    def __str__(self) -> str:
-        return f"{self.name}"
+    
     
 class Cart(BaseModel):
 
     user      = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+
 
     def __str__(self)-> str:
         return f"{self.user}'s cart"
 
+    
 
 class CartItem(BaseModel):
 
     cart      = models.ForeignKey(Cart,on_delete=models.CASCADE)
     product   = models.ForeignKey(Product,on_delete=models.CASCADE)
     quantity  = models.PositiveIntegerField(default=1)
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     def __str__(self)-> str:
         return f"{self.product} and {self.cart.user}"
+    
+    class Meta:
+
+        ordering = ('-created',)
+
+
+
+class WishList(BaseModel):
+
+    user       = models.ForeignKey(MyUser,on_delete=models.CASCADE)
+    is_active  = models.BooleanField(default=True)
+
+
+
+class WishListItem(BaseModel):
+
+    wishlist = models.ForeignKey(WishList,on_delete=models.CASCADE)
+    product   = models.ForeignKey(Product,on_delete=models.CASCADE)
+    is_active = models.BooleanField(default=True)
+
+
+    class Meta:
+
+        ordering = ('-created',)
+
+
+
+
 
 
 
     
-
 
 
 
