@@ -8,6 +8,8 @@ class JWTPermission():
     permission_classes = [permissions.IsAuthenticated]
     authentication_classes = [JWTAuthentication]
 
+    
+
 
 
 

@@ -8,6 +8,7 @@ from .models import MyUser
 from .utils import Google,register_social_user,verify_token
 from .thread import EmailThread
 from django.contrib.auth import authenticate
+from .task import send_mail
 
 
 
@@ -237,10 +238,56 @@ class UserViewSerailizer(serializers.ModelSerializer):
         ]
 
 
-class UserUpdateSerializer(UserViewSerailizer):
+class UserUpdateSerializer(serializers.ModelSerializer):
+        
 
-    def validate(self, attrs):
-        return super().validate(attrs)
+    email      = serializers.EmailField()
+    first_name = serializers.CharField()
+    last_name  = serializers.CharField()
+
+    def validate_email(self,value) -> str :
+        
+        
+        
+
+        request = self.context.get('request')
+
+        if request:
+            user  = request.user 
+
+            if MyUser.objects.exclude(pk=MyUser.pk).filter(email=value).exists():
+                raise serializers.ValidationError(
+                    {'email':'email is already used by a user'}
+                )
+              
+        return value
+    
+
+    def update(self,instance,validated_data):
+        
+        email =  validated_data.get('email',None)
+
+        if email is not None and email != instance.email: 
+            instance.is_active = False
+            instance.email = email
+            instance.save()
+            EmailThread(req=self.context.get('request'),user=instance)
+        else:
+            instance.first_name = validated_data.get('first_name',instance.first_name)
+            instance.last_name  = validated_data.get('last_name',instance.last_name)
+            instance()
+        return instance
+        
+
+    class Meta:
+            model = UserViewSerailizer.Meta.model
+            fields = [
+                'email',
+                'first_name',
+                'last_name',
+            ]
+        
+    
 
 
 

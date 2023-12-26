@@ -13,6 +13,7 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 from datetime import timedelta
+from decouple import config
 
 
 load_dotenv()
@@ -27,7 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECURITY_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=1)
+
 
 ALLOWED_HOSTS = []
 
@@ -53,6 +55,8 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     'corsheaders',
+
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -264,3 +268,17 @@ MEDIA_URL = '/media/'
 
 # Path where media is stored'
 MEDIA_ROOT = BASE_DIR / 'media'
+
+
+#CELERY SETTINGS
+
+CELERY_RESULT_BACKEND = "django-db"
+
+# This configures Redis as the datastore between Django + Celery
+CELERY_BROKER_URL = config('CELERY_BROKER_REDIS_URL', default='redis://127.0.0.1:6379')
+# if you out to use os.environ the config is:
+# CELERY_BROKER_URL = os.environ.get('CELERY_BROKER_REDIS_URL', 'redis://localhost:6379')
+
+
+# this allows you to schedule items in the Django admin.
+CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseSchedul'

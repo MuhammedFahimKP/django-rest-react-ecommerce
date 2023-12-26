@@ -2,8 +2,7 @@ from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from .models import MyUser as User
-from ecom.mixins import JWTPermission
-
+from ecom.mixins import JWTPermission 
 from rest_framework_simplejwt.tokens import RefreshToken
 from .thread import EmailThread
 
@@ -15,6 +14,7 @@ from .serializers import (
     UserSignInSerializer,
     UserEmailActivationSerializer,
     GoogleSiginSerializer,
+    UserUpdateSerializer,
 
 )
 
@@ -167,6 +167,46 @@ class GoogleUserSiginAPIView(generics.GenericAPIView):
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
 
+class UserUpdateApiView(JWTPermission,generics.GenericAPIView):
+   
+    serializer_class = UserUpdateSerializer
+
+    #post method only allow
+
+    def patch(self,request):
+
+        #taking the post data   
+        user_data = self.request.data
+
+        #sending the data to the serializer
+        serializer = self.serializer_class(data=user_data)
+
+        """
+        checking serializer is valid if serialzer is not valid it will send serailizor error with http 400   
+
+        """    
+        if serializer.is_valid(raise_exception=True):
+
+            #creating new user  object using serializer create method
+            
+            serializer.save()
+
+            #taking the serializer data for response sending activation link
+
+            user = serializer.data
+            
+            #calling thread class to send email
+
+            
+            #returning the response with http 
+        
+            return Response({
+                'data':user,
+                'message':f'hi {user['email']} please check your email to mail to confirm your email and activate account',
+            },status=status.HTTP_202_ACCEPTED) 
+         
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+
 
 
     
@@ -189,6 +229,7 @@ class UserActivaionApiView(generics.GenericAPIView):
             },status=status.HTTP_200_OK) 
          # other wise it will send a 400 http response with serializer error
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+
 
 
 
