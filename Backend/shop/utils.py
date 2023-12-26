@@ -9,8 +9,9 @@ def get_or_none(class_model,**kwargs) -> object or None:
 
    
     try:
-
+        
         instance = class_model.objects.get(**kwargs)
+
         
         return instance
     

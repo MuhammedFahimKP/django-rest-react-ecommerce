@@ -78,6 +78,11 @@ class WishListItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIV
 
         serializer = self.get_serializer(data=request.data)
         
+
+
+
+
+
         if serializer.is_valid(raise_exception=True):
             self.perform_create(serializer)
             headers = self.get_success_headers(serializer.data)
@@ -114,10 +119,14 @@ class ListProductAPIView(generics.ListAPIView):
      
 
     def get_queryset(self,*args, **kwargs):
+
+       
          
-        categoery  =  kwargs.get('categeory',None)
+        categoery  =  self.kwargs.get('categoery',None)
         
-        categoery  =  get_or_none(class_model=Categoery,name=categoery)
+        categoery  =  get_or_none(class_model=Categoery,slug=categoery)
+        
+        
         
 
 
@@ -134,7 +143,7 @@ class ListProductAPIView(generics.ListAPIView):
 class ProductRetriveApiView(generics.RetrieveAPIView):
 
      serializer_class = ProductSerilizer 
-     queryset         = ProductSerilizer   
+     queryset         = Product.objects.all()  
      lookup_field     = 'slug'
 
      

@@ -132,6 +132,7 @@ class ProductSerilizer(serializers.ModelSerializer):
             'brand',
             'img',
             'discription',
+            'slug',
         ]
 
  
@@ -210,7 +211,10 @@ class CartItemSerializer(serializers.ModelSerializer):
                     'quantity must be 1 or more'
                 )
             
-            instance.save()
+            if validated_data['quantity'] > instance.quantity:
+
+                   instance.quantity =validated_data['quantity'] 
+                   instance.save()
 
             return instance 
 
@@ -231,12 +235,15 @@ class CartItemSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
 
-        instance.quantity = validated_data.get('quantity', instance.quantity)
+        quantity = validated_data.get('quantity', None)
         
         # Check if quantity is zero, and delete the cart item if true
-        if instance.quantity == 0:
+        if quantity and quantity == 0:
+            
             instance.delete()
+
         else:
+
             instance.save()
 
         return instance 
@@ -274,6 +281,7 @@ class WishtListItemSerializer(serializers.ModelSerializer):
 
                 'there  no product in our db '
             )
+            
 
         data['wishlist']  = wishlist
         data['product']   = product
@@ -301,10 +309,9 @@ class WishtListItemSerializer(serializers.ModelSerializer):
                     'quantity must be 1 or more'
                 )
             
-            
+
+            instance.quantity += validated_data['quantity'] 
             instance.save()
-
-
             return instance 
 
 
@@ -322,6 +329,20 @@ class WishtListItemSerializer(serializers.ModelSerializer):
 
         return instance
     
+    def update(self, instance, validated_data):
+
+        quantity = validated_data.get('quantity', None)
+        
+        # Check if quantity is zero, and delete the cart item if true
+        if quantity and quantity == 0:
+            
+            instance.delete()
+
+        else:
+
+            instance.save()
+
+        return instance 
     
 
 

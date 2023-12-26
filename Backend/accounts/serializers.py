@@ -228,7 +228,6 @@ class UserViewSerailizer(serializers.ModelSerializer):
     last_name  = serializers.CharField(read_only=True)
 
 
-
     class Meta:
         model = MyUser
         fields = [
@@ -236,6 +235,13 @@ class UserViewSerailizer(serializers.ModelSerializer):
             'first_name',
             'last_name',
         ]
+
+
+class UserUpdateSerializer(UserViewSerailizer):
+
+    def validate(self, attrs):
+        return super().validate(attrs)
+
 
 
 
