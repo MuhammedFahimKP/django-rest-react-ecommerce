@@ -16,7 +16,7 @@ from .models import (
 
 
 from accounts.models import MyUser
-from . import serializerfields 
+
 
 
 
@@ -74,7 +74,7 @@ class BrandSerializer(serializers.ModelSerializer[Brand]):
 
     def create(self, validated_data):
         
-        if Brand.objects.filter(name=validated_data['name']).exists:
+        if Brand.objects.filter(name=validated_data['name']).exists():
             raise serializers.ValidationError('Brand already exist')
         
         instance = Brand.objects.create(name=validated_data['name'])
@@ -89,7 +89,7 @@ class BrandSerializer(serializers.ModelSerializer[Brand]):
 
 class ColorSerializer(serializers.ModelSerializer):
 
-    name = serializerfields.LowercaseCharField(max_length=15,min_length=2,queryset=Color.objects.all())
+    name = serializers.CharField(max_length=15,min_length=2)
 
 
     class Meta:
@@ -104,7 +104,7 @@ class ColorSerializer(serializers.ModelSerializer):
 
 class SizeSerializer(serializers.ModelSerializer):
 
-    name = serializerfields.LowercaseCharField(max_length=14,min_length=1,queryset=Size.objects.all())
+    name = serializers.CharField(max_length=14,min_length=1)
 
     class Meta:
 
