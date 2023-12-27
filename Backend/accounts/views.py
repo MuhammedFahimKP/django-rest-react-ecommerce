@@ -176,10 +176,9 @@ class UserUpdateApiView(JWTPermission,generics.GenericAPIView):
     def patch(self,request):
 
         #taking the post data   
-        user_data = self.request.data
-
+    
         #sending the data to the serializer
-        serializer = self.serializer_class(data=user_data)
+        serializer = self.serializer_class(data=request.data,context={'request':request})
 
         """
         checking serializer is valid if serialzer is not valid it will send serailizor error with http 400   
@@ -202,7 +201,7 @@ class UserUpdateApiView(JWTPermission,generics.GenericAPIView):
         
             return Response({
                 'data':user,
-                'message':f'hi {user['email']} please check your email to mail to confirm your email and activate account',
+                'message':f'hi {user['firstname']} profile updated ',
             },status=status.HTTP_202_ACCEPTED) 
          
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
@@ -229,6 +228,9 @@ class UserActivaionApiView(generics.GenericAPIView):
             },status=status.HTTP_200_OK) 
          # other wise it will send a 400 http response with serializer error
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+
+
+
 
 
 

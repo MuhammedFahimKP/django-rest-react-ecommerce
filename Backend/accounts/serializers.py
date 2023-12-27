@@ -242,41 +242,30 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         
 
     email      = serializers.EmailField()
-    first_name = serializers.CharField()
-    last_name  = serializers.CharField()
+    first_name = serializers.CharField(required=False)
+    last_name  = serializers.CharField(required=False)
 
-    def validate_email(self,value) -> str :
-        
-        
-        
-
+    def validate(self,data) -> dict[str:str] :
+        print(self.context)
         request = self.context.get('request')
+        user   = request.user 
+        print(f'requst {request}')
+        if MyUser.objects.exclude(pk=user.pk).filter(email=data['email']).exists():
+            raise serializers.ValidationError(
+                    
+                    {'email':'email is already taken'}
 
-        if request:
-            user  = request.user 
-
-            if MyUser.objects.exclude(pk=MyUser.pk).filter(email=value).exists():
-                raise serializers.ValidationError(
-                    {'email':'email is already used by a user'}
-                )
-              
-        return value
+            )          
+        return data
     
 
     def update(self,instance,validated_data):
         
-        email =  validated_data.get('email',None)
-
-        if email is not None and email != instance.email: 
-            instance.is_active = False
-            instance.email = email
-            instance.save()
-            EmailThread(req=self.context.get('request'),user=instance)
-        else:
+            instance.email =  validated_data.get('email',instance.email)
             instance.first_name = validated_data.get('first_name',instance.first_name)
             instance.last_name  = validated_data.get('last_name',instance.last_name)
-            instance()
-        return instance
+            instance.save()
+            return instance
         
 
     class Meta:

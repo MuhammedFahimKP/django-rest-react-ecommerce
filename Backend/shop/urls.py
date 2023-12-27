@@ -6,6 +6,11 @@ urlpatterns = [
     #listing all Products
     path('product/',views.ListProductAPIView.as_view(),name="list-product"),
 
+
+    #listing all categoeries
+    path('categoeries/',views.CateogoeryListApiView.as_view(),name="list-categoery"),
+
+
     #listing  Products by categoery
     path('product/<str:categoery>/',views.ListProductAPIView.as_view(),name='list-product-by-categoery'),
 
@@ -23,5 +28,8 @@ urlpatterns = [
 
     # single wishlist item getting and updating and delete view
     path('whishlist/<str:pk>/',views.WishListItemReteriveUpdateDestroyAPIView.as_view(),name="wish-item-retrive-update-delete"),
+
+
+
 ]
 

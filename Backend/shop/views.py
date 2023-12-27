@@ -14,22 +14,51 @@ from .models import (
 
 from rest_framework.response import Response
 from .utils import get_or_none
-from .serializers import  CartItemSerializer,WishtListItemSerializer,ProductSerilizer
+from .serializers import  CartItemSerializer,WishtListItemSerializer,ProductSerilizer,CategoerySerializer
 
 
 
 
 class CartItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIView):
 
+    
+    """
+
+    used jwt authentication class and  to ftech cartitems of current user
+    
+    """
+
+
     serializer_class = CartItemSerializer
     queryset         = CartItem.objects.all()
 
 
     def create(self,request):
+        """
+
+        overiding the create method  anf
+
+
+        """
+
+        #getting serializer class and sending the requested data
         serializer = self.get_serializer(data=request.data)
+        
+
+        """
+
+        if data send to serializer is valid then we need to perform create 
+
+        else we need to raise the validation error
+
+
+        """   
         if serializer.is_valid(raise_exception=True):
+            
             self.perform_create(serializer)
+
             headers = self.get_success_headers(serializer.data)
+            
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         return Response(serializer.errors,status=404)
     
@@ -38,10 +67,22 @@ class CartItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIView)
 
             
     def get_queryset(self,*args, **kwargs):
+            
+            #getting the cart of current user if user does not have cart it return a None 
 
             cart = get_or_none(class_model=Cart,user=self.request.user)
 
+
+
+        
+            """
+
+            user have cart then filtering the cartitems are related to cart 
+            otherwise returns a empty list
+
+            """
             if cart is not None :
+
                 qs = super().get_queryset(*args,**kwargs)
                 return qs.filter(cart=cart)
         
@@ -55,13 +96,13 @@ class CartItemReteriveUpdateDestroyAPIView(JWT_Permssion_mixin,generics.Retrieve
      queryset         = CartItem.objects.all()
      lookup_field     = 'pk'     
 
-     def put(self, request, pk):
-        cart_item = CartItem.objects.get(pk=pk)
-        serializer = CartItemSerializer(cart_item, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+     """
+
+            getinging  the cartitem updating the
+            using put 
+     """
+
+     
      
      
     
@@ -69,9 +110,18 @@ class CartItemReteriveUpdateDestroyAPIView(JWT_Permssion_mixin,generics.Retrieve
 
 
 class WishListItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIView):
+    
+    """
+
+    used jwt authentication class and  to ftech cartitems of current user
+    
+    """
+
 
     serializer_class = WishtListItemSerializer
     queryset         = WishListItem.objects.all()
+
+    
 
 
     def create(self,request):
@@ -94,6 +144,16 @@ class WishListItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIV
 
             
     def get_queryset(self,*args, **kwargs):
+            
+            #getting the wishlist  of current user if user does not have wishlist it return a None
+
+            
+            """
+
+            user have wishlist then filtering the wishlistitems are related to wishlist 
+            otherwise returns empty list
+
+            """
 
             wishlist = get_or_none(class_model=WishList,user=self.request.user)
 
@@ -111,6 +171,13 @@ class WishListItemReteriveUpdateDestroyAPIView(JWT_Permssion_mixin,generics.Retr
      queryset         = WishListItem.objects.all()
      lookup_field     = 'pk'     
 
+     
+     """
+
+            getinging  the cartitem updating the
+            using put 
+     """
+
 
 class ListProductAPIView(generics.ListAPIView):
 
@@ -120,7 +187,8 @@ class ListProductAPIView(generics.ListAPIView):
 
     def get_queryset(self,*args, **kwargs):
 
-       
+        
+        # slug in url then we need to filter the products by otherwise we need to list all products   
          
         categoery  =  self.kwargs.get('categoery',None)
         
@@ -146,6 +214,13 @@ class ProductRetriveApiView(generics.RetrieveAPIView):
      queryset         = Product.objects.all()  
      lookup_field     = 'slug'
 
+
+
+class CateogoeryListApiView(generics.ListAPIView):
+     
+     serializer_class = CategoerySerializer
+     queryset         = Categoery.objects.all()
+     
      
 
 
