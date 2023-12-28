@@ -108,11 +108,11 @@ class Product(BaseModel):
 
 
 class ProductVariantImages(BaseModel):
-    name      = models.CharField(max_length=200,unique=True) 
-    color     = models.OneToOneField(Color,on_delete=models.CASCADE,null=True)
+    slug      = models.SlugField(max_length=200,unique=True,null=True)
     img_1     = models.ImageField(upload_to="prdv1/",null=True,blank=True)
     img_2     = models.ImageField(upload_to="prdv2/",null=True,blank=True)
     img_3     = models.ImageField(upload_to="prdv3/" ,null=True,blank=True)
+
 
 
 
@@ -121,10 +121,14 @@ class ProductVariant(BaseModel):
     slug      = models.SlugField(max_length=200,unique=True,null=True)
     product   = models.ForeignKey(Product,on_delete=models.CASCADE)
     img       = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
+    color     = models.OneToOneField(Color,on_delete=models.CASCADE,null=True)
     size      = models.ForeignKey(Size,null=True,on_delete=models.CASCADE)
     price     = models.DecimalField(default=0.0,decimal_places=2,max_digits=15)
     stock     = models.PositiveIntegerField(default=0)
     is_active = models.BooleanField(default=False)
+
+    def __str__(self) -> str:
+        return f'{self.product} {self.size} {self.color}'
 
 
     

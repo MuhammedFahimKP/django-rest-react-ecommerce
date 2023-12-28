@@ -313,6 +313,7 @@ class WishtListItemSerializer(serializers.ModelSerializer):
             instance.quantity += validated_data['quantity'] 
             instance.save()
             return instance 
+        
 
 
 
