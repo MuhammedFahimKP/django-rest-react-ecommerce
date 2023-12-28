@@ -6,6 +6,8 @@ from .models import (
     Brand,
     Size,
     Color,
+    ProductVariant,
+    ProductVariantImages,
     Cart,
     CartItem,
 
@@ -35,6 +37,9 @@ class ProductAdmin(admin.ModelAdmin):
     list_display = ('name','img_tag','slug')
     prepopulated_fields = {'slug':('name',)}
 
+
+admin.site.register(ProductVariantImages)
+admin.site.register(ProductVariant)
 
 
 # class CategoeryAdmin(admin.ModelAdmin):

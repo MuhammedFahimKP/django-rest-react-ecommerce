@@ -1,10 +1,13 @@
-from shop.models import Categoery,Product,Brand
+from shop.models import Categoery,Product,Brand,ProductVariant,ProductVariantImages,Size,Color
+from shop.utils import get_or_create,get_or_none
+
 from shop.serializers import( 
     CategoerySerializer,
     BrandSerializer,
     ColorSerializer,
     SizeSerializer,
     ProductSerilizer,
+    ProductVariantSerailizer,
 )
 from rest_framework import serializers
 
@@ -136,3 +139,79 @@ class AdminProductSerializer(ProductSerilizer):
         instance.save()
        
         return instance
+    
+
+class AdminProductVariantSerializer(ProductVariantSerailizer):
+
+    name  = serializers.CharField(read_only=True)
+    
+    class Meta:
+
+        model          = ProductVariantSerailizer.Meta.model
+        current_fileds = ProductVariantSerailizer.Meta.fields.copy()
+        current_fileds.insert(0,'id')
+        current_fileds.insert(1,'name')
+        
+        fields         = current_fileds  + ['stocks','is_active']
+
+
+    def validate(self, data):
+        color   = data.get('color',None)
+        img     = data.get('img',None)
+        name    = img.get('name',None)
+        product = data.get('product',None)
+        if product is not None:
+            
+            product = Product.objects.get(name=product['name'])
+
+            data['product'] = product
+
+        else:
+            raise serializers.ValidationError(
+                {'product','we could find the product in our db'}
+            )    
+    
+
+
+        if color is not None:
+            color = get_or_create(class_model=Color,name=data['color']['name'])
+            data['color'] = color
+
+            
+        if img is not None:  
+
+            img = get_or_none(class_model=ProductVariantImages,name=str(data['color'].name+data['product'].name))
+
+            if img is None:            
+                img = ProductVariantImages.objects.create(
+                    name   = str(data['color'].name + data['product'].name),
+                    img_1  = data['img_1'],
+                    img_2  = data['img_2'],
+                    img_3  = data['img_3']
+
+                )  
+
+            data['img'] = img
+
+        return data
+    
+    def create(self,validate_data):
+        size  = validate_data.get('size',None)
+        color = validate_data.get('color',None)
+       
+
+        if size is not None :
+            size = get_or_create(model=Size,name=validate_data['size']['name'])
+            validate_data['size'] = size
+
+            
+
+                
+
+
+
+
+
+
+
+

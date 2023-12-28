@@ -113,6 +113,9 @@ class ProductVariantImages(BaseModel):
     img_2     = models.ImageField(upload_to="prdv2/",null=True,blank=True)
     img_3     = models.ImageField(upload_to="prdv3/" ,null=True,blank=True)
 
+    def __str__(self) -> str:
+        return f"{self.slug}"
+
 
 
 
@@ -121,7 +124,7 @@ class ProductVariant(BaseModel):
     slug      = models.SlugField(max_length=200,unique=True,null=True)
     product   = models.ForeignKey(Product,on_delete=models.CASCADE)
     img       = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
-    color     = models.OneToOneField(Color,on_delete=models.CASCADE,null=True)
+    color     = models.ForeignKey(Color,on_delete=models.CASCADE,null=True)
     size      = models.ForeignKey(Size,null=True,on_delete=models.CASCADE)
     price     = models.DecimalField(default=0.0,decimal_places=2,max_digits=15)
     stock     = models.PositiveIntegerField(default=0)
@@ -169,13 +172,13 @@ class WishList(BaseModel):
 
 class WishListItem(BaseModel):
 
-    wishlist = models.ForeignKey(WishList,on_delete=models.CASCADE)
+    wishlist  = models.ForeignKey(WishList,on_delete=models.CASCADE)
     product   = models.ForeignKey(Product,on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
 
     class Meta:
-
+        
         ordering = ('-created',)
 
 
@@ -185,6 +188,7 @@ class WishListItem(BaseModel):
 
 
     
+
 
 
 

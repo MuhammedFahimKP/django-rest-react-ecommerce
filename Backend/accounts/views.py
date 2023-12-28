@@ -201,7 +201,7 @@ class UserUpdateApiView(JWTPermission,generics.GenericAPIView):
         
             return Response({
                 'data':user,
-                'message':f'hi {user['firstname']} profile updated ',
+                'message':f'hi {user['first_name']} profile updated ',
             },status=status.HTTP_202_ACCEPTED) 
          
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
@@ -223,8 +223,10 @@ class UserActivaionApiView(generics.GenericAPIView):
         if serializer.is_valid(raise_exception=True):
 
             user = serializer.data
+            
+
             return Response({
-                'message':f'hi {user['first_name']} your account activated successfully ',
+                'message':f'hi {user}  your account activated successfully ',
             },status=status.HTTP_200_OK) 
          # other wise it will send a 400 http response with serializer error
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 

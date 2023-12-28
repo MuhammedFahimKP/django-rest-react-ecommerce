@@ -8,10 +8,13 @@ from .models import (
     Size,
     Color,
     Product,
+    ProductVariantImages,
+    ProductVariant,
     Cart,
     CartItem,
     WishList,
     WishListItem,
+
 )
 
 
@@ -346,9 +349,16 @@ class WishtListItemSerializer(serializers.ModelSerializer):
         return instance 
     
 
+class ProductVariantSerailizer(serializers.ModelSerializer):
 
-
-
-
-    
-
+    class Meta:
+        model  = ProductVariant
+        fields = [
+            'name',
+            'product',
+            'img'
+            'size',
+            'color',
+            'price',
+            
+        ]
