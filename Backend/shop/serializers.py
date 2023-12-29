@@ -362,3 +362,16 @@ class ProductVariantSerailizer(serializers.ModelSerializer):
             'price',
             
         ]
+
+
+class ProductVariantImageSerializer(serializers.ModelSerializer):
+
+
+
+    class Meta:
+        model  = ProductVariantImages
+        fields = [
+            'img_1',
+            'img_2',
+            'img_3',
+        ]

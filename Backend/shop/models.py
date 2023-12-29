@@ -51,7 +51,7 @@ class Brand(BaseModel):
     is_active = models.BooleanField(default=False)
 
 
-    def __str__(self) ->str:
+    def __str__(self) -> str:
         return f"{self.name}"
 
 class Color(BaseModel):
@@ -120,15 +120,23 @@ class ProductVariantImages(BaseModel):
 
 
 class ProductVariant(BaseModel):
-    name      = models.CharField(max_length=200,unique=True,null=True)
-    slug      = models.SlugField(max_length=200,unique=True,null=True)
-    product   = models.ForeignKey(Product,on_delete=models.CASCADE)
-    img       = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
-    color     = models.ForeignKey(Color,on_delete=models.CASCADE,null=True)
-    size      = models.ForeignKey(Size,null=True,on_delete=models.CASCADE)
-    price     = models.DecimalField(default=0.0,decimal_places=2,max_digits=15)
-    stock     = models.PositiveIntegerField(default=0)
-    is_active = models.BooleanField(default=False)
+
+    """
+
+    productvariant  
+    
+    
+    """
+
+    variand_id      = models.CharField(max_length=500,unique=True,null=True)
+    slug            = models.SlugField(max_length=400,unique=True,null=True)
+    product         = models.ForeignKey(Product,on_delete=models.CASCADE)
+    img             = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
+    color           = models.ForeignKey(Color,on_delete=models.CASCADE,null=True)
+    size            = models.ForeignKey(Size,null=True,on_delete=models.CASCADE)
+    price           = models.DecimalField(default=0.0,decimal_places=2,max_digits=15)
+    stock           = models.PositiveIntegerField(default=0)
+    is_active       = models.BooleanField(default=False)
 
     def __str__(self) -> str:
         return f'{self.product} {self.size} {self.color}'

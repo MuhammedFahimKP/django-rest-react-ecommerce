@@ -1,5 +1,6 @@
 from shop.models import Categoery,Product,Brand,ProductVariant,ProductVariantImages,Size,Color
 from shop.utils import get_or_create,get_or_none
+from django.utils.text import slugify
 
 from shop.serializers import( 
     CategoerySerializer,
@@ -7,6 +8,7 @@ from shop.serializers import(
     ColorSerializer,
     SizeSerializer,
     ProductSerilizer,
+    ProductVariantImageSerializer,  
     ProductVariantSerailizer,
 )
 from rest_framework import serializers
@@ -143,8 +145,12 @@ class AdminProductSerializer(ProductSerilizer):
 
 class AdminProductVariantSerializer(ProductVariantSerailizer):
 
-    name  = serializers.CharField(read_only=True)
-    
+
+
+    name   = serializers.CharField(read_only=True)
+    stocks = serializers.IntegerField()
+    img    = ProductVariantImageSerializer()
+
     class Meta:
 
         model          = ProductVariantSerailizer.Meta.model
@@ -156,9 +162,7 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
 
 
     def validate(self, data):
-        color   = data.get('color',None)
-        img     = data.get('img',None)
-        name    = img.get('name',None)
+      
         product = data.get('product',None)
         if product is not None:
             
@@ -170,41 +174,73 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
             raise serializers.ValidationError(
                 {'product','we could find the product in our db'}
             )    
-    
+        
+
+       
 
 
-        if color is not None:
-            color = get_or_create(class_model=Color,name=data['color']['name'])
-            data['color'] = color
-
-            
-        if img is not None:  
-
-            img = get_or_none(class_model=ProductVariantImages,name=str(data['color'].name+data['product'].name))
-
-            if img is None:            
-                img = ProductVariantImages.objects.create(
-                    name   = str(data['color'].name + data['product'].name),
-                    img_1  = data['img_1'],
-                    img_2  = data['img_2'],
-                    img_3  = data['img_3']
-
-                )  
-
-            data['img'] = img
+        
 
         return data
     
     def create(self,validate_data):
-        size  = validate_data.get('size',None)
-        color = validate_data.get('color',None)
-       
+        color   = validate_data.get('color',None)
+        img     = validate_data.get('img',None)
+        name    = img.get('name',None)
+        size    = validate_data.get('size',None)
+        active  = validate_data.get('is_active',False)
+
+    
+
+
 
         if size is not None :
             size = get_or_create(model=Size,name=validate_data['size']['name'])
             validate_data['size'] = size
 
+        if color is not None:
+            color = get_or_create(class_model=Color,name=validate_data['color']['name'])
+            validate_data['color'] = color
+
+        variant_id = str(validate_data['product'].id) + " " + str(validate_data['color'].name) + " " + str(validate_data['size'].name)
+
+        if ProductVariant.objects.filter(variant_id=variant_id).exists():
+
+            raise serializers.ValidationError(
+                {"product_variant":"product variant already exists"}
+            )  
             
+        if img is not None:  
+
+            imges = get_or_none(class_model=ProductVariantImages,name=str(validate_data['color'].name+validate_data['product'].name))
+
+            if imges is None:            
+
+                imges = ProductVariantImages.objects.create(
+                    name   = str(validate_data['color'].name + validate_data['product'].name),
+                    img_1  = img['img_1'],
+                    img_2  = img['img_2'],
+                    img_3  = img['img_3']
+                )  
+
+            validate_data['img'] = imges 
+
+
+
+            
+        slug     = slugify(variant_id) 
+        instance = ProductVariant.objects.create(
+            variant_id     = slug,
+            img       = validate_data['img'],
+            product   = validate_data['product'],
+            stocks    = validate_data['stocks'],
+            price     = validate_data['price'],
+            size      = validate_data['size'],
+            color     = validate_data['color'],
+            is_active = active
+        )    
+
+        return instance
 
                 
 

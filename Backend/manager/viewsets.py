@@ -9,6 +9,7 @@ from .serializers import (
     AdminColorSerializer,
     AdminSizeSerializer,
     AdminProductSerializer,
+    AdminProductVariantSerializer,
 )
 from shop.models import (
     Categoery,
@@ -16,6 +17,7 @@ from shop.models import (
     Color,
     Size,
     Product,
+    ProductVariant
 )
 
 from .permissions import AdminOnly
@@ -62,23 +64,22 @@ class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
     lookup_field       ='pk'    
 
 
-# class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
+class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
 
-#     permission_classes = [AdminOnly]
-#     queryset           = Product.objects.all()
-#     serializer_class   = AdminProductSerializer
-#     lookup_field       = 'pk'
-
-
-
-
-class AdminProductCreate(generics.ListCreateAPIView):
-    
-    # parser_classes = (MultiPartParser,FormParser)
-   
+    permission_classes = [AdminOnly]
     queryset           = Product.objects.all()
     serializer_class   = AdminProductSerializer
-    
+    lookup_field       = 'pk'
+
+
+
+class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
+
+    permission_classes = [AdminOnly]
+    queryset           = ProductVariant.objects.all()
+    serializer_class   = AdminProductVariantSerializer
+    lookup_field       = 'pk'
+
 
 
   
