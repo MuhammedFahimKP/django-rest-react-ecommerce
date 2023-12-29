@@ -73,9 +73,9 @@ class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
 
 
 
-class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
+class AdminProductVariantViewSet(viewsets.ModelViewSet):
 
-    permission_classes = [AdminOnly]
+    # permission_classes = [AdminOnly]
     queryset           = ProductVariant.objects.all()
     serializer_class   = AdminProductVariantSerializer
     lookup_field       = 'pk'

@@ -108,13 +108,14 @@ class Product(BaseModel):
 
 
 class ProductVariantImages(BaseModel):
-    slug      = models.SlugField(max_length=200,unique=True,null=True)
+
+    img_id    = models.CharField(max_length=200,null=True)
     img_1     = models.ImageField(upload_to="prdv1/",null=True,blank=True)
     img_2     = models.ImageField(upload_to="prdv2/",null=True,blank=True)
     img_3     = models.ImageField(upload_to="prdv3/" ,null=True,blank=True)
 
     def __str__(self) -> str:
-        return f"{self.slug}"
+        return f"{self.img_id}"
 
 
 

@@ -4,7 +4,8 @@ from .viewsets import (
     AdminBrandViewset,
     AdminColorViewset,
     AdminSizeViewset,
-    # AdminProductViewSet,
+    AdminProductViewSet,
+    AdminProductVariantViewSet,
 )
 
 
@@ -34,11 +35,20 @@ router.register(
     AdminSizeViewset,
     basename='size'
 )
-# router.register(
-#     'product',
-#     AdminProductViewSet,
-#     basename='product'
-# )
+router.register(
+    'product',
+    AdminProductViewSet,
+    basename='product'
+)
+
+router.register(
+
+    'product-variant',
+    AdminProductVariantViewSet,
+    basename="product-variant"
+
+)
+
 
 urlpatterns = router.urls
 

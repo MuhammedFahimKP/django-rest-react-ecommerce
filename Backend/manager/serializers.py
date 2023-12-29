@@ -147,18 +147,18 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
 
 
 
-    name   = serializers.CharField(read_only=True)
-    stocks = serializers.IntegerField()
-    img    = ProductVariantImageSerializer()
+    variant_id   = serializers.CharField(read_only=True)
+    stocks       = serializers.IntegerField()
+    img          = ProductVariantImageSerializer()
 
     class Meta:
 
         model          = ProductVariantSerailizer.Meta.model
         current_fileds = ProductVariantSerailizer.Meta.fields.copy()
         current_fileds.insert(0,'id')
-        current_fileds.insert(1,'name')
+        current_fileds.insert(1,'variant_id')
         
-        fields         = current_fileds  + ['stocks','is_active']
+        fields         = current_fileds  + ['stocks','is_active','img']
 
 
     def validate(self, data):
