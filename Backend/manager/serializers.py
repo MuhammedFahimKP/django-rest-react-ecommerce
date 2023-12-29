@@ -211,8 +211,11 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
             )  
             
         if img is not None:  
+            
 
-            imges = get_or_none(class_model=ProductVariantImages,name=str(validate_data['color'].name+validate_data['product'].name))
+            img_id = str(validate_data['product'].id)+ " " + str(validate_data['colour'].id)
+
+            imges = get_or_none(class_model=ProductVariantImages,img_id=img_id)
 
             if imges is None:            
 
