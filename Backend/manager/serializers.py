@@ -149,9 +149,9 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
 
     
     stock        = serializers.IntegerField()
-    img_1        = serializers.ImageField(required=True)
-    img_2        = serializers.ImageField(required=True)
-    img_3        = serializers.ImageField(required=True)
+    img_1        = serializers.ImageField(required=True,write_only=True)
+    img_2        = serializers.ImageField(required=True,write_only=True)
+    img_3        = serializers.ImageField(required=True,write_only=True)
     product      = serializers.CharField() 
     size         = serializers.CharField()
     color        = serializers.CharField()
@@ -167,15 +167,14 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
     def validate(self, data):
       
         product = data.get('product',None)
-        if product is not None:
-            
-            product = Product.objects.get(name=product)
 
+        product = get_or_none(class_model=Product,name=product)
+        if product is not None:
             data['product'] = product
 
         else:
             raise serializers.ValidationError(
-                {'product','we could find the product in our db'}
+                {'product':'we could find the product in our db'}
             )    
         
 
@@ -207,8 +206,12 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
             validate_data['color'] = color
 
         variant_id = str(validate_data['product'].id) + " " + str(validate_data['color'].name) + " " + str(validate_data['size'].name)
+        print(variant_id)
 
-        if ProductVariant.objects.filter(variant_id=variant_id).exists():
+
+        variant = ProductVariant.objects.filter(variant_id=slugify(variant_id)) 
+
+        if variant.exists():
 
             raise serializers.ValidationError(
                 {"product_variant":"product variant already exists"}
@@ -228,21 +231,30 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
                     img_1  = img_1,
                     img_2  = img_2,
                     img_3  = img_3
-            )  
+            )
 
-            validate_data['img'] = imges 
+            
+        validate_data.pop('img_1')
+        validate_data.pop('img_2')
+        validate_data.pop('img_3')
+        validate_data.update({'img':ProductVariantImageSerializer(data=imges).data})
+
+        print(validate_data)
+
+
+            
 
             
         slug     = slugify(variant_id) 
         instance = ProductVariant.objects.create(
-            variant_id     = slug,
-            img       = validate_data['img'],
-            product   = validate_data['product'],
-            stock    = validate_data['stock'],
-            price     = validate_data['price'],
-            size      = validate_data['size'],
-            color     = validate_data['color'],
-            is_active = active
+            variant_id = slug,
+            img        =  imges,
+            product    = validate_data['product'],
+            stock      = validate_data['stock'],
+            price      = validate_data['price'],
+            size       = validate_data['size'],
+            color      = validate_data['color'],
+            is_active  = active
         )    
 
         return instance
