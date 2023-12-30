@@ -44,7 +44,7 @@ class AdminBrandSerializer(BrandSerializer):
        
 class AdminColorSerializer(ColorSerializer):
 
-    is_active = serializers.BooleanField()
+    is_active = serializers.BooleanField(required=False)
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
 
@@ -57,7 +57,7 @@ class AdminColorSerializer(ColorSerializer):
 
 class AdminSizeSerializer(SizeSerializer):
 
-    is_active  = serializers.BooleanField()
+    is_active  = serializers.BooleanField(required=False)
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
 
@@ -147,18 +147,21 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
 
 
 
-    variant_id   = serializers.CharField(read_only=True)
-    stocks       = serializers.IntegerField()
-    img          = ProductVariantImageSerializer()
+    
+    stock        = serializers.IntegerField()
+    img_1        = serializers.ImageField(required=True)
+    img_2        = serializers.ImageField(required=True)
+    img_3        = serializers.ImageField(required=True)
+    product      = serializers.CharField() 
+    size         = serializers.CharField()
+    color        = serializers.CharField()
+    img          = serializers.ImageField(read_only=True)
 
     class Meta:
 
         model          = ProductVariantSerailizer.Meta.model
         current_fileds = ProductVariantSerailizer.Meta.fields.copy()
-        current_fileds.insert(0,'id')
-        current_fileds.insert(1,'variant_id')
-        
-        fields         = current_fileds  + ['stocks','is_active','img']
+        fields         = current_fileds  + ['img_1','img_2','img_3','stock','is_active',]
 
 
     def validate(self, data):
@@ -166,7 +169,7 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
         product = data.get('product',None)
         if product is not None:
             
-            product = Product.objects.get(name=product['name'])
+            product = Product.objects.get(name=product)
 
             data['product'] = product
 
@@ -185,8 +188,9 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
     
     def create(self,validate_data):
         color   = validate_data.get('color',None)
-        img     = validate_data.get('img',None)
-        name    = img.get('name',None)
+        img_1   = validate_data.get('img_1',None)
+        img_2   = validate_data.get('img_2',None)
+        img_3   = validate_data.get('img_3',None)
         size    = validate_data.get('size',None)
         active  = validate_data.get('is_active',False)
 
@@ -195,11 +199,11 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
 
 
         if size is not None :
-            size = get_or_create(model=Size,name=validate_data['size']['name'])
+            size = get_or_create(class_model=Size,name=size)
             validate_data['size'] = size
 
         if color is not None:
-            color = get_or_create(class_model=Color,name=validate_data['color']['name'])
+            color = get_or_create(class_model=Color,name=color,slug=slugify(color))
             validate_data['color'] = color
 
         variant_id = str(validate_data['product'].id) + " " + str(validate_data['color'].name) + " " + str(validate_data['size'].name)
@@ -210,25 +214,23 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
                 {"product_variant":"product variant already exists"}
             )  
             
-        if img is not None:  
-            
+         
 
-            img_id = str(validate_data['product'].id)+ " " + str(validate_data['colour'].id)
 
-            imges = get_or_none(class_model=ProductVariantImages,img_id=img_id)
+        img_id = str(validate_data['product'].id)+ " " + str(validate_data['color'].id)
 
-            if imges is None:            
+        imges = get_or_none(class_model=ProductVariantImages,img_id=img_id)
 
-                imges = ProductVariantImages.objects.create(
-                    name   = str(validate_data['color'].name + validate_data['product'].name),
-                    img_1  = img['img_1'],
-                    img_2  = img['img_2'],
-                    img_3  = img['img_3']
-                )  
+        if imges is None:            
+
+            imges = ProductVariantImages.objects.create(
+                    img_id = img_id,
+                    img_1  = img_1,
+                    img_2  = img_2,
+                    img_3  = img_3
+            )  
 
             validate_data['img'] = imges 
-
-
 
             
         slug     = slugify(variant_id) 
@@ -236,7 +238,7 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
             variant_id     = slug,
             img       = validate_data['img'],
             product   = validate_data['product'],
-            stocks    = validate_data['stocks'],
+            stock    = validate_data['stock'],
             price     = validate_data['price'],
             size      = validate_data['size'],
             color     = validate_data['color'],
@@ -246,6 +248,31 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
         return instance
 
                 
+class AdminProductVarintListSerializer(AdminProductSerializer):
+
+    
+    img        = ProductVariantImageSerializer()
+    product    = AdminProductSerializer()
+    stock      = serializers.IntegerField()
+    size       = AdminSizeSerializer()
+    color      = AdminColorSerializer()
+    created    = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+    updated    = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+
+
+    class Meta:
+
+        model          = ProductVariantSerailizer.Meta.model
+        current_fileds = ProductVariantSerailizer.Meta.fields.copy()
+        fields         = current_fileds  + ['created','updated','stock','is_active']
+
+
+
+
+
+
+
+
 
 
 

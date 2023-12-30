@@ -10,6 +10,7 @@ from .serializers import (
     AdminSizeSerializer,
     AdminProductSerializer,
     AdminProductVariantSerializer,
+    AdminProductVarintListSerializer,
 )
 from shop.models import (
     Categoery,
@@ -77,8 +78,14 @@ class AdminProductVariantViewSet(viewsets.ModelViewSet):
 
     # permission_classes = [AdminOnly]
     queryset           = ProductVariant.objects.all()
-    serializer_class   = AdminProductVariantSerializer
+    
     lookup_field       = 'pk'
+
+
+    def get_serializer_class(self):
+        if self.action == "CREATE":
+            return AdminProductVariantSerializer
+        return AdminProductVarintListSerializer
 
 
 

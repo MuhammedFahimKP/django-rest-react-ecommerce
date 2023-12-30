@@ -127,9 +127,10 @@ class ProductVariant(BaseModel):
     productvariant  
     
     
+    
     """
 
-    variand_id      = models.CharField(max_length=500,unique=True,null=True)
+    variant_id      = models.CharField(max_length=500,unique=True,null=True)
     slug            = models.SlugField(max_length=400,unique=True,null=True)
     product         = models.ForeignKey(Product,on_delete=models.CASCADE)
     img             = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
