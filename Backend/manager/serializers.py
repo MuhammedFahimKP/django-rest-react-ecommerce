@@ -143,24 +143,26 @@ class AdminProductSerializer(ProductSerilizer):
         return instance
     
 
-class AdminProductVariantSerializer(ProductVariantSerailizer):
+class AdminProductVariantSerializer(serializers.Serializer):
 
 
 
     
     stock        = serializers.IntegerField()
-    img_1        = serializers.ImageField(required=True,write_only=True)
-    img_2        = serializers.ImageField(required=True,write_only=True)
-    img_3        = serializers.ImageField(required=True,write_only=True)
+    img_1        = serializers.ImageField(required=True,)
+    img_2        = serializers.ImageField(required=True)
+    img_3        = serializers.ImageField(required=True)
     product      = serializers.CharField() 
     size         = serializers.CharField()
     color        = serializers.CharField()
-    img          = serializers.ImageField(read_only=True)
+    price        = serializers.IntegerField()
+    
 
     class Meta:
 
-        model          = ProductVariantSerailizer.Meta.model
+       
         current_fileds = ProductVariantSerailizer.Meta.fields.copy()
+        current_fileds.remove('img')
         fields         = current_fileds  + ['img_1','img_2','img_3','stock','is_active',]
 
 
@@ -237,7 +239,7 @@ class AdminProductVariantSerializer(ProductVariantSerailizer):
         validate_data.pop('img_1')
         validate_data.pop('img_2')
         validate_data.pop('img_3')
-        validate_data.update({'img':ProductVariantImageSerializer(data=imges).data})
+        
 
         print(validate_data)
 
@@ -276,6 +278,9 @@ class AdminProductVarintListSerializer(AdminProductSerializer):
 
         model          = ProductVariantSerailizer.Meta.model
         current_fileds = ProductVariantSerailizer.Meta.fields.copy()
+        # current_fileds.pop('img')
+       
+        print(current_fileds)
         fields         = current_fileds  + ['created','updated','stock','is_active']
 
 
