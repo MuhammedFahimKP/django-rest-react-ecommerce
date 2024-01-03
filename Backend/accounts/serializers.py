@@ -4,7 +4,7 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
-from .models import MyUser
+from .models import MyUser,ShippingAddress
 from .utils import Google,register_social_user,verify_token
 from .thread import EmailThread
 from django.contrib.auth import authenticate
@@ -278,6 +278,28 @@ class UserUpdateSerializer(serializers.ModelSerializer):
         
     
 
+class ShippingAddressSerializer(serializers.ModelSerializer):
+    
+    user     = UserViewSerailizer(read_only=True) 
+    state    = serializers.ChoiceField(choices=ShippingAddress.state_choices)
+    pin_code = serializers.CharField(max_length=6,min_length=4)
+    
+    
+    
+    def create(self,validated_data):
+        request  = self.context.get('request',None)
+        
+        user = {
+            'user':request.user
+        } 
+        validated_data.update(user)
+        instance = ShippingAddress.objects.create(**validated_data)
+        return instance 
+    
+    
+    class Meta:
+        model  =  ShippingAddress
+        fields =  '__all__'
 
 
 

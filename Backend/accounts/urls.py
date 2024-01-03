@@ -21,5 +21,6 @@ urlpatterns = [
     path('signout/',views.BlackListTokenView.as_view()),
     path('google/',views.GoogleUserSiginAPIView.as_view()),
     path('user-activation/<str:token>/',views.UserActivaionApiView.as_view(),name="activate"),
-    path('user-update',views.UserUpdateApiView.as_view())
+    path('user-update/',views.UserUpdateApiView.as_view()),
+    path('shiping-address/',views.ShippingAddressListCreateApiView.as_view(),name="shiping-address")
 ]

@@ -39,23 +39,32 @@ CORS_URL_REGEX = r"^/api/.*"
 # Application definition
 
 INSTALLED_APPS = [
+    
+    #django default apps
+    
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    #project apps
 
     'accounts',
     'shop',
     'manager',
+    'checkouts',
     
-
+    #rest framework apps
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    
+    #corsheaders apps
     'corsheaders',
 
+    #celery_beat
     'django_celery_results',
 ]
 

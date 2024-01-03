@@ -1,11 +1,12 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
-from .models import MyUser as User
+from .models import MyUser as User,ShippingAddress
 from ecom.mixins import JWTPermission 
 from rest_framework_simplejwt.tokens import RefreshToken
-from .thread import EmailThread
 
+from .thread import EmailThread
+# from .models import ShippingAddress
 # Create your views here.
 from rest_framework import generics,status,permissions
 from .serializers import (
@@ -15,6 +16,7 @@ from .serializers import (
     UserEmailActivationSerializer,
     GoogleSiginSerializer,
     UserUpdateSerializer,
+    ShippingAddressSerializer,
 
 )
 
@@ -214,7 +216,8 @@ class UserActivaionApiView(generics.GenericAPIView):
 
      # sending data to serializer  
     serializer_class = UserEmailActivationSerializer
-
+    
+    
 
     #if serializer valid then it will send a data with http 200
     def post(self,request,token):
@@ -229,7 +232,60 @@ class UserActivaionApiView(generics.GenericAPIView):
                 'message':f'hi {user}  your account activated successfully ',
             },status=status.HTTP_200_OK) 
          # other wise it will send a 400 http response with serializer error
-        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+class ShippingAddressListCreateApiView(JWTPermission,generics.GenericAPIView):
+    
+    serializer_class = ShippingAddressSerializer
+    queryset           = ShippingAddress.objects.all()
+    
+    def get_queryset(self,*args, **kwargs):
+            
+            
+            
+            
+        #Taking the current user  for  filter thier address
+
+        user = self.request.user
+            
+        """
+        
+            user have wishlist then filtering the wishlistitems are related to wishlist 
+            otherwise returns empty list    
+        
+        """
+            
+        qs = super().get_queryset(*args,**kwargs)
+        return qs.filter(user=user)
+        
+        
+        
+    
+    def post(self,request,*args, **kwargs):
+        
+        serializer = self.get_serializer_class()
+        
+        serializer = serializer(data=request.data,context={'request':request})
+        
+
+
+        
+        if serializer.is_valid(raise_exception=True):
+            
+            serializer.save()
+            
+            return Response(serializer.data,status=201)
+        
+        return Response(serializer.errors,status=404)        
+    
+    def get(self,reqeust,*args, **kwargs):
+            
+        models      = self.get_queryset()
+    
+        serializer  = self.get_serializer(models,many=True)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 
