@@ -250,10 +250,8 @@ class ShippingAddressListCreateApiView(JWTPermission,generics.GenericAPIView):
         user = self.request.user
             
         """
-        
-            user have wishlist then filtering the wishlistitems are related to wishlist 
-            otherwise returns empty list    
-        
+        filter the address of the current user
+           
         """
             
         qs = super().get_queryset(*args,**kwargs)
