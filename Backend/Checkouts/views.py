@@ -1,15 +1,27 @@
 from django.shortcuts import render
-from rest_framework import generics
+from rest_framework import generics,status
 from rest_framework.response import Response
-from .models import OrderItems
-from .serializer import OrderCreateSerializer
+from ecom.mixins import JWTPermission 
+from .models import OrderItems,Order
+from .serializer import OrderCreateSerializer,OrderListSearializer
 
 
 # Create your views here.
-class OrderCreateApiView(generics.GenericAPIView):
+class OrderCreateApiView(JWTPermission,generics.GenericAPIView):
     
     serializer_class = OrderCreateSerializer
-    queryset         = OrderItems.objects.all()
+    queryset         = Order.objects.prefetch_related()
+    
+    
+    def get_queryset(self):
+        
+        
+        user = self.request.user
+        
+        qs = super().get_queryset()
+        
+        return qs.filter()
+    
     
     
     def post(self,request,*args, **kwargs):
@@ -25,6 +37,33 @@ class OrderCreateApiView(generics.GenericAPIView):
             
             serializer.save()
             
-            return Response(serializer.data,status=201)
+            return Response({"success":"order created "},status=201)
         
         return Response(serializer.errors,status=404)
+    
+    
+        
+        
+class OrderListApiView(JWTPermission,generics.ListAPIView):
+    
+    queryset = Order.objects.all()
+    
+    serializer_class = OrderListSearializer
+    
+    def get(self, request, format=None):
+        serializer = self.get_serializer(
+            self.get_queryset().filter(user = request.user),
+            many=True
+        )
+        return Response(serializer.data)
+    
+    
+    
+    
+            
+        
+            
+            
+            
+         
+        

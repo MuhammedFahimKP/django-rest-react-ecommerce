@@ -348,22 +348,7 @@ class WishtListItemSerializer(serializers.ModelSerializer):
 
         return instance 
     
-
-class ProductVariantSerailizer(serializers.ModelSerializer):
-
-    class Meta:
-        model  = ProductVariant
-        fields = [
-            'variant_id',
-            'product',
-            'img',
-            'size',
-            'color',
-            'price',
-            
-        ]
-
-
+    
 class ProductVariantImageSerializer(serializers.ModelSerializer):
 
 
@@ -375,4 +360,36 @@ class ProductVariantImageSerializer(serializers.ModelSerializer):
             'img_1',
             'img_2',
             'img_3',
+        ]    
+    
+
+class ProductVariantSerailizer(serializers.ModelSerializer):
+   
+   
+    img     = ProductVariantImageSerializer()
+    product = ProductSerilizer()
+    size    = serializers.SerializerMethodField()
+    color   = serializers.SerializerMethodField()
+    
+    
+    
+    def get_size(self,obj):
+        return f"{obj.size.name}"
+    
+    def get_color(self,obj):
+        return f"{obj.color.name}"
+    
+    class Meta:
+        model  = ProductVariant
+        
+        fields = [
+            
+            'variant_id',
+            'product',
+            'img',
+            'size',
+            'color',
+            'price',   
         ]
+
+

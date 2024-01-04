@@ -35,7 +35,7 @@ class Order(BaseModel):
     total_amount   = models.DecimalField(max_digits=10, decimal_places=2)
     status         = models.CharField(max_length=12,choices=status_choices)
     payment        = models.CharField(max_length=3, choices=payment_choices)
-    payment_staus  = models.CharField(max_length=7,choices=payment_staus)
+    payment_status  = models.CharField(max_length=7,choices=payment_staus)
     
     """
      
@@ -57,12 +57,12 @@ class Order(BaseModel):
     
 class OrderItems(BaseModel):
     
-    order    = models.ForeignKey(Order,on_delete=models.CASCADE)
+    order    = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='orders')
     product  = models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1)])
     
-    # @property
-    # def sub_total(self) -> int :
-    #     return self.product.price * self.quantity
+    @property
+    def sub_total(self) -> int :
+        return self.product.price * self.quantity
         
         
