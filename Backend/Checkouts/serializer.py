@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from .models import Order,OrderItems,Address,ProductVariant
 from shop.serializers import ProductVariantSerailizer 
+from .payments import make_razorpay_payment
+
+
 
 
 class OrderCreateSerializer(serializers.Serializer):
@@ -67,9 +70,9 @@ class OrderCreateSerializer(serializers.Serializer):
             )
             
         
-            products:list[object] = validated_data.get('product',None)
-            quantity:dict[int]    = validated_data.get('quantity',None) 
-            total_amount:float = 0.0
+            products : list[object]     = validated_data.get('product',None)
+            quantity : dict[str,int]    = validated_data.get('quantity',None) 
+            total_amount : float = 0.0
             
             for prd in products:
                 
@@ -86,6 +89,9 @@ class OrderCreateSerializer(serializers.Serializer):
                 
                 )                
                 total_amount += float(prd.price) * item_quantity
+                
+            payment    =  make_razorpay_payment(amount=total_amount,name=request.user.first_name)    
+            print(payment)
             order.total_amount = total_amount 
             order.save()
             

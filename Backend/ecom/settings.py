@@ -287,6 +287,11 @@ STRIPE_PUBLISH_KEY = os.environ.get('STRIPE_PUBLISH_KEY')
 STRIPE_SECRET_KEY  = os.environ.get('STRIPE_SECRET_KEY')
 
 
+#Razorpay Payment Gateway Setup 
+
+RAZOR_PAY_KEY         = os.environ.get('RAZOR_PAY_KEY')
+RAZOR_PAY_SECRETE_KEY = os.environ.get('RAZOR_PAY_SECRETE_KEY')
+
 
 
 #CELERY SETTINGS

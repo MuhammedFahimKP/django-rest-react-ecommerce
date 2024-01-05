@@ -1,22 +1,28 @@
 from django.conf import settings
-import stripe
 
 
-stripe.api_key = settings.STRIPE_SECRET_KEY
+import razorpay
 
 
-def payment_function(amount_to_paid):
+
+def make_razorpay_payment(amount:float,name:str) -> dict:
     
-    checkout_session = stripe.checkout.Session.create(
+    
+    
+    
         
-        line_items= [
-            {
-                'price': '{{PRICE_ID}}'
-            }
-        ]
+    client : object       =   razorpay.Client(auth=(settings.RAZOR_PAY_KEY,settings.RAZOR_PAY_SECRETE_KEY))  
+    
+    payment_data : dict   = {
         
+        "amount": float(amount), 
+        "currency": "INR", 
+        "payment_capture": "1"
+    } 
+    payment =   client.order.create(payment_data)
+    
         
-    )
+    return payment
     
     
     
