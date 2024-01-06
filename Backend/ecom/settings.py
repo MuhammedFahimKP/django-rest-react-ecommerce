@@ -66,6 +66,10 @@ INSTALLED_APPS = [
 
     #celery_beat
     'django_celery_results',
+    
+    #filters_app
+    'django_filters'
+    
 ]
 
 MIDDLEWARE = [

@@ -281,6 +281,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 
 class ShippingAddressSerializer(serializers.ModelSerializer):
     
+    
     user     = UserViewSerailizer(read_only=True) 
     state    = serializers.ChoiceField(choices=ShippingAddress.state_choices)
     pin_code = serializers.CharField(max_length=6,min_length=4)
@@ -288,13 +289,14 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     
     
     def create(self,validated_data):
-        request  = self.context.get('request',None)
         
+        request  = self.context.get('request',None)
         user = {
             'user':request.user
         } 
         validated_data.update(user)
         instance = ShippingAddress.objects.create(**validated_data)
+        
         return instance 
     
     

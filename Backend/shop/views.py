@@ -1,3 +1,6 @@
+from django_filters.rest_framework import DjangoFilterBackend
+
+
 from rest_framework import generics,status
 from ecom.mixins import JWTPermission as JWT_Permssion_mixin
 from .models import (
@@ -15,6 +18,7 @@ from .models import (
 from rest_framework.response import Response
 from .utils import get_or_none
 from .serializers import  CartItemSerializer,WishtListItemSerializer,ProductSerilizer,CategoerySerializer
+from .filters import ProductFilterSet
 
 
 
@@ -183,6 +187,10 @@ class ListProductAPIView(generics.ListAPIView):
 
     serializer_class = ProductSerilizer
     queryset         = Product.objects.all()
+    
+    filter_backends  = [DjangoFilterBackend]
+    filterset_class  =  ProductFilterSet  
+    
      
 
     def get_queryset(self,*args, **kwargs):
@@ -191,7 +199,7 @@ class ListProductAPIView(generics.ListAPIView):
         # slug in url then we need to filter the products by otherwise we need to list all products   
          
         categoery  =  self.kwargs.get('categoery',None)
-        
+    
         categoery  =  get_or_none(class_model=Categoery,slug=categoery)
         
         

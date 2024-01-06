@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
-from .models import MyUser as User,ShippingAddress
+from .models import MyUser as User,ShippingAddress 
 from ecom.mixins import JWTPermission 
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -72,7 +72,7 @@ class UserRegisterApiView(generics.GenericAPIView):
 
 
 
-
+ 
 
 
     
@@ -288,10 +288,21 @@ class ShippingAddressListCreateApiView(JWTPermission,generics.GenericAPIView):
 
 
 
-class ShippingAddressDeleteUpdateRetriveaAPIView(generics.RetrieveUpdateDestroyAPIView):
+
+
+class ShippingAddressDeleteUpdateRetrieveApiView(JWTPermission,generics.RetrieveUpdateDestroyAPIView):
     
-    def get():
-        return 
+    
+    
+    serializer_class = ShippingAddressSerializer
+    queryset         = ShippingAddress.objects.all()
+    lookup_field     = 'pk'
+    
+    
+    
+    
+    
+    
     
     
     
