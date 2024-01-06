@@ -160,3 +160,19 @@ class ShippingAddress(BaseModel):
     def __str__(self) -> str:
         return f"near {self.landmark}, {self.place}, {self.state} {self.pin_code}"
     
+
+    
+
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+        

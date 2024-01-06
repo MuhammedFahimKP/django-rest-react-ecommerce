@@ -288,7 +288,13 @@ class ShippingAddressListCreateApiView(JWTPermission,generics.GenericAPIView):
 
 
 
-
+class ShippingAddressDeleteUpdateRetriveaAPIView(generics.RetrieveUpdateDestroyAPIView):
+    
+    def get():
+        return 
+    
+    
+    
 
 
 

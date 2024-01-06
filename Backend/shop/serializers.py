@@ -116,14 +116,68 @@ class SizeSerializer(serializers.ModelSerializer):
             'name',
         ]
 
+class ProductVariantImageSerializer(serializers.ModelSerializer):
+
+
+
+    class Meta:
+        model  = ProductVariantImages
+        fields = [
+            'img_id',
+            'img_1',
+            'img_2',
+            'img_3',
+        ]    
+            
+
+class ProductVariantSerailizer(serializers.ModelSerializer):
+   
+    
+    img     = ProductVariantImageSerializer()
+    size    = serializers.SerializerMethodField()
+    color   = serializers.SerializerMethodField()
+    
+    
+    
+    def get_size(self,obj):
+        return f"{obj.size.name}"
+    
+    def get_color(self,obj):
+        return f"{obj.color.name}"
+    
+    class Meta:
+        model  = ProductVariant
+        
+        fields = [
+            'id',
+            'variant_id',
+            'img',
+            'size',
+            'color',
+            'price',   
+        ]
 
 
 class ProductSerilizer(serializers.ModelSerializer):
 
-    name  =  serializers.CharField(max_length=50,min_length=5)
-    
+    name      = serializers.CharField(max_length=50,min_length=5)
     brand     = BrandSerializer(read_only=True)
     categoery = CategoerySerializer(read_only=True)
+    variants  = ProductVariantSerailizer(read_only=True,many=True)
+    categoery = serializers.SerializerMethodField()
+    brand     = serializers.SerializerMethodField()
+    
+    
+    def get_categoery(self,obj):
+        return f"{obj.categoery.name}"
+    
+    
+    
+    
+
+    def get_brand(self,obj):
+        return f"{obj.brand.name}"
+    
 
    
     class Meta:
@@ -134,8 +188,10 @@ class ProductSerilizer(serializers.ModelSerializer):
             'categoery',
             'brand',
             'img',
+            'variants',
             'discription',
             'slug',
+            
         ]
 
  
@@ -349,47 +405,6 @@ class WishtListItemSerializer(serializers.ModelSerializer):
         return instance 
     
     
-class ProductVariantImageSerializer(serializers.ModelSerializer):
 
-
-
-    class Meta:
-        model  = ProductVariantImages
-        fields = [
-            'img_id',
-            'img_1',
-            'img_2',
-            'img_3',
-        ]    
-    
-
-class ProductVariantSerailizer(serializers.ModelSerializer):
-   
-   
-    img     = ProductVariantImageSerializer()
-    product = ProductSerilizer()
-    size    = serializers.SerializerMethodField()
-    color   = serializers.SerializerMethodField()
-    
-    
-    
-    def get_size(self,obj):
-        return f"{obj.size.name}"
-    
-    def get_color(self,obj):
-        return f"{obj.color.name}"
-    
-    class Meta:
-        model  = ProductVariant
-        
-        fields = [
-            
-            'variant_id',
-            'product',
-            'img',
-            'size',
-            'color',
-            'price',   
-        ]
 
 

@@ -9,18 +9,34 @@ from .serializer import OrderCreateSerializer,OrderListSearializer
 # Create your views here.
 class OrderCreateApiView(JWTPermission,generics.GenericAPIView):
     
-    serializer_class = OrderCreateSerializer
-    queryset         = Order.objects.prefetch_related()
+    
+    queryset         = Order.objects.all()
     
     
     def get_queryset(self):
+        return super().get_queryset().filter(user=self.request.user)
+    
+    
+    # def get_serializer(self, *args, **kwargs):
+    #     return super().get_serializer(*args, **kwargs)
+    
+    
+    def get_serializer_class(self):
         
+        if self.request.method == 'POST':
+            return OrderCreateSerializer
         
-        user = self.request.user
+        return OrderListSearializer
+            
+    
+    
+    def get(self, request, format=None):
         
-        qs = super().get_queryset()
+        serializer =  self.get_serializer(self.get_queryset(),many=True)
         
-        return qs.filter()
+        return Response(serializer.data)
+    
+    
     
     
     
@@ -42,20 +58,11 @@ class OrderCreateApiView(JWTPermission,generics.GenericAPIView):
         return Response(serializer.errors,status=404)
     
     
-        
-        
-class OrderListApiView(JWTPermission,generics.ListAPIView):
     
-    queryset = Order.objects.all()
+                
+
     
-    serializer_class = OrderListSearializer
     
-    def get(self, request, format=None):
-        serializer = self.get_serializer(
-            self.get_queryset().filter(user = request.user),
-            many=True
-        )
-        return Response(serializer.data)
     
     
     

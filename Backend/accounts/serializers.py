@@ -58,6 +58,7 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
         
         return attrs   
     
+    
 
     def create(self,validated_data):
         validated_data.pop('password2')

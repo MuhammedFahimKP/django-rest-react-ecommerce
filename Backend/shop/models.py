@@ -132,7 +132,7 @@ class ProductVariant(BaseModel):
 
     variant_id      = models.CharField(max_length=500,unique=True,null=True)
     slug            = models.SlugField(max_length=400,unique=True,null=True)
-    product         = models.ForeignKey(Product,on_delete=models.CASCADE)
+    product         = models.ForeignKey(Product,related_name="variants",on_delete=models.CASCADE)
     img             = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
     color           = models.ForeignKey(Color,on_delete=models.CASCADE,null=True)
     size            = models.ForeignKey(Size,null=True,on_delete=models.CASCADE)
@@ -159,8 +159,8 @@ class Cart(BaseModel):
 
 class CartItem(BaseModel):
 
-    cart      = models.ForeignKey(Cart,on_delete=models.CASCADE)
-    product   = models.ForeignKey(Product,on_delete=models.CASCADE)
+    cart      = models.ForeignKey(Cart,related_name="cart_items",on_delete=models.CASCADE)
+    product   = models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
     quantity  = models.PositiveIntegerField(default=1)
     is_active = models.BooleanField(default=True)
 
@@ -182,8 +182,8 @@ class WishList(BaseModel):
 
 class WishListItem(BaseModel):
 
-    wishlist  = models.ForeignKey(WishList,on_delete=models.CASCADE)
-    product   = models.ForeignKey(Product,on_delete=models.CASCADE)
+    wishlist  = models.ForeignKey(WishList,related_name="wishlist_items",on_delete=models.CASCADE)
+    product   = models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
 
@@ -196,9 +196,9 @@ class WishListItem(BaseModel):
 
 
 
-
     
 
 
 
 
+    

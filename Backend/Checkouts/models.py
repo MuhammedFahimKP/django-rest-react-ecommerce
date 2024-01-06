@@ -64,5 +64,21 @@ class OrderItems(BaseModel):
     @property
     def sub_total(self) -> int :
         return self.product.price * self.quantity
+
+
+class Returns(BaseModel):
+    
+    RETURN_OPTIONS = [
         
+        ("Refund","Refund"),
+        ("Exachange","Exchange")
+    ]
+        
+
+    returning_policy   = models.CharField(max_length=200,choices=RETURN_OPTIONS)
+    order_item         = models.ForeignKey(OrderItems,on_delete=models.CASCADE)
+    amount             = models.DecimalField(default=0.0,decimal_places=2,max_digits=15)
+    reason             = models.TextField()
+    is_accepted        = models.BooleanField(default=False)
+    
         
