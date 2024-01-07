@@ -152,6 +152,7 @@ class Cart(BaseModel):
     is_active = models.BooleanField(default=True)
 
 
+
     def __str__(self)-> str:
         return f"{self.user}'s cart"
 

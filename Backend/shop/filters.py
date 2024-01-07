@@ -10,18 +10,24 @@ class ProductFilterSet(django_filters.FilterSet):
     category = django_filters.CharFilter(field_name="categoery__name",lookup_expr="icontains")
     size     = django_filters.CharFilter(field_name="variants__size__name",lookup_expr="icontains")
     color    = django_filters.CharFilter(field_name="variants__color__name",lookup_expr="icontains")
+        
+    created  = django_filters.OrderingFilter(field_name="created") 
     
     
     class Meta:
        
        model  = Product
        fields = [
+           
            'product',
            'brand',
            'category',
            'size',
-           'color'
-       ] 
+           'color',
+           'created' 
+       ]
+        
+        
         
         
     

@@ -1,4 +1,7 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from rest_framework.pagination import LimitOffsetPagination
+from rest_framework.filters import OrderingFilter
+
 
 
 from rest_framework import generics,status
@@ -188,32 +191,46 @@ class ListProductAPIView(generics.ListAPIView):
     serializer_class = ProductSerilizer
     queryset         = Product.objects.all()
     
-    filter_backends  = [DjangoFilterBackend]
+    
+    
+    
+    
+    
+    filter_backends  = [DjangoFilterBackend,OrderingFilter]
     filterset_class  =  ProductFilterSet  
+    ordering_fields  = ['created','updated','is_active']   
+    
+    """
+    
+    pagination_class for sort the product 
+    
+    """ 
+    pagination_class = LimitOffsetPagination
+    pagination_class.page = 100
     
      
 
-    def get_queryset(self,*args, **kwargs):
+    # def get_queryset(self,*args, **kwargs):
 
         
-        # slug in url then we need to filter the products by otherwise we need to list all products   
+    #     # slug in url then we need to filter the products by otherwise we need to list all products   
          
-        categoery  =  self.kwargs.get('categoery',None)
+    #     categoery  =  self.kwargs.get('categoery',None)
     
-        categoery  =  get_or_none(class_model=Categoery,slug=categoery)
+    #     categoery  =  get_or_none(class_model=Categoery,slug=categoery)
         
         
         
 
 
-        if categoery is not None:
+    #     if categoery is not None:
              
-             qs = super().get_queryset(*args, **kwargs)
+    #          qs = super().get_queryset(*args, **kwargs)
 
-             return qs.filter(categoery=categoery)
+    #          return qs.filter(categoery=categoery)
 
-        qs = Product.objects.all()             
-        return qs 
+    #     qs = Product.objects.all()             
+    #     return qs 
     
 
 class ProductRetriveApiView(generics.RetrieveAPIView):
