@@ -210,27 +210,7 @@ class ListProductAPIView(generics.ListAPIView):
     
      
 
-    # def get_queryset(self,*args, **kwargs):
-
-        
-    #     # slug in url then we need to filter the products by otherwise we need to list all products   
-         
-    #     categoery  =  self.kwargs.get('categoery',None)
     
-    #     categoery  =  get_or_none(class_model=Categoery,slug=categoery)
-        
-        
-        
-
-
-    #     if categoery is not None:
-             
-    #          qs = super().get_queryset(*args, **kwargs)
-
-    #          return qs.filter(categoery=categoery)
-
-    #     qs = Product.objects.all()             
-    #     return qs 
     
 
 class ProductRetriveApiView(generics.RetrieveAPIView):

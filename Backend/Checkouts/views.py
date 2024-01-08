@@ -58,7 +58,7 @@ class OrderCreateApiView(JWTPermission,generics.GenericAPIView):
         return Response(serializer.errors,status=404)
     
     
-    
+
                 
 
     
