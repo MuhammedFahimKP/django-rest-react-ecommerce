@@ -1,4 +1,8 @@
-from .import razorpay_client as client
+import razorpay
+from django.conf import settings
+
+
+razorpay_client : object = razorpay.Client(auth=(settings.RAZOR_PAY_KEY,settings.RAZOR_PAY_SECRETE_KEY))
 
 class RazorPay:
     
@@ -12,7 +16,7 @@ class RazorPay:
             'currency':currency
         }
         
-        payment_order = client.oder.create(data=data)
+        payment_order = razorpay_client.oder.create(data=data)
         return payment_order
     
     @staticmethod
@@ -24,22 +28,6 @@ class RazorPay:
             'razorpay_signature': signature
         }
         
-        check = client.utility.verify_payment_signature(data)
+        check = razorpay_client.utility.verify_payment_signature(data)
         
         return check 
-        
-        
-        
-    
-    
-    
-        
-        
-        
-        
-        
-    
-    
-    
-
-
