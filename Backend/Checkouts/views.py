@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework import generics,status
 from rest_framework.response import Response 
-from .models import Order
+from .models import Order,OrderItems
 
 from .serializer import ( 
                          
@@ -59,34 +59,75 @@ class OrderCreateApiView(JWTAUTHENTICATION,generics.GenericAPIView):
         
         if serializer.is_valid(raise_exception=True):
             
-            serializer.save()
             
-            return Response({"success":"order created "},status=201)
+            try:
+            
+                transation_id  = serializer.validated_data.get('payment_transation_id',None)
+                payment_status = 'Pending'
+                order = Order.objects.create(
+                    user                  = request.user,
+                    address               = serializer.validated_data['shipping_address'],
+                    total_amount          = 0.0,
+                    status                = 'Placed',
+                    payment               = serializer.validated_data['payment_type'],
+                    payment_transation_id = transation_id,
+                    payment_status        = payment_status,             
+                )
+                
+            
+                products : list[object]     = serializer.validated_data.get('product',None)
+                quantity : dict[str,int]    = serializer.validated_data.get('quantity',None) 
+            
+                total_amount : float = 0.0
+                
+                
+            except ValueError as e:
+            
+                    return Response(
+                        {"Value error":f"Invalid input, use an integer : {str(e)}"},
+                        status= status.HTTP_400_BAD_REQUEST
+                    )
+            
+            for prd in products:
+                
+            
+                
+                
+                
+                item_quantity = quantity.get(prd.id,1)
+                
+                orderitem = OrderItems.objects.create(
+                    order   = order,
+                    product = prd,
+                    quantity = item_quantity
+                
+                )                
+                total_amount += float(prd.price) * item_quantity
+             
+            order.total_amount = total_amount 
+            order.save()
+            
+            if serializer.validated_data['payment_type'] == 'RAZOR PAY':
+                
+                payment = RazorPay.create_payment_order(amount=total_amount,currency="INR")
+                    
+                return Response({
+                     
+                     "success"   : "order created",
+                     "Payment Details" : payment,
+                     "order_id" : order.id,
+                     
+                },status=201)
+            
+            
+            
+            return Response({"success order created"},status=201)
         
         return Response(serializer.errors,status=404)
   
 
 
-class PaymentOrderCreateApiView(JWTAUTHENTICATION,generics.GenericAPIView):
-    
-    serializer_class = PaymentOrderCreateSerializer
-    
-    
-    def post(self,reqeust) -> Response:
-        
-        
-        serailizer  = self.get_serializer_class()
-        
-        serailizer  = serailizer(data=reqeust.data)
-        
-        
-        if serailizer.is_valid(raise_expection=True):
-            
-            serailizer.save()
-    
-            return Response(serailizer.data,status=status.HTTP_201_CREATED)
-            
-        return   Response(serailizer.errors,status=status.HTTP_400_BAD_REQUEST)
+
     
     
     
@@ -103,17 +144,25 @@ class PaymentOrderVerifyApiView(JWTAUTHENTICATION,generics.GenericAPIView):
         serailizer  = serailizer(data=reqeust.data)
         
         
-        if serailizer.is_valid(raise_expection=True):
+        if serailizer.is_valid(raise_exception=True):
             
             check = RazorPay.verfiy_payment(
 
-                order_id   = serailizer.validated_data['order_id'],
+                order_id   = serailizer.validated_data['payment_order_id'],
                 payment_id = serailizer.validated_data['payment_id'],
-                signature  = serailizer.validated_data['signature']
+                signature  = serailizer.validated_data['signature'],
     
             )
             
             if check is None:
+                
+                order = serailizer.validated_data.get('order_id')
+                
+                order.payment_status =  'Paid'
+                
+                order.payment_transation_id = serailizer.validated_data.get('payment_id')
+                
+                order.save()
 
                 return Response(check.data,status.HTTP_200_OK)
     

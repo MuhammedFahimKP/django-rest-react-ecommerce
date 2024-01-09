@@ -1,3 +1,4 @@
+from decimal import Decimal
 import razorpay
 from django.conf import settings
 
@@ -8,15 +9,15 @@ class RazorPay:
     
     
     @staticmethod
-    def create_payment_order(amount:float,currency:str) -> dict:
+    def create_payment_order(amount:Decimal,currency:str) -> dict:
         
         data = {
             
-            'amount':amount,
+            'amount':float(amount),
             'currency':currency
         }
         
-        payment_order = razorpay_client.oder.create(data=data)
+        payment_order = razorpay_client.order.create(data=data)
         return payment_order
     
     @staticmethod

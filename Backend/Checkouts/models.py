@@ -12,7 +12,7 @@ class Order(BaseModel):
     payment_choices = [
         
         ("COD", "Cash On Delivery"),
-        ("UPI","UPI Payment")
+        ("RAZOR PAY","RAZOR PAY Payment")
     
     ]
     
@@ -34,7 +34,7 @@ class Order(BaseModel):
     address        = models.ForeignKey(Address, on_delete=models.CASCADE)
     total_amount   = models.DecimalField(max_digits=10, decimal_places=2)
     status         = models.CharField(max_length=12,choices=status_choices)
-    payment        = models.CharField(max_length=3, choices=payment_choices)
+    payment        = models.CharField(max_length=10, choices=payment_choices)
     payment_status  = models.CharField(max_length=7,choices=payment_staus)
     
     """
