@@ -1,12 +1,25 @@
 from rest_framework import serializers
 from .models import Order,OrderItems,Address,ProductVariant
 from shop.serializers import ProductVariantSerailizer 
-from .payments import make_razorpay_payment
-from .utils import RazorPay
+
+
+
+
 
 
 
 class OrderCreateSerializer(serializers.Serializer):
+    
+    
+    
+    
+    
+    """
+    
+    -> this serializer is only for to collect the data from client and create order in view
+    
+    
+    """
     
     
     product               = serializers.PrimaryKeyRelatedField(queryset=ProductVariant.objects.all(),many=True)
@@ -34,6 +47,7 @@ class OrderCreateSerializer(serializers.Serializer):
     class Meta:
         
         fields = [
+            
             'product',
             'quantity',
             'shipping_address',
@@ -63,9 +77,7 @@ class OrderCreateSerializer(serializers.Serializer):
 
 class OrderItemSerializer(serializers.ModelSerializer):
     
-    id = serializers.ModelField(
-        model_field=OrderItems()._meta.get_field('id')
-    )
+    
     product = ProductVariantSerailizer()
 
     class Meta:
@@ -114,54 +126,20 @@ class OrderListSearializer(serializers.ModelSerializer):
 
 
 
-class PaymentOrderCreateSerializer(serializers.Serializer):
-    
-    currency = serializers.CharField(required=False)
-    amount  = serializers.DecimalField(decimal_places=2,max_digits=15)
-    
-    
-    class Meta:
-        
-        fields = [
-            'amount',
-            'currency'
-        ]
-    
-    
-    def validate_amount(self,value) -> float:
-        
-        if value < 0.0:
-            
-            raise serializers.ValidationError(
-                {"amount":"amount mustbe greater than 0 "}
-            ) 
-        
-        return value
-    
-    
-    def create(self,validate_data):
-        
-        currency = validate_data.get('currency','INR')
-        
-        client_order =  RazorPay.create_payment_order(amount=validate_data['amount'],currency=currency)
-        
-        error  = client_order.get('error')
-        
-        
-        if error is not None:
-            
-            
-            raise serializers.ValidationError(
-                {"error":error}    
-            )
-            
-        return client_order
+
         
         
 class PaymentOrderVerifySerializer(serializers.Serializer):   
     
-    payment_order_id   = serializers.CharField(queryset=Order.objects.all())
-    order_id           = serializers.PrimaryKeyRelatedField() 
+    
+    """
+    
+    -> this serailiazer is used to verify the razor pay order in the view 
+    
+    """
+    
+    payment_order_id   = serializers.CharField()
+    order_id           = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all()) 
     payment_id         = serializers.CharField()
     signature          = serializers.CharField()
     

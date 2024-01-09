@@ -2,20 +2,28 @@ from django.shortcuts import render
 from rest_framework import generics,status
 from rest_framework.response import Response 
 from .models import Order,OrderItems
-
 from .serializer import ( 
                          
     OrderCreateSerializer,
     OrderListSearializer,
-    PaymentOrderCreateSerializer,
     PaymentOrderVerifySerializer 
 )
+
+
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.permissions import IsAuthenticated
+
+from rest_framework.decorators import authentication_classes,permission_classes
 
 from ecom.mixins import JWTPermission as JWTAUTHENTICATION 
 from .utils import RazorPay
 
 # Create your views here.
-class OrderCreateApiView(JWTAUTHENTICATION,generics.GenericAPIView):
+
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class OrderCreateListApiView(generics.GenericAPIView):
     
     
     queryset         = Order.objects.all()
@@ -130,8 +138,9 @@ class OrderCreateApiView(JWTAUTHENTICATION,generics.GenericAPIView):
 
     
     
-    
-class PaymentOrderVerifyApiView(JWTAUTHENTICATION,generics.GenericAPIView):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])    
+class PaymentOrderVerifyApiView(generics.GenericAPIView):
     
     serializer_class = PaymentOrderVerifySerializer
     

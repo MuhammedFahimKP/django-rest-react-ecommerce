@@ -25,7 +25,11 @@ from .permissions import AdminOnly
 from rest_framework.response import Response
 
 
-class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
+
+
+
+
+class AdminCategoeryViewset(viewsets.ModelViewSet):
     
     permission_classes = [AdminOnly] 
     queryset           = Categoery.objects.all()

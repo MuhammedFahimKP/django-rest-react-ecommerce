@@ -5,7 +5,12 @@ from rest_framework.filters import OrderingFilter
 
 
 from rest_framework import generics,status
-from ecom.mixins import JWTPermission as JWT_Permssion_mixin
+
+from rest_framework.permissions import IsAuthenticated
+from rest_framework_simplejwt.authentication import JWTAuthentication
+from rest_framework.decorators import authentication_classes,permission_classes
+
+
 from .models import (
      
      Cart,
@@ -26,7 +31,10 @@ from .filters import ProductFilterSet
 
 
 
-class CartItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIView):
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class CartItemsListCreateApiView(generics.ListCreateAPIView):
 
     
     """
@@ -97,7 +105,9 @@ class CartItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIView)
             return  qs
                 
 
-class CartItemReteriveUpdateDestroyAPIView(JWT_Permssion_mixin,generics.RetrieveUpdateDestroyAPIView):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class CartItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
      serializer_class = CartItemSerializer
      queryset         = CartItem.objects.all()
@@ -115,8 +125,9 @@ class CartItemReteriveUpdateDestroyAPIView(JWT_Permssion_mixin,generics.Retrieve
     
    
 
-
-class WishListItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIView):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class WishListItemsListCreateApiView(generics.ListCreateAPIView):
     
     """
 
@@ -172,7 +183,10 @@ class WishListItemsListCreateApiView(JWT_Permssion_mixin,generics.ListCreateAPIV
             return  qs
                 
 
-class WishListItemReteriveUpdateDestroyAPIView(JWT_Permssion_mixin,generics.RetrieveUpdateDestroyAPIView):
+
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
      serializer_class = WishtListItemSerializer
      queryset         = WishListItem.objects.all()
@@ -193,10 +207,23 @@ class ListProductAPIView(generics.ListAPIView):
     
     
     
+    """
     
+    -> used django-filter backend to use custom filter class 
+    -> used restframework ordering filter for get products by order
+     
+    
+    
+    """
     
     
     filter_backends  = [DjangoFilterBackend,OrderingFilter]
+    
+    
+    
+    
+    
+    
     filterset_class  =  ProductFilterSet  
     ordering_fields  = ['created','updated','is_active']   
     

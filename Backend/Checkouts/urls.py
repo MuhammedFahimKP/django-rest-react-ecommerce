@@ -4,7 +4,7 @@ from . import views
 urlpatterns = [
     
     # order 
-    path('',views.OrderCreateApiView.as_view(),name="order"),
+    path('',views.OrderCreateListApiView.as_view(),name="order"),
     
     
     
