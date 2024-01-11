@@ -46,24 +46,33 @@ class Order(BaseModel):
     
     
     
-    def delete(self):
+    
         
-        self.status = 'Cancelled'     
-        self.save()
         
+    class Meta:
+        
+        ordering = ('-created',)    
     
     
     
     
 class OrderItems(BaseModel):
     
-    order    = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='orders')
-    product  = models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1)])
+    order           = models.ForeignKey(Order,on_delete=models.CASCADE,related_name='orders')
+    product         = models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
+    quantity        = models.PositiveIntegerField(default=1,validators=[MinValueValidator(1)])
     
     @property
     def sub_total(self) -> int :
         return self.product.price * self.quantity
+    
+    
+    class Meta: 
+        
+        ordering = ('-created',)
+        
+    
+    
 
 
 class Returns(BaseModel):

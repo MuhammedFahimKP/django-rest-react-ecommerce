@@ -11,7 +11,7 @@ class ProductFilterSet(django_filters.FilterSet):
     size     = django_filters.CharFilter(field_name="variants__size__name",lookup_expr="icontains")
     color    = django_filters.CharFilter(field_name="variants__color__name",lookup_expr="icontains")
         
-    created  = django_filters.OrderingFilter(field_name="created") 
+    
     
     
     class Meta:
@@ -24,11 +24,9 @@ class ProductFilterSet(django_filters.FilterSet):
            'category',
            'size',
            'color',
-           'created' 
+           
        ]
-        
-        
-        
+
         
     
      

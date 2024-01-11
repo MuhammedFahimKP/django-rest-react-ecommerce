@@ -6,8 +6,10 @@ from .serializer import (
                          
     OrderCreateSerializer,
     OrderListSearializer,
-    PaymentOrderVerifySerializer 
+    PaymentOrderVerifySerializer,
+    OrderCancelSerializer,
 )
+
 
 
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -28,13 +30,13 @@ class OrderCreateListApiView(generics.GenericAPIView):
     
     queryset         = Order.objects.all()
     
+   
     
     def get_queryset(self):
         return super().get_queryset().filter(user=self.request.user)
     
     
-    # def get_serializer(self, *args, **kwargs):
-    #     return super().get_serializer(*args, **kwargs)
+    
     
     
     def get_serializer_class(self):
@@ -42,11 +44,14 @@ class OrderCreateListApiView(generics.GenericAPIView):
         if self.request.method == 'POST':
             return OrderCreateSerializer
         
+        elif self.request.method == 'PATCH':
+            return OrderCancelSerializer
+        
         return OrderListSearializer
             
     
     
-    def get(self, request, format=None):
+    def get(self, request):
         
         serializer =  self.get_serializer(self.get_queryset(),many=True)
         
@@ -63,62 +68,149 @@ class OrderCreateListApiView(generics.GenericAPIView):
         serializer = serializer(data=request.data,context={'request':request})
         
 
+        
 
         
         if serializer.is_valid(raise_exception=True):
             
+            """
             
-            try:
+            -> getting the data from serailizer
             
-                transation_id  = serializer.validated_data.get('payment_transation_id',None)
-                payment_status = 'Pending'
-                order = Order.objects.create(
+             
+            """
+        
+            
+            
+            # seeting the payment staus pending                
+            payment_status = 'Pending'
+            
+            
+            #create order object based on the serializer data 
+            
+            order = Order.objects.create(
+                    
+                    #setting the current user                
                     user                  = request.user,
+                    
+                    #setting shiping address
                     address               = serializer.validated_data['shipping_address'],
+                    
+                    
                     total_amount          = 0.0,
+                    #setting status 
                     status                = 'Placed',
+                    
+                    #setting payment type 
                     payment               = serializer.validated_data['payment_type'],
-                    payment_transation_id = transation_id,
+                    payment_transation_id = None,
                     payment_status        = payment_status,             
-                )
+            )
                 
             
-                products : list[object]     = serializer.validated_data.get('product',None)
-                quantity : dict[str,int]    = serializer.validated_data.get('quantity',None) 
+            #getting productlist  from serilizer 
             
-                total_amount : float = 0.0
+            products : list[object]     = serializer.validated_data.get('product',None)
+            
+            
+            #getting quantity dictionary from serailizer 
+            
+            quantity : dict[str,int]    = serializer.validated_data.get('quantity',None) 
+            
+             
+            total_amount : float = 0.0
                 
                 
-            except ValueError as e:
+            #create an oder items for append  model objects list for run if any problems there and decreament the product stock
+            orderitems = []
             
-                    return Response(
-                        {"Value error":f"Invalid input, use an integer : {str(e)}"},
-                        status= status.HTTP_400_BAD_REQUEST
-                    )
+            
+            
+            #iterate through product
             
             for prd in products:
                 
-            
+                #getting the item quantity from dictionary if it deosnt exist it will be one
+                
+                item_quantity = quantity.get(str(prd.id),1)
+                    
+                    
+                    
+                #product is not avalible in  stock
+                if prd.stock == 0 :
+                    
+                    #deleteing the entire order and orderitems and break entire the order process
+                    order.delete()
+                    
+                    #sending bad request response
+                    return Response({f"{prd.product.name}":"is not avaible" } , status=status.HTTP_400_BAD_REQUEST )
+                
+                
+                #ordering quantiy > product  stock 
+                elif prd.stock < item_quantity :
+                    
+                    
+                    #deleteing the entire order and orderitems and break entire the order process
+                    
+                    order.delete()   
+                    
+                    
+                    #sending bad request response            
+                    return Response({f"{prd.product.name}":f"is only available in {item_quantity} " } , status=status.HTTP_400_BAD_REQUEST )
+                
+                else :
+                    
+                    
+                    
+                    #orther wise create order 
+                
+                    orderitem = OrderItems.objects.create(
+                        order   = order,
+                        product = prd,
+                        quantity = item_quantity
+                    
+                    )   
+                    
+                    
+                    
+                    #append the order item to to orderitem list 
+                    orderitems.append(orderitem)
+                    
+                    #getting total amount
+                    total_amount += float(prd.price) * item_quantity
+                
+                #updating total amount every iteration 
+                order.total_amount = total_amount 
+                order.save()
+                             
+            #if all product have stocks  then we need to decreatment the stocks from db according to  orderitem quantity
+                            
+            for item in orderitems:
+                
+                product        = item.product
+                product.stock -= item.quantity
+                product.save()
+                
+                
+                    
                 
                 
                 
-                item_quantity = quantity.get(prd.id,1)
                 
-                orderitem = OrderItems.objects.create(
-                    order   = order,
-                    product = prd,
-                    quantity = item_quantity
-                
-                )                
-                total_amount += float(prd.price) * item_quantity
              
-            order.total_amount = total_amount 
-            order.save()
+            
+            
+            #creating payment oder if payment type is RAZOR PAY
+            
             
             if serializer.validated_data['payment_type'] == 'RAZOR PAY':
                 
+                #requesting razor pay client for getting  response
                 payment = RazorPay.create_payment_order(amount=total_amount,currency="INR")
-                    
+                   
+                
+                
+                #sending payment order detials along with response    
                 return Response({
                      
                      "success"   : "order created",
@@ -132,9 +224,50 @@ class OrderCreateListApiView(generics.GenericAPIView):
             return Response({"success order created"},status=201)
         
         return Response(serializer.errors,status=404)
-  
+    
+    
+    """
+        
+        patch request only used to user oder canceltion functionality 
+        
+    """
+    
+    def patch(self,request):
+
+        
+        
+        serializer = self.get_serializer_class()
+    
+        serializer = serializer(data=request.data,context={'request':request})
+
+        """
+        checking serializer is valid if serialzer is not valid it will send serailizor error with http 400   
+
+        """    
+        if serializer.is_valid(raise_exception=True):
+            
+            
+            
+            order = serializer.validated_data['order_id']
+            order.status = 'Cancelled'
+            order.save()            
+            
+
+        
+            return Response({
+                'Message':'Oder Canceld',
+            },status=status.HTTP_202_ACCEPTED) 
+         
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
 
 
+        
+        
+        
+        
+        
+        
+        
 
     
     

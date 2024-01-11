@@ -5,17 +5,10 @@ urlpatterns = [
 
     #listing all Products
     path('product/',views.ListProductAPIView.as_view(),name="list-product"),
-
-
-    #listing all categoeries
-    path('categoeries/',views.CateogoeryListApiView.as_view(),name="list-categoery"),
-
-
-    #listing  Products by categoery
-    path('product/<str:categoery>/',views.ListProductAPIView.as_view(),name='list-product-by-categoery'),
-
+   
     #single Product 
     path('product-single/<str:slug>/',views.ProductRetriveApiView.as_view(),name="single-product-retrive"),
+    
 
     # cartitems getting and creating view
     path('cart/',views.CartItemsListCreateApiView.as_view(),name="cart-items-create-and-update-view"),
@@ -30,6 +23,7 @@ urlpatterns = [
     path('whishlist/<str:pk>/',views.WishListItemReteriveUpdateDestroyAPIView.as_view(),name="wish-item-retrive-update-delete"),
 
 
-
 ]
+
+
 

@@ -18,14 +18,15 @@ from .models import (
      WishList,
      WishListItem,
      Product,
-     Categoery,
+     ProductVariant,
+     
 
 )
 
 
 from rest_framework.response import Response
 from .utils import get_or_none
-from .serializers import  CartItemSerializer,WishtListItemSerializer,ProductSerilizer,CategoerySerializer
+from .serializers import  CartItemSerializer,WishtListItemSerializer,ProductSerilizer,ProductVariantSerailizer
 from .filters import ProductFilterSet
 
 
@@ -225,7 +226,7 @@ class ListProductAPIView(generics.ListAPIView):
     
     
     filterset_class  =  ProductFilterSet  
-    ordering_fields  = ['created','updated','is_active']   
+    ordering_fields  = ['created','updated','is_active','variants__price']   
     
     """
     
@@ -236,6 +237,8 @@ class ListProductAPIView(generics.ListAPIView):
     pagination_class.page = 100
     
      
+
+
 
     
     
@@ -248,11 +251,11 @@ class ProductRetriveApiView(generics.RetrieveAPIView):
 
 
 
-class CateogoeryListApiView(generics.ListAPIView):
-     
-     serializer_class = CategoerySerializer
-     queryset         = Categoery.objects.all()
-     
+class ProductVariantRetriveApiView(generics.RetrieveAPIView):
+    
+    serializer_class = ProductVariantSerailizer
+    queryset         = ProductVariant.objects.all()
+    lookup_field     = 'variant_id' 
      
 
 

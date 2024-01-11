@@ -1,0 +1,418 @@
+[
+  {
+      "orders": [
+          {
+              "id": "fdeb8041-5955-49d1-b9cd-6f0dcb905270",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "2973d740-b20f-4789-9aa7-4661b65803ba",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "250e1c72-565d-49d1-a472-e2ebb257594c",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "COD",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "d3f43006-b8ce-4186-929c-e4dd26d03dee",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "COD",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "8f208494-0f6a-450d-9b6b-4e78cda710b4",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "9698d678-21b6-44f2-8ec8-5c9a6378ed6b",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "9b3334da-c028-447f-9076-e64690b1bf56",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "0a07a5d0-a50e-4b92-9ed8-509739f50d7e",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "0ccd9456-e8fd-45df-bd33-a8d06f924495",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "0c9d76f3-b3c0-4a55-b7fa-3d81a8815a09",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "05b69620-3a46-456f-85cc-f4f0dfcea73e",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "deb55350-aa4b-4f21-bc51-1b9a0e121525",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "5000.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "RAZOR PAY",
+      "payment_status": "Pending"
+  },
+  {
+      "orders": [
+          {
+              "id": "80251939-d9a3-4d8f-9a37-bfd33bdd1acc",
+              "product": {
+                  "product": "Sportswear Wind Runner Therma Fit Puffer Jackets",
+                  "img": {
+                      "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+                      "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+                      "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+                      "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+                  },
+                  "size": "s",
+                  "color": "Black"
+              },
+              "quantity": 1
+          }
+      ],
+      "total_amount": "6200.00",
+      "status": "Placed",
+      "address": {
+          "state": "Kerala",
+          "place": "kayalam",
+          "city": "kozhikode",
+          "pin_code": "673661",
+          "landmark": "near football turf",
+          "phone_no": "9048005413",
+          "alter_phone_no": "8921212828"
+      },
+      "payment_type": "COD",
+      "payment_status": "Pending"
+  }
+]
