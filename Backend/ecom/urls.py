@@ -14,14 +14,19 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+
+from rest_framework_swagger.views import get_swagger_view 
 from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
+schema_view  = get_swagger_view(title="Wild Fab API")
+
 
 urlpatterns = [
 
     path('ad/', admin.site.urls),
+    path('',schema_view),
     path('users/',include('accounts.urls')),
     path('admin/',include('manager.routers')),
     path('shop/',include('shop.urls')),

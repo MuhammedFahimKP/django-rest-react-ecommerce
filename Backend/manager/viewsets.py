@@ -78,7 +78,7 @@ class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
 
 
 
-class AdminProductVariantViewSet(viewsets.ModelViewSet):
+class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
 
     # permission_classes = [AdminOnly]
     queryset           = ProductVariant.objects.all()

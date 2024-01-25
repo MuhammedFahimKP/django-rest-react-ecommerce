@@ -279,7 +279,7 @@ class AdminProductVarintListSerializer(AdminProductSerializer):
         model          = ProductVariantSerailizer.Meta.model
         current_fileds = ProductVariantSerailizer.Meta.fields.copy()
         
-        fields         = current_fileds  + ['created','updated','stock','is_active']
+        fields         = current_fileds  + ['created','updated','stock','is_active','product']
 
 
 

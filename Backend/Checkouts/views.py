@@ -27,7 +27,6 @@ from .utils import RazorPay
 @permission_classes([IsAuthenticated])
 class OrderCreateListApiView(generics.GenericAPIView):
     
-    
     queryset         = Order.objects.all()
     
    
