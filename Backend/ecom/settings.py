@@ -71,8 +71,8 @@ INSTALLED_APPS = [
     #filters_app
     'django_filters',
     
-    'rest_framework_swagger'
-    
+    #api docs
+    'drf_spectacular'
 ]
 
 MIDDLEWARE = [
@@ -318,5 +318,15 @@ CELERY_BROKER_URL = config('CELERY_BROKER_REDIS_URL', default='redis://127.0.0.1
 # this allows you to schedule items in the Django admin.
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseSchedul'
 
-#swager 
-REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
+# #swager 
+# REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
+
+REST_FRAMEWORK = {
+    # YOUR SETTINGS
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
+}
+
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Wild FAB API',
+    # OTHER SETTINGS
+}

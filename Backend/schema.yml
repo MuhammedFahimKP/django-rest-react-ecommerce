@@ -1,0 +1,2773 @@
+openapi: 3.0.3
+info:
+  title: Wild FAB API
+  version: 0.0.0
+paths:
+  /:
+    get:
+      operationId: root_retrieve
+      parameters:
+      - in: query
+        name: format
+        schema:
+          type: string
+          enum:
+          - corejson
+          - openapi
+          - swagger
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /admin/brand/:
+    get:
+      operationId: admin_brand_list
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminBrand'
+          description: ''
+    post:
+      operationId: admin_brand_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBrand'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminBrand'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminBrand'
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminBrand'
+          description: ''
+  /admin/brand/{id}/:
+    get:
+      operationId: admin_brand_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this brand.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminBrand'
+          description: ''
+    put:
+      operationId: admin_brand_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this brand.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminBrand'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminBrand'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminBrand'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminBrand'
+          description: ''
+    patch:
+      operationId: admin_brand_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this brand.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminBrand'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminBrand'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminBrand'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminBrand'
+          description: ''
+    delete:
+      operationId: admin_brand_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this brand.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /admin/categoery/:
+    get:
+      operationId: admin_categoery_list
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminCategoery'
+          description: ''
+    post:
+      operationId: admin_categoery_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCategoery'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminCategoery'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminCategoery'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategoery'
+          description: ''
+  /admin/categoery/{id}/:
+    get:
+      operationId: admin_categoery_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Categoery.
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategoery'
+          description: ''
+    put:
+      operationId: admin_categoery_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Categoery.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminCategoery'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminCategoery'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminCategoery'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategoery'
+          description: ''
+    patch:
+      operationId: admin_categoery_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Categoery.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminCategoery'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminCategoery'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminCategoery'
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminCategoery'
+          description: ''
+    delete:
+      operationId: admin_categoery_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this Categoery.
+        required: true
+      tags:
+      - admin
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      responses:
+        '204':
+          description: No response body
+  /admin/color/:
+    get:
+      operationId: admin_color_list
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminColor'
+          description: ''
+    post:
+      operationId: admin_color_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminColor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminColor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminColor'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminColor'
+          description: ''
+  /admin/color/{id}/:
+    get:
+      operationId: admin_color_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this color.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminColor'
+          description: ''
+    put:
+      operationId: admin_color_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this color.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminColor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminColor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminColor'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminColor'
+          description: ''
+    patch:
+      operationId: admin_color_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this color.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminColor'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminColor'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminColor'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminColor'
+          description: ''
+    delete:
+      operationId: admin_color_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this color.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /admin/product/:
+    get:
+      operationId: admin_product_list
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminProduct'
+          description: ''
+    post:
+      operationId: admin_product_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminProduct'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProduct'
+          description: ''
+  /admin/product-variant/:
+    get:
+      operationId: admin_product_variant_list
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminProductVarintList'
+          description: ''
+    post:
+      operationId: admin_product_variant_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminProductVariant'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminProductVariant'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminProductVariant'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductVariant'
+          description: ''
+  /admin/product-variant/{id}/:
+    get:
+      operationId: admin_product_variant_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product variant.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductVarintList'
+          description: ''
+    put:
+      operationId: admin_product_variant_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product variant.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminProductVarintList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminProductVarintList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminProductVarintList'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductVarintList'
+          description: ''
+    patch:
+      operationId: admin_product_variant_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product variant.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminProductVarintList'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminProductVarintList'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminProductVarintList'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProductVarintList'
+          description: ''
+    delete:
+      operationId: admin_product_variant_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product variant.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /admin/product/{id}/:
+    get:
+      operationId: admin_product_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProduct'
+          description: ''
+    put:
+      operationId: admin_product_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminProduct'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProduct'
+          description: ''
+    patch:
+      operationId: admin_product_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminProduct'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminProduct'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminProduct'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminProduct'
+          description: ''
+    delete:
+      operationId: admin_product_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this product.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /admin/size/:
+    get:
+      operationId: admin_size_list
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AdminSize'
+          description: ''
+    post:
+      operationId: admin_size_create
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSize'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminSize'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminSize'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSize'
+          description: ''
+  /admin/size/{id}/:
+    get:
+      operationId: admin_size_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this size.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSize'
+          description: ''
+    put:
+      operationId: admin_size_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this size.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AdminSize'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/AdminSize'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/AdminSize'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSize'
+          description: ''
+    patch:
+      operationId: admin_size_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this size.
+        required: true
+      tags:
+      - admin
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminSize'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminSize'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedAdminSize'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AdminSize'
+          description: ''
+    delete:
+      operationId: admin_size_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+          format: uuid
+        description: A UUID string identifying this size.
+        required: true
+      tags:
+      - admin
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /orders/:
+    get:
+      operationId: orders_retrieve
+      tags:
+      - orders
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderListSearializer'
+          description: ''
+    post:
+      operationId: orders_create
+      tags:
+      - orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/OrderCreate'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCreate'
+          description: ''
+    patch:
+      operationId: orders_partial_update
+      tags:
+      - orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderCancel'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderCancel'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedOrderCancel'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/OrderCancel'
+          description: ''
+  /orders/razorpay/verify/:
+    post:
+      operationId: orders_razorpay_verify_create
+      tags:
+      - orders
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PaymentOrderVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PaymentOrderVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PaymentOrderVerify'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaymentOrderVerify'
+          description: ''
+  /shop/cart/:
+    get:
+      operationId: shop_cart_list
+      description: used jwt authentication class and  to ftech cartitems of current
+        user
+      tags:
+      - shop
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/CartItem'
+          description: ''
+    post:
+      operationId: shop_cart_create
+      description: used jwt authentication class and  to ftech cartitems of current
+        user
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+          description: ''
+  /shop/cart/{id}/:
+    get:
+      operationId: shop_cart_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+          description: ''
+    put:
+      operationId: shop_cart_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/CartItem'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+          description: ''
+    patch:
+      operationId: shop_cart_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedCartItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedCartItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedCartItem'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/CartItem'
+          description: ''
+    delete:
+      operationId: shop_cart_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /shop/product/:
+    get:
+      operationId: shop_product_list
+      parameters:
+      - in: query
+        name: brand
+        schema:
+          type: string
+      - in: query
+        name: category
+        schema:
+          type: string
+      - in: query
+        name: color
+        schema:
+          type: string
+      - name: limit
+        required: false
+        in: query
+        description: Number of results to return per page.
+        schema:
+          type: integer
+      - name: offset
+        required: false
+        in: query
+        description: The initial index from which to return the results.
+        schema:
+          type: integer
+      - name: ordering
+        required: false
+        in: query
+        description: Which field to use when ordering the results.
+        schema:
+          type: string
+      - in: query
+        name: product
+        schema:
+          type: string
+      - in: query
+        name: size
+        schema:
+          type: string
+      tags:
+      - shop
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/PaginatedProductSerilizerList'
+          description: ''
+  /shop/product-single/{slug}/:
+    get:
+      operationId: shop_product_single_retrieve
+      parameters:
+      - in: path
+        name: slug
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ProductSerilizer'
+          description: ''
+  /shop/whishlist/:
+    get:
+      operationId: shop_whishlist_list
+      description: used jwt authentication class and  to ftech cartitems of current
+        user
+      tags:
+      - shop
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/WishtListItem'
+          description: ''
+    post:
+      operationId: shop_whishlist_create
+      description: used jwt authentication class and  to ftech cartitems of current
+        user
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishtListItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WishtListItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WishtListItem'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '201':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WishtListItem'
+          description: ''
+  /shop/whishlist/{id}/:
+    get:
+      operationId: shop_whishlist_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WishtListItem'
+          description: ''
+    put:
+      operationId: shop_whishlist_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/WishtListItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/WishtListItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/WishtListItem'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WishtListItem'
+          description: ''
+    patch:
+      operationId: shop_whishlist_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedWishtListItem'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedWishtListItem'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedWishtListItem'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WishtListItem'
+          description: ''
+    delete:
+      operationId: shop_whishlist_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - shop
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /users/google/:
+    post:
+      operationId: users_google_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GoogleSigin'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/GoogleSigin'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/GoogleSigin'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GoogleSigin'
+          description: ''
+  /users/register/:
+    post:
+      operationId: users_register_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserRegisterSerialzer'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserRegisterSerialzer'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserRegisterSerialzer'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegisterSerialzer'
+          description: ''
+  /users/shipping-address/:
+    get:
+      operationId: users_shipping_address_retrieve
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddress'
+          description: ''
+    post:
+      operationId: users_shipping_address_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingAddress'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShippingAddress'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShippingAddress'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddress'
+          description: ''
+  /users/shipping-address/{id}/:
+    get:
+      operationId: users_shipping_address_retrieve_2
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddress'
+          description: ''
+    put:
+      operationId: users_shipping_address_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ShippingAddress'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/ShippingAddress'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/ShippingAddress'
+        required: true
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddress'
+          description: ''
+    patch:
+      operationId: users_shipping_address_partial_update
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedShippingAddress'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedShippingAddress'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedShippingAddress'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ShippingAddress'
+          description: ''
+    delete:
+      operationId: users_shipping_address_destroy
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '204':
+          description: No response body
+  /users/signin/:
+    post:
+      operationId: users_signin_create
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserSignIn'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserSignIn'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserSignIn'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserSignIn'
+          description: ''
+  /users/signout/:
+    post:
+      operationId: users_signout_create
+      description: geeting the refreash token if there is no refreash token exception
+      tags:
+      - users
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          description: No response body
+  /users/token/:
+    post:
+      operationId: users_token_create
+      description: |-
+        Takes a set of user credentials and returns an access and refresh JSON web
+        token pair to prove the authentication of those credentials.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenObtainPair'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenObtainPair'
+          description: ''
+  /users/token/blacklist:
+    post:
+      operationId: users_token_blacklist_create
+      description: |-
+        Takes a token and blacklists it. Must be used with the
+        `rest_framework_simplejwt.token_blacklist` app installed.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenBlacklist'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenBlacklist'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenBlacklist'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenBlacklist'
+          description: ''
+  /users/token/refresh:
+    post:
+      operationId: users_token_refresh_create
+      description: |-
+        Takes a refresh type JSON web token and returns an access type JSON web
+        token if the refresh token is valid.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenRefresh'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenRefresh'
+          description: ''
+  /users/token/verify:
+    post:
+      operationId: users_token_verify_create
+      description: |-
+        Takes a token and indicates if it is valid.  This view provides no
+        information about a token's fitness for a particular use.
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/TokenVerify'
+        required: true
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/TokenVerify'
+          description: ''
+  /users/user-activation/{token}/:
+    post:
+      operationId: users_user_activation_create
+      parameters:
+      - in: path
+        name: token
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserEmailActivation'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/UserEmailActivation'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/UserEmailActivation'
+        required: true
+      security:
+      - cookieAuth: []
+      - basicAuth: []
+      - {}
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserEmailActivation'
+          description: ''
+  /users/user-update/:
+    patch:
+      operationId: users_user_update_partial_update
+      tags:
+      - users
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+          application/x-www-form-urlencoded:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+          multipart/form-data:
+            schema:
+              $ref: '#/components/schemas/PatchedUserUpdate'
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserUpdate'
+          description: ''
+  /users/user/{id}/:
+    get:
+      operationId: users_user_retrieve
+      parameters:
+      - in: path
+        name: id
+        schema:
+          type: string
+        required: true
+      tags:
+      - users
+      security:
+      - jwtAuth: []
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UserRegisterSerialzer'
+          description: ''
+components:
+  schemas:
+    AdminBrand:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - id
+      - updated
+    AdminCategoery:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+          minLength: 5
+        img:
+          type: string
+          format: uri
+          readOnly: true
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - id
+      - img
+      - updated
+    AdminColor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 15
+          minLength: 2
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - id
+      - name
+      - updated
+    AdminProduct:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+          minLength: 5
+        categoery:
+          $ref: '#/components/schemas/AdminCategoery'
+        brand:
+          $ref: '#/components/schemas/AdminBrand'
+        img:
+          type: string
+          format: uri
+          nullable: true
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariantSerailizer'
+          readOnly: true
+        discription:
+          type: string
+          nullable: true
+          maxLength: 500
+        slug:
+          type: string
+          nullable: true
+          maxLength: 200
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - brand
+      - categoery
+      - created
+      - id
+      - name
+      - updated
+      - variants
+    AdminProductVariant:
+      type: object
+      properties:
+        stock:
+          type: integer
+        img_1:
+          type: string
+          format: uri
+        img_2:
+          type: string
+          format: uri
+        img_3:
+          type: string
+          format: uri
+        product:
+          type: string
+        size:
+          type: string
+        color:
+          type: string
+        price:
+          type: integer
+      required:
+      - color
+      - img_1
+      - img_2
+      - img_3
+      - price
+      - product
+      - size
+      - stock
+    AdminProductVarintList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        variant_id:
+          type: string
+          nullable: true
+          maxLength: 500
+        img:
+          $ref: '#/components/schemas/ProductVariantImage'
+        size:
+          $ref: '#/components/schemas/AdminSize'
+        color:
+          $ref: '#/components/schemas/AdminColor'
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        stock:
+          type: integer
+        is_active:
+          type: boolean
+        product:
+          $ref: '#/components/schemas/AdminProduct'
+      required:
+      - color
+      - created
+      - id
+      - img
+      - product
+      - size
+      - stock
+      - updated
+    AdminSize:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 14
+          minLength: 1
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+      required:
+      - created
+      - id
+      - name
+      - updated
+    AdrressOrderList:
+      type: object
+      properties:
+        state:
+          $ref: '#/components/schemas/StateEnum'
+        place:
+          type: string
+          maxLength: 100
+        city:
+          type: string
+          maxLength: 100
+        pin_code:
+          type: string
+          maxLength: 6
+          minLength: 4
+        landmark:
+          type: string
+          maxLength: 100
+        phone_no:
+          type: string
+          maxLength: 10
+        alter_phone_no:
+          type: string
+          title: Alternate phone no
+          maxLength: 10
+      required:
+      - alter_phone_no
+      - city
+      - landmark
+      - phone_no
+      - pin_code
+      - place
+      - state
+    CartItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductSerilizer'
+        quantity:
+          type: integer
+        url:
+          type: string
+          format: uri
+          readOnly: true
+      required:
+      - product
+      - quantity
+      - url
+    GoogleSigin:
+      type: object
+      properties:
+        access_token:
+          type: string
+          minLength: 6
+      required:
+      - access_token
+    OrderCancel:
+      type: object
+      properties:
+        order_id:
+          type: string
+          format: uuid
+      required:
+      - order_id
+    OrderCreate:
+      type: object
+      description: -> this serializer is only for to collect the data from client
+        and create order in view
+      properties:
+        product:
+          type: array
+          items:
+            type: string
+            format: uuid
+        quantity:
+          type: object
+          additionalProperties:
+            type: integer
+        shipping_address:
+          type: string
+          format: uuid
+        payment_type:
+          $ref: '#/components/schemas/PaymentTypeEnum'
+      required:
+      - payment_type
+      - product
+      - quantity
+      - shipping_address
+    OrderItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        product:
+          $ref: '#/components/schemas/OrderProductSerailizer'
+        quantity:
+          type: integer
+          maximum: 2147483647
+          minimum: 1
+      required:
+      - id
+      - product
+    OrderListSearializer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        orders:
+          type: array
+          items:
+            $ref: '#/components/schemas/OrderItem'
+        total_amount:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,8}(?:\.\d{0,2})?$
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        status:
+          $ref: '#/components/schemas/StatusEnum'
+        address:
+          $ref: '#/components/schemas/AdrressOrderList'
+        payment_type:
+          type: string
+          readOnly: true
+        payment_status:
+          $ref: '#/components/schemas/PaymentStatusEnum'
+      required:
+      - address
+      - created
+      - id
+      - orders
+      - payment_status
+      - payment_type
+      - status
+      - total_amount
+    OrderProductSerailizer:
+      type: object
+      properties:
+        product:
+          type: string
+          readOnly: true
+        img:
+          $ref: '#/components/schemas/ProductVariantImage'
+        size:
+          type: string
+          readOnly: true
+        color:
+          type: string
+          readOnly: true
+      required:
+      - color
+      - img
+      - product
+      - size
+    PaginatedProductSerilizerList:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 123
+        next:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=400&limit=100
+        previous:
+          type: string
+          nullable: true
+          format: uri
+          example: http://api.example.org/accounts/?offset=200&limit=100
+        results:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductSerilizer'
+    PatchedAdminBrand:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedAdminCategoery:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+          minLength: 5
+        img:
+          type: string
+          format: uri
+          readOnly: true
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedAdminColor:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 15
+          minLength: 2
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedAdminProduct:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 50
+          minLength: 5
+        categoery:
+          $ref: '#/components/schemas/AdminCategoery'
+        brand:
+          $ref: '#/components/schemas/AdminBrand'
+        img:
+          type: string
+          format: uri
+          nullable: true
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariantSerailizer'
+          readOnly: true
+        discription:
+          type: string
+          nullable: true
+          maxLength: 500
+        slug:
+          type: string
+          nullable: true
+          maxLength: 200
+          pattern: ^[-a-zA-Z0-9_]+$
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedAdminProductVarintList:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        variant_id:
+          type: string
+          nullable: true
+          maxLength: 500
+        img:
+          $ref: '#/components/schemas/ProductVariantImage'
+        size:
+          $ref: '#/components/schemas/AdminSize'
+        color:
+          $ref: '#/components/schemas/AdminColor'
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        stock:
+          type: integer
+        is_active:
+          type: boolean
+        product:
+          $ref: '#/components/schemas/AdminProduct'
+    PatchedAdminSize:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        name:
+          type: string
+          maxLength: 14
+          minLength: 1
+        is_active:
+          type: boolean
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+    PatchedCartItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductSerilizer'
+        quantity:
+          type: integer
+        url:
+          type: string
+          format: uri
+          readOnly: true
+    PatchedOrderCancel:
+      type: object
+      properties:
+        order_id:
+          type: string
+          format: uuid
+    PatchedShippingAddress:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserViewSerailizer'
+          readOnly: true
+        state:
+          $ref: '#/components/schemas/StateEnum'
+        pin_code:
+          type: string
+          maxLength: 6
+          minLength: 4
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        city:
+          type: string
+          maxLength: 100
+        place:
+          type: string
+          maxLength: 100
+        landmark:
+          type: string
+          maxLength: 100
+        phone_no:
+          type: string
+          maxLength: 10
+        alter_phone_no:
+          type: string
+          title: Alternate phone no
+          maxLength: 10
+        is_active:
+          type: boolean
+    PatchedUserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+    PatchedWishtListItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductSerilizer'
+    PaymentOrderVerify:
+      type: object
+      description: -> this serailiazer is used to verify the razor pay order in the
+        view
+      properties:
+        payment_order_id:
+          type: string
+        order_id:
+          type: string
+          format: uuid
+        payment_id:
+          type: string
+        signature:
+          type: string
+      required:
+      - order_id
+      - payment_id
+      - payment_order_id
+      - signature
+    PaymentStatusEnum:
+      enum:
+      - Pending
+      - Paid
+      type: string
+      description: |-
+        * `Pending` - Pending
+        * `Paid` - Paid
+    PaymentTypeEnum:
+      enum:
+      - COD
+      - RAZOR PAY
+      type: string
+      description: |-
+        * `COD` - Cash On Delivery
+        * `RAZOR PAY` - RAZOR PAY Payment
+    ProductSerilizer:
+      type: object
+      properties:
+        name:
+          type: string
+          maxLength: 50
+          minLength: 5
+        categoery:
+          type: string
+          readOnly: true
+        brand:
+          type: string
+          readOnly: true
+        img:
+          type: string
+          format: uri
+          nullable: true
+        variants:
+          type: array
+          items:
+            $ref: '#/components/schemas/ProductVariantSerailizer'
+          readOnly: true
+        discription:
+          type: string
+          nullable: true
+          maxLength: 500
+        slug:
+          type: string
+          nullable: true
+          maxLength: 200
+          pattern: ^[-a-zA-Z0-9_]+$
+      required:
+      - brand
+      - categoery
+      - name
+      - variants
+    ProductVariantImage:
+      type: object
+      properties:
+        img_id:
+          type: string
+          nullable: true
+          maxLength: 200
+        img_1:
+          type: string
+          format: uri
+          nullable: true
+        img_2:
+          type: string
+          format: uri
+          nullable: true
+        img_3:
+          type: string
+          format: uri
+          nullable: true
+    ProductVariantSerailizer:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        variant_id:
+          type: string
+          nullable: true
+          maxLength: 500
+        img:
+          $ref: '#/components/schemas/ProductVariantImage'
+        size:
+          type: string
+          readOnly: true
+        color:
+          type: string
+          readOnly: true
+        price:
+          type: string
+          format: decimal
+          pattern: ^-?\d{0,13}(?:\.\d{0,2})?$
+      required:
+      - color
+      - id
+      - img
+      - size
+    ShippingAddress:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          readOnly: true
+        user:
+          allOf:
+          - $ref: '#/components/schemas/UserViewSerailizer'
+          readOnly: true
+        state:
+          $ref: '#/components/schemas/StateEnum'
+        pin_code:
+          type: string
+          maxLength: 6
+          minLength: 4
+        created:
+          type: string
+          format: date-time
+          readOnly: true
+        updated:
+          type: string
+          format: date-time
+          readOnly: true
+        city:
+          type: string
+          maxLength: 100
+        place:
+          type: string
+          maxLength: 100
+        landmark:
+          type: string
+          maxLength: 100
+        phone_no:
+          type: string
+          maxLength: 10
+        alter_phone_no:
+          type: string
+          title: Alternate phone no
+          maxLength: 10
+        is_active:
+          type: boolean
+      required:
+      - alter_phone_no
+      - city
+      - created
+      - id
+      - landmark
+      - phone_no
+      - pin_code
+      - place
+      - state
+      - updated
+      - user
+    StateEnum:
+      enum:
+      - Kerala
+      - Karnataka
+      - Tamilnadu
+      type: string
+      description: |-
+        * `Kerala` - Kerala
+        * `Karnataka` - Karnataka
+        * `Tamilnadu` - TamilNadu
+    StatusEnum:
+      enum:
+      - Cancelled
+      - Placed
+      - Delivered
+      type: string
+      description: |-
+        * `Cancelled` - Cancelled
+        * `Placed` - Placed
+        * `Delivered` - Delivered
+    TokenBlacklist:
+      type: object
+      properties:
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - refresh
+    TokenObtainPair:
+      type: object
+      properties:
+        email:
+          type: string
+          writeOnly: true
+        password:
+          type: string
+          writeOnly: true
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          readOnly: true
+      required:
+      - access
+      - email
+      - password
+      - refresh
+    TokenRefresh:
+      type: object
+      properties:
+        access:
+          type: string
+          readOnly: true
+        refresh:
+          type: string
+          writeOnly: true
+      required:
+      - access
+      - refresh
+    TokenVerify:
+      type: object
+      properties:
+        token:
+          type: string
+          writeOnly: true
+      required:
+      - token
+    UserEmailActivation:
+      type: object
+      properties:
+        access_token:
+          type: string
+          minLength: 6
+      required:
+      - access_token
+    UserRegisterSerialzer:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 68
+          minLength: 8
+        first_name:
+          type: string
+          maxLength: 150
+        last_name:
+          type: string
+          nullable: true
+          maxLength: 150
+        password:
+          type: string
+          writeOnly: true
+          maxLength: 68
+          minLength: 8
+        password2:
+          type: string
+          writeOnly: true
+          maxLength: 68
+          minLength: 8
+      required:
+      - email
+      - first_name
+      - password
+      - password2
+    UserSignIn:
+      type: object
+      description: taking email and password from the client
+      properties:
+        email:
+          type: string
+          format: email
+          maxLength: 255
+        name:
+          type: string
+          readOnly: true
+          maxLength: 255
+        password:
+          type: string
+          writeOnly: true
+        access_token:
+          type: string
+          readOnly: true
+          maxLength: 255
+        refresh_token:
+          type: string
+          readOnly: true
+          maxLength: 255
+      required:
+      - access_token
+      - email
+      - name
+      - password
+      - refresh_token
+    UserUpdate:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        first_name:
+          type: string
+        last_name:
+          type: string
+      required:
+      - email
+    UserViewSerailizer:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+          readOnly: true
+        first_name:
+          type: string
+          readOnly: true
+        last_name:
+          type: string
+          readOnly: true
+      required:
+      - email
+      - first_name
+      - last_name
+    WishtListItem:
+      type: object
+      properties:
+        product:
+          $ref: '#/components/schemas/ProductSerilizer'
+      required:
+      - product
+  securitySchemes:
+    basicAuth:
+      type: http
+      scheme: basic
+    cookieAuth:
+      type: apiKey
+      in: cookie
+      name: sessionid
+    jwtAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
