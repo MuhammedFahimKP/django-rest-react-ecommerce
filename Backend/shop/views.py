@@ -4,7 +4,7 @@ from rest_framework.filters import OrderingFilter
 
 
 
-from rest_framework import generics,status
+from rest_framework import generics,status,renderers
 
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
@@ -47,6 +47,9 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
 
     serializer_class = CartItemSerializer
     queryset         = CartItem.objects.all()
+    
+    
+    
 
 
     def create(self,request):
@@ -112,6 +115,8 @@ class CartItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
      serializer_class = CartItemSerializer
      queryset         = CartItem.objects.all()
+     renderer_classes = []
+     
      lookup_field     = 'pk'     
 
      """
@@ -230,6 +235,7 @@ class ListProductAPIView(generics.ListAPIView):
     filterset_class  =  ProductFilterSet  
     ordering_fields  = ['created','updated','is_active','variants__price']   
     
+    renderer_classes = [renderers.JSONRenderer]
     """
     
     pagination_class for sort the product 

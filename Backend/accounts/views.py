@@ -161,7 +161,7 @@ class GoogleUserSiginAPIView(generics.GenericAPIView):
         #if serializer valid then it will send a data with http 200
         if serializer.is_valid(raise_exception=True):
             data = ((serializer.validated_data)['access_token'])
-            Response(data,status=status.HTTP_200_OK)
+            return Response(data,status=status.HTTP_200_OK)
 
         
         # other wise it will send a 400 http response with serializer error

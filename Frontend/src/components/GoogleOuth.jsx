@@ -1,5 +1,4 @@
 import React, { useEffect, useRef } from 'react'
-import {jwtDecode} from 'jwt-decode'
 const loadScript = (src) =>
   new Promise((resolve, reject) => {
     if (document.querySelector(`script[src="${src}"]`)) return resolve()
@@ -8,7 +7,7 @@ const loadScript = (src) =>
     script.onload = () => resolve()
     script.onerror = (err) => reject(err)
     document.body.appendChild(script)
-  }) 
+  })
 
 const GoogleAuth = () => {
 
@@ -17,7 +16,7 @@ const GoogleAuth = () => {
   useEffect(() => {
     const src = 'https://accounts.google.com/gsi/client'
     const id = "296061655793-btom7bmad6ugdt93200u7j3uk22ijevl.apps.googleusercontent.com"
-    // const h = jwtDecode()
+
     loadScript(src)
       .then(() => {
       
@@ -42,10 +41,8 @@ const GoogleAuth = () => {
 
   function handleCredentialResponse(response) {
     if (response.credential) {
-      var data = { "access_token": response.credential }
-      console.log(data)
-      fetch("http://127.0.0.1:8000/api/google/",
-      
+      var data = { "id_token": response.credential }
+      fetch("http://127.0.0.1:8000/users/google-auth/",
         {
           method: "post",
           body: JSON.stringify(data),
@@ -53,26 +50,9 @@ const GoogleAuth = () => {
             'Content-Type': 'application/json; charset=utf-8'
           }
         })
-        .then(response => {
-          if (!response.ok) {
-  
-  
-              // writeToContent(error=response.code)
-  
-              // throw new Error(`HTTP error! Status: ${response.status}`);
-              
-          }
-          //  console.log(response);
-      })
-      .then(authData =>{
-          console.log(authData)
-      })
-      .catch(error => {
-          // Handle errors here
-          console.log('Error:', error);
-        
-      });
-    }
+        .then((res) => res.json())
+        .catch((err) => console.log(error))
+      }
   }
 
   return (
@@ -85,11 +65,7 @@ const GoogleAuth = () => {
       </div>
       <div>
         <label>Auth token:</label>
-        <label id='access_token'></label>
-      </div>
-      <div>
-        <label>Auth token:</label>
-        <label id='refresh_token'></label>
+        <label id='auth_token'></label>
       </div>
 
     </div>
@@ -97,5 +73,6 @@ const GoogleAuth = () => {
     
   )
 }
+
 
 export default GoogleAuth

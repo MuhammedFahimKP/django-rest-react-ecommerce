@@ -141,41 +141,43 @@ const Signup = () =>{
 
                                     console.log(credentialResponse)
                                    
+                                   
 
                                    
 
-                                    const SignInEndPoint = "http://127.0.0.1:8000/api/google/"
+                                    const SignInEndPoint = "http://127.0.0.1:8000/users/google-auth/"
                                     
                                     console.log(credentialResponse.credential)
+                                    const TokenObject = { "id_token":credentialResponse.credential}
 
-                                    // fetch(SignInEndPoint,{
-                                    //     method : "POST",
-                                    //     headers : {
-                                    //         'Content-Type': 'application/json',
-                                    //     },
-                                    //     body:JSON.stringify(TokenObject)
+                                    fetch(SignInEndPoint,{
+                                        method : "POST",
+                                        headers : {
+                                            'Content-Type': 'application/json',
+                                        },
+                                        body:JSON.stringify(TokenObject)
                                     
                                 
-                                    // }) .then(response => {
-                                    //     if (!response.ok) {
+                                    }) .then(response => {
+                                        if (!response.ok) {
                                 
                                 
-                                    //         // writeToContent(error=response.code)
+                                            // writeToContent(error=response.code)
                                 
-                                    //         // throw new Error(`HTTP error! Status: ${response.status}`);
+                                            // throw new Error(`HTTP error! Status: ${response.status}`);
                                             
-                                    //     }
-                                    //     return response.json();
-                                    // })
-                                    // .then(authData =>{
-                                    //     // handleAuthData(authData,getProduct)
-                                    //     console.log(authData)
-                                    // })
-                                    // .catch(error => {
-                                    //     // Handle errors here
-                                    //     console.log('Error:', error);
+                                        }
+                                        return response.json();
+                                    })
+                                    .then(authData =>{
+                                        // handleAuthData(authData,getProduct)
+                                        console.log(authData)
+                                    })
+                                    .catch(error => {
+                                        // Handle errors here
+                                        console.log('Error:', error);
                                       
-                                    // });
+                                    });
 
 
 
