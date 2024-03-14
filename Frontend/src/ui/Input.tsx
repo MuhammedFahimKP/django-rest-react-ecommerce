@@ -11,7 +11,7 @@ interface Props {
 const Input = ({ type, placeholder, name, onChange, value }: Props) => {
   return (
     <input
-      className="p-2  w-full rounded-md outline-none focus:ring-3 border-2 border-black"
+      className="p-2  w-full rounded-md outline-none focus:ring-3 border-2 border-black focus:border-gray-500"
       type={type}
       name={name}
       value={value}

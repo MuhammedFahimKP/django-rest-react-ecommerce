@@ -60,13 +60,13 @@ class UserRegisterApiView(generics.GenericAPIView):
             EmailThread(req=self.request,user=user).start()
             
             #returning the response with http 201
-
+            print(user)
           
             return Response({
                 'data':user,
                 'message':f'hi {user['first_name']} thanks for siging up please check your mail for confirmation  ',
             },status=status.HTTP_201_CREATED) 
-         
+           
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST) 
 
 

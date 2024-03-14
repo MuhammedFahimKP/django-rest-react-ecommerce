@@ -1,6 +1,8 @@
+
+from django.contrib.auth import get_user_model
 from google.auth.transport import requests
 from google.oauth2 import id_token
-from google.auth.transport import requests as google_auth_requests
+from google.auth.transport import requests 
 from django.contrib.auth import authenticate
 from django.conf import settings
 from rest_framework.exceptions import AuthenticationFailed
@@ -25,9 +27,6 @@ class Google:
               id_info = id_token.verify_oauth2_token(access_token,requests.Request(),settings.GOOGLE_CLIENT_ID)
               if 'accounts.google.com' in id_info['iss']:
                      return id_info
-               
-
-
 
         except Exception as e:
                return "Token is Invalid or has expired"    
@@ -48,27 +47,27 @@ def login_user(email):
 
 def register_social_user(email,first_name,last_name):
                 
-                user = MyUser.objects.filter(email=email)
-                if user.exists():
-                        if  user[0].auth_provider == 'google':                               
-                               return login_user(email)           
-                        else:
-                             return f'please login with your {user[0].auth_provider} account '
-                           
-                else:
-                        user_data = {
-                                'email':email,
-                                'first_name':first_name,
-                                'last_name':last_name,
-                                'password': make_password(settings.SOCIAL_AUTH_PASSWORD)
-                                
-                        }
-                
-                        register_user = MyUser.objects.create(**user_data)
-                        register_user.auth_provider = 'google'
-                        register_user.is_active = True
-                        register_user.save() 
-                        return login_user(email=email)
+       user = MyUser.objects.filter(email=email)
+       if user.exists():
+              if  user[0].auth_provider == 'google':                               
+                     return login_user(email)           
+              else:
+                     return f'please login with your {user[0].auth_provider} account '
+              
+       else:
+              user_data = {
+                     'email':email,
+                     'first_name':first_name,
+                     'last_name':last_name,
+                     'password': make_password(settings.SOCIAL_AUTH_PASSWORD)
+                     
+              }
+       
+              register_user = MyUser.objects.create(**user_data)
+              register_user.auth_provider = 'google'
+              register_user.is_active = True
+              register_user.save() 
+              return login_user(email=email)
                 
 
 
@@ -82,16 +81,29 @@ def create_verification_token(user_id):
 
 
 def verify_token(token):
-        try:
+       
+       try:
               payload = jwt.decode(token,settings.SECRET_KEY, algorithms=['HS256'])
               return payload['user_id']
-        except jwt.ExpiredSignatureError:
+       except jwt.ExpiredSignatureError:
               return None
-        except jwt.InvalidTokenError:
-               return None
+       except jwt.InvalidTokenError:
+              return None
                        
                         
 
+def user_exists_or_not(**kwargs) -> bool:
+       
+       USER = get_user_model()
+       
+       user = USER.objects.filter(**kwargs) 
+       
+       if user.exists():
+              return True 
+       
+       return False
+
+       
                                             
 
                         

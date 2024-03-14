@@ -2,13 +2,15 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
+
 from rest_framework.exceptions import AuthenticationFailed
 from django.conf import settings
 from .models import MyUser,ShippingAddress
-from .utils import Google,register_social_user,verify_token
+from .utils import Google,register_social_user,verify_token,user_exists_or_not
 from .thread import EmailThread
 from django.contrib.auth import authenticate
 from .task import send_mail
+from .exceptions import UserAlreadyExist
 
 
 
@@ -33,9 +35,7 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
 
     password  = serializers.CharField(max_length=68,min_length=8,write_only=True)
     password2 = serializers.CharField(max_length=68,min_length=8,write_only=True)
-    email     = serializers.EmailField(max_length=68,min_length=8,validators=[
-        UniqueValidator(queryset=MyUser.objects.all())
-    ])
+    email     = serializers.EmailField(max_length=68,min_length=8)
 
     class Meta:
         model  = MyUser
@@ -49,6 +49,10 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
 
 
     def validate(self,attrs):
+        
+        if user_exists_or_not(email=attrs['email']):
+            raise UserAlreadyExist()
+        
         password  = attrs.get('password','')
         password2 = attrs.get('password2','')
     

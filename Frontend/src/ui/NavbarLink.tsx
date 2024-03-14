@@ -8,6 +8,8 @@ const NavbarLink = ({ linkText, linkURL }: Props) => {
     <a href={linkURL} onClick={(e) => e.preventDefault()}>
       {linkText}
     </a>
+
+    
   );
 };
 

@@ -1,16 +1,9 @@
+
+import { UserSigninData,UserSignupData } from "../types";
 import createHttpService from "./http-service";
 
 
-interface UserSigninData {
-    email:string;
-    password:string;
-}
 
-interface UserSignupData extends UserSigninData { 
-    first_name:string;
-    last_name:string;
-    password2:string;
-}
 
 
 
@@ -29,7 +22,7 @@ class User {
 
     }
     
-    signup(data:UserSignupData) {
+    signup(data:UserSignupData|any) {
         return this.service.post(this.endpoint + 'signup/',data)
     }
 
