@@ -1,14 +1,13 @@
-export interface UserSigninData {
+export interface UserSignInData{
     email:string;
     password:string;
 }
 
-export interface UserSignupData extends UserSigninData { 
+
+export interface UserSignUpData extends UserSignInData {
     first_name:string;
     last_name:string;
     password2:string;
 }
 
-export interface DynamicObj{
-    [key: string]: string 
-}
+

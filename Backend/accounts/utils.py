@@ -94,7 +94,13 @@ def verify_token(token):
 
 def user_exists_or_not(**kwargs) -> bool:
        
+       """
+       return true if user is exists with same **kwargs attribute matchs 
+       otherwise it return a  false
+       """
+       
        USER = get_user_model()
+       
        
        user = USER.objects.filter(**kwargs) 
        

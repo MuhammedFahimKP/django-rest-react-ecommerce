@@ -4,27 +4,13 @@ class HttpService{
 
     
     
-    async get<FetchResponse>(endpoint:string){
-        const res  = await apiClient.get<FetchResponse>(endpoint)
-        const {data} = res
-        return data
-
+    get<FetchResponse>(endpoint:string){
+        return apiClient.get<FetchResponse>(endpoint)
     }
 
 
     post<RequestData,FetchResponse>(endpoint:string,data:RequestData) {
-        
-        let  res = {};
-        apiClient.post<FetchResponse>(endpoint,data)
-        .then((response) => { 
-            res =  response
-        }) 
-        .catch((error) => {
-             res = error
-        })
-        
-        return res
-
+        return apiClient.post<FetchResponse>(endpoint,data)
     } 
     
 }

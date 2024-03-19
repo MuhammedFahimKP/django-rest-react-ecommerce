@@ -61,4 +61,27 @@ export function SignupValidator(key:string ,value:string) {
 
 }
 
+
+
+export function setEmptyField(formObj:DynamicObj,setFromErrorObj:Function){
+  return new Promise<void>((resolve, reject) => {
+    console.log('inside form validator');
+    for (const key in formObj) {
+      if (formObj[key] === "") {
+        console.log(key);
+        setFromErrorObj((p:DynamicObj) => {
+          const newError = { ...p };
+          newError[key] = `please provide a ${errorFieldName[key]}`;
+          return newError;
+        });
+      }
+    }
+    console.log('loop ended');
+    resolve(); // Resolve the promise when the loop completes
+  });
+}
+
+
+
+
 export {errorFieldName}

@@ -3,7 +3,7 @@ from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed,NotFound
 from django.conf import settings
 from .models import MyUser,ShippingAddress
 from .utils import Google,register_social_user,verify_token,user_exists_or_not
@@ -51,7 +51,7 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
     def validate(self,attrs):
         
         if user_exists_or_not(email=attrs['email']):
-            raise UserAlreadyExist()
+            raise UserAlreadyExist({'email' : 'User with same Email already exists '})
         
         password  = attrs.get('password','')
         password2 = attrs.get('password2','')
@@ -122,42 +122,47 @@ class UserSignInSerializer(serializers.ModelSerializer):
         """
             taking password and email from client
         """
-        email = attrs.get('email')
-        password = attrs.get('password')
+        email     = attrs.get('email')
+        password  = attrs.get('password')
         
         """
             authenticate function while return a user object if creadentials are ok
             otherwise it return a None 
             
         """
-
-        user = authenticate(email=email,password=password)
+        
+        user = MyUser.objects.filter(email__iexact=email) 
+        
+        if user.exists() :
+            
+            user = user[0]
+            
+            if user.check_password(password):
+                
+                if not user.is_active:
+                    raise AuthenticationFailed({'User':'Not activated'})
+                
+                token = user.tokens
+                
+                return {
+                    
+                    'email':user.email,
+                    'name':f"{user.first_name}  {user.last_name}",
+                    'access_token':str(token.get('access')),
+                    'refresh_token':str(token.get('refresh'))
+                }
+                
+            else: 
+                raise AuthenticationFailed({'passowrd' : 'incorect password'})
+        else:
+            raise NotFound({'email':'user with this mail is not found'})
+            
+         
+        
     
-        """
-         checking is user none or not if none it while raise expection authentication failed as expection
-        """
-        if not user:
-            raise serializers.ValidationError("please provide valid mail and password ")
         
 
-        """
-         Taking tokens for the corsponding user
-
-        """
-        token=user.tokens
-
-        """
         
-        returning the email,name,Token keys(access refresh keys) of the user to client
-        
-        """
-
-        return {
-            'email':user.email,
-            'name':f"{user.first_name}  {user.last_name}",
-            'access_token':str(token.get('access')),
-            'refresh_token':str(token.get('refresh'))
-        }
 
 
    

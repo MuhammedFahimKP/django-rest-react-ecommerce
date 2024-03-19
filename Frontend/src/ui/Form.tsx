@@ -1,27 +1,38 @@
-import { ReactNode } from "react";
+import { FormEvent, ReactNode } from "react";
 import SubmitBtn from "./SubmitBtn";
 import InputContainer from "./InputContainer";
+import whiteLogo from "../assets/whiteLogo.svg";
+
 interface Props {
   children: ReactNode;
   title: string;
+  onSubmit: (e: FormEvent) => void;
 }
 
-const Form = ({ children, title }: Props) => {
+const Form = ({ children, title, onSubmit }: Props) => {
   return (
-    <div
-      className="lg:min-w-[30%] max-sm:min-w-[90%] sm:min-w-[60%]    overflow-hidden
-       shadow-2xl border-2 border-gray-50 rounded-md"
+    <form
+      className="lg:min-w-[30%] max-sm:max-w-[90%] sm:min-w-[40%] md:max-w-[20%] overflow-hidden
+       shadow-2xl border-2 border-gray-50 rounded-lg"
+      onSubmit={(e) => onSubmit(e)}
     >
-      <div className="bg-black  w-full text-white h-16 p-4">
-        <h1 className={"text-md md:text-lg lg:text-xl font-bold "}>{title}</h1>
+      <div className="bg-black  overflow-hidden flex flex-row-reverse itmes-center align-middle justify-between  w-full text-white h-16 p-3">
+        <div>
+          <img src={whiteLogo} className="object-fill w-50 h-10" />
+        </div>
+        <div>
+          <h1 className={"mt-2 ml-3  text-2xl  font-mono font-extrabold "}>
+            {title}
+          </h1>
+        </div>
       </div>
-      <div className="p-6">
+      <div className="px-4 pt-2 pb-3">
         {children}
         <InputContainer>
-          <SubmitBtn disabled={false}>Submit</SubmitBtn>
+          <SubmitBtn disabled={true}>Submit</SubmitBtn>
         </InputContainer>
       </div>
-    </div>
+    </form>
   );
 };
 

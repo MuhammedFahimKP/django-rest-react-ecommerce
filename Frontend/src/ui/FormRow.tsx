@@ -5,7 +5,7 @@ interface Props {
 
 const FormRow = ({ children }: Props) => {
   return (
-    <section className="flex items-center justify-between mt-1 py-1  w-full ">
+    <section className="flex  items-center justify-center gap-2   w-full ">
       {children}
     </section>
   );
