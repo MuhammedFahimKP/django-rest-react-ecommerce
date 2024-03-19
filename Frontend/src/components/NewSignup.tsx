@@ -1,3 +1,5 @@
+import React from "react";
+
 // 3rd party validators
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -18,7 +20,6 @@ import InputContainer from "../ui/InputContainer";
 import Input from "../ui/Input";
 import ErrorText from "../ui/ErrorText";
 import SuceessIcon from "../ui/SuccessIcon";
-import { FormEvent } from "react";
 
 const initialValues: FormValues = {
   email: "",
@@ -191,9 +192,8 @@ const NewSignup = () => {
         {formFeilds
           .filter((field: FormFieldType) => !field.had_sibling)
           .map((field: FormFieldType, index) => (
-            <>
+            <React.Fragment key={index}>
               <Input
-                key={index}
                 name={field.name}
                 type={field.type}
                 label={field.label}
@@ -203,9 +203,9 @@ const NewSignup = () => {
                 onBlur={formike.handleBlur}
               />
               {erros[field.name] && touched[field.name] && (
-                <ErrorText key={index}>{erros[field.name]}</ErrorText>
+                <ErrorText>{erros[field.name]}</ErrorText>
               )}
-            </>
+            </React.Fragment>
           ))}
         <InputContainer>
           <p className="text-gray-500 dark:text-gray-400">

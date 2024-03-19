@@ -1,8 +1,8 @@
-// import SignupForm from "./components/SignupForm";
-import NewSignup from "./components/NewSignup";
+import { RouterProvider } from "react-router-dom";
+import routes from "./routes";
 
 function App() {
-  return <NewSignup />;
+  return <RouterProvider router={routes} />;
 }
 
 export default App;
