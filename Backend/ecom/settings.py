@@ -204,23 +204,18 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 REST_FRAMEWORK = {
-    # Use Django's standard `django.contrib.auth` permissions,
-    # or allow read-only access for unauthenticated users.
-    # 'DEFAULT_PERMISSION_CLASSES': [
-    #     # 'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly',
-    #     # 'rest_framework_simplejwt.authentication.JWTAuthentication'
-    # ]
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
     
     
-    # 'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.LimitOffsetPagination',
-    # 'PAGE_SIZE': 10,  # Set the number of items per page
 }
 
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(days=1),
-    "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
-    "ROTATE_REFRESH_TOKENS": False,
+    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=1),
+    "REFRESH_TOKEN_LIFETIME": timedelta(minutes=5),
+    "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": False,
     "UPDATE_LAST_LOGIN": False,
 
@@ -324,12 +319,15 @@ CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseSchedul'
 # #swager 
 # REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
 
-REST_FRAMEWORK = {
-    # YOUR SETTINGS
-    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-}
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'Wild FAB API',
     # OTHER SETTINGS
 }
+
+
+#Crypto Settings 
+DECRYPT_KEY = os.environ.get('DECRYPT_KEY')
+
+CRYPTO_IV  = os.environ.get('CRYPTO_IV')
+CRYPTO_KEY = os.environ.get('CRYPTO_KEY') 

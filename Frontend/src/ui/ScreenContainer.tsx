@@ -5,9 +5,7 @@ interface Props {
 }
 
 const ScreenContainer = ({ children }: Props) => {
-  return (
-    <div className="h-screen  flex justify-center items-center">{children}</div>
-  );
+  return <div className="h-screen  flex flex-col">{children}</div>;
 };
 
 export default ScreenContainer;

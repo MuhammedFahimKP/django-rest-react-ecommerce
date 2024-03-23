@@ -1,16 +1,22 @@
+from django.conf import settings
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
-
 from rest_framework.exceptions import AuthenticationFailed,NotFound
-from django.conf import settings
+
 from .models import MyUser,ShippingAddress
-from .utils import Google,register_social_user,verify_token,user_exists_or_not
+from .utils import (
+    Google,
+    register_social_user,
+    verify_token,
+    user_exists_or_not,
+    decrypt_string
+)
 from .thread import EmailThread
-from django.contrib.auth import authenticate
 from .task import send_mail
 from .exceptions import UserAlreadyExist
+
 
 
 
@@ -34,7 +40,6 @@ from .exceptions import UserAlreadyExist
 class UserRegisterSerialzer(serializers.ModelSerializer):
 
     password  = serializers.CharField(max_length=68,min_length=8,write_only=True)
-    password2 = serializers.CharField(max_length=68,min_length=8,write_only=True)
     email     = serializers.EmailField(max_length=68,min_length=8)
 
     class Meta:
@@ -44,7 +49,7 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
             'first_name',
             'last_name',
             'password',
-            'password2',
+            
         ] 
 
 
@@ -54,24 +59,42 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
             raise UserAlreadyExist({'email' : 'User with same Email already exists '})
         
         password  = attrs.get('password','')
-        password2 = attrs.get('password2','')
-    
-
-        if password != password2 :
-            raise serializers.ValidationError('passwords do not match')
+        password  = decrypt_string(password)
+        attrs['password'] =  password
         
         return attrs   
     
     
 
     def create(self,validated_data):
-        validated_data.pop('password2')
         return super().create(validated_data)
     
 
 
          
+class UserViewSerailizer(serializers.ModelSerializer):
 
+    email      = serializers.EmailField(read_only=True)
+    first_name = serializers.CharField(read_only=True)
+    last_name  = serializers.CharField(read_only=True)
+    role       = serializers.SerializerMethodField()
+    
+    
+    
+    def get_role(self,obj) -> str:
+        return obj
+
+
+    class Meta:
+        model = MyUser
+        fields = [
+            
+            'id',
+            'email',
+            'first_name',
+            'last_name',
+            'role'
+        ]
 
     
     
@@ -87,7 +110,7 @@ class UserSignInSerializer(serializers.ModelSerializer):
 
 
 
-    email    = serializers.EmailField(max_length=255)
+    email    = serializers.EmailField(max_length=255,write_only=True)
     password =  serializers.CharField(write_only=True)
 
 
@@ -98,9 +121,9 @@ class UserSignInSerializer(serializers.ModelSerializer):
     """
 
 
-    access_token = serializers.CharField(max_length=255,read_only=True)
-    refresh_token = serializers.CharField(max_length=255,read_only=True)
-    name = serializers.CharField(max_length=255,read_only=True)
+    access = serializers.CharField(max_length=255,read_only=True)
+    refresh = serializers.CharField(max_length=255,read_only=True)
+    user = UserViewSerailizer(read_only=True)
 
 
 
@@ -110,10 +133,11 @@ class UserSignInSerializer(serializers.ModelSerializer):
         model = MyUser
         fields = [
             'email',
-            'name',
+            'user',
             'password',
-            'access_token',
-            'refresh_token',
+            'access',
+            'refresh',
+            
             
         ]
 
@@ -124,6 +148,10 @@ class UserSignInSerializer(serializers.ModelSerializer):
         """
         email     = attrs.get('email')
         password  = attrs.get('password')
+        password  = decrypt_string(password) 
+
+        
+        
         
         """
             authenticate function while return a user object if creadentials are ok
@@ -144,12 +172,20 @@ class UserSignInSerializer(serializers.ModelSerializer):
                 
                 token = user.tokens
                 
+                
+                
                 return {
                     
-                    'email':user.email,
-                    'name':f"{user.first_name}  {user.last_name}",
-                    'access_token':str(token.get('access')),
-                    'refresh_token':str(token.get('refresh'))
+                    'user':{
+                      'id':user.id,
+                      'email':user.email,
+                      'first_name':user.first_name,
+                      'last_name':user.last_name,
+                      'role':user.role
+                    },
+                    
+                    'access':token.get('access'),
+                    'refresh':token.get('refresh')
                 }
                 
             else: 
@@ -232,20 +268,7 @@ class UserEmailActivationSerializer(serializers.Serializer):
             raise serializers.ValidationError('Invalid Token or Expired Token')
 
 
-class UserViewSerailizer(serializers.ModelSerializer):
 
-    email      = serializers.EmailField(read_only=True)
-    first_name = serializers.CharField(read_only=True)
-    last_name  = serializers.CharField(read_only=True)
-
-
-    class Meta:
-        model = MyUser
-        fields = [
-            'email',
-            'first_name',
-            'last_name',
-        ]
 
 
 class UserUpdateSerializer(serializers.ModelSerializer):

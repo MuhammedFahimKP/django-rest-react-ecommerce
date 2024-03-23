@@ -12,7 +12,7 @@ interface Props {
 const Form = ({ children, title, onSubmit }: Props) => {
   return (
     <form
-      className="lg:min-w-[30%] max-sm:max-w-[90%] sm:min-w-[40%] md:max-w-[20%] overflow-hidden
+      className="lg:min-w-[30%] max-sm:max-w-[90%] sm:min-w-[40%] md:max-w-[60%] overflow-hidden
        shadow-2xl border-2 border-gray-50 rounded-lg"
       onSubmit={(e) => onSubmit(e)}
     >

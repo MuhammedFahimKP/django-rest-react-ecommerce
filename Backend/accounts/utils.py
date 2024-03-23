@@ -1,15 +1,29 @@
-
+from django.contrib.auth.hashers import make_password
+from django.contrib.auth import authenticate
+from django.conf import settings 
 from django.contrib.auth import get_user_model
+
+from rest_framework.exceptions import AuthenticationFailed
+
+from datetime import datetime, timedelta
+
 from google.auth.transport import requests
 from google.oauth2 import id_token
 from google.auth.transport import requests 
-from django.contrib.auth import authenticate
-from django.conf import settings
-from rest_framework.exceptions import AuthenticationFailed
-from django.contrib.auth.hashers import make_password
+
+
+from Crypto.Cipher import AES
+from Crypto.Util.Padding import unpad
+
+
 from .models import MyUser
-from datetime import datetime, timedelta
+
 import jwt
+
+import os
+
+import base64
+
 
 """
    google python client libary for google auth 
@@ -70,6 +84,25 @@ def register_social_user(email,first_name,last_name):
               return login_user(email=email)
                 
 
+import hashlib
+
+def convert_to_16_byte_code(input_string):
+    # Convert the string to bytes using UTF-8 encoding
+    input_bytes = input_string.encode('utf-8')
+    
+    # Compute the SHA-256 hash of the input bytes
+    hash_object = hashlib.sha256(input_bytes)
+    
+    # Get the digest (hash value) as bytes
+    hash_bytes = hash_object.digest()
+    
+    # Trim the hash to the first 16 bytes (128 bits)
+    trimmed_hash = hash_bytes[:16]
+    
+    # Convert the bytes to a hexadecimal string
+    hex_code = trimmed_hash.hex()
+    
+    return hex_code
 
 
 def create_verification_token(user_id):
@@ -110,6 +143,30 @@ def user_exists_or_not(**kwargs) -> bool:
        return False
 
        
+
+from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
+from cryptography.hazmat.backends import default_backend
+from base64 import b64decode
+
+import secrets
+
+
+def decrypt_string(encrypted_string):
+       
+    key = settings.DECRYPT_KEY
+    
+    
+    
+    encrypted_string = base64.decode(encrypted_string)
+    cipher = AES.new(key.encode('utf-8'),AES.MODE_ECB)
+    return unpad(cipher.decrypt(encrypted_string),16)
+    
                                             
 
+
+
+    
+    
+              
+  
                         

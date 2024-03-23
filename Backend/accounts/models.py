@@ -96,6 +96,19 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     def get_full_name(self) -> str:
         return f"{self.first_name} {self.last_name}"
     
+    
+    @property
+    def role(self) -> str:
+        
+        if self.is_staff and self.is_superuser :
+            return "admin"
+        
+        if self.is_staff:
+            return "sub admin"
+        
+        return "user"
+        
+    
 
 
 
