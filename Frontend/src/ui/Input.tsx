@@ -22,7 +22,7 @@ const Input = ({
   return (
     <div className={"flex" + "flex-" + "col" + " mt-1 px-2   py-1   w-full"}>
       <label
-        className="block  text-gray-500 ml-2  text-sm font-mono  font-bold mb-1"
+        className="block  text-gray-500 ml-2  text-sm   mb-1"
         htmlFor={name}
       >
         {label}

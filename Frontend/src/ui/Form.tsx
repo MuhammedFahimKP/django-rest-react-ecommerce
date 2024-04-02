@@ -12,22 +12,22 @@ interface Props {
 const Form = ({ children, title, onSubmit }: Props) => {
   return (
     <form
-      className="lg:min-w-[30%] max-sm:max-w-[90%] sm:min-w-[40%] md:max-w-[60%] overflow-hidden
-       shadow-2xl border-2 border-gray-50 rounded-lg"
+      className="w-[90%] md:max-w-md shadow-2xl rounded-lg boder-2 pb-4 border-gray-200 overflow-hidden "
       onSubmit={(e) => onSubmit(e)}
     >
-      <div className="bg-black  overflow-hidden flex flex-row-reverse itmes-center align-middle justify-between  w-full text-white h-16 p-3">
+      <div className="bg-black  overflow-hidden flex flex-row-reverse itmes-center align-middle justify-between  w-full text-black h-16 p-3">
         <div>
           <img src={whiteLogo} className="object-fill w-50 h-10" />
         </div>
         <div>
-          <h1 className={"mt-2 ml-3  text-2xl  font-mono font-extrabold "}>
+          <h1 className={"mt-2 ml-3  text-3xl  font-bold text-white  "}>
             {title}
           </h1>
         </div>
       </div>
       <div className="px-4 pt-2 pb-3">
         {children}
+
         <InputContainer>
           <SubmitBtn disabled={true}>Submit</SubmitBtn>
         </InputContainer>

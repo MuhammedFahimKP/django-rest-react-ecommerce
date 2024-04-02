@@ -13,7 +13,7 @@ urlpatterns = [
     path('refresh/',TokenRefreshView.as_view(),name="refresh token"),
     path('signup/',views.UserSigninAPIView.as_view()),
     path('signin/',views.UserSigninAPIView.as_view()),
-    path('<str:pk>/',views.UserProfileRetriveAPIView.as_view()),
+    # path('<str:pk>/',views.UserProfileRetriveAPIView.as_view()),
     
     path('token/verify',TokenVerifyView.as_view(),name="token_verify"),
     path('token/blacklist',TokenBlacklistView.as_view(),name="blacklist"),

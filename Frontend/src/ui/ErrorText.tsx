@@ -3,7 +3,7 @@ interface Props {
 }
 
 const ErrorText = ({ children }: Props) => {
-  return <p className="text-sm mt-1 ml-2 pl-2 text-red-500 ">{children}</p>;
+  return <p className="text-sm mt-1  px-2 text-red-500  ">{children}</p>;
 };
 
 export default ErrorText;

@@ -1,25 +1,26 @@
-import React from "react";
-
+import React, { useState } from "react";
 // 3rd party validators
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 import toast, { Toaster } from "react-hot-toast";
+import { useSelector } from "react-redux";
+import { CredentialResponse, useGoogleOneTapLogin } from "@react-oauth/google";
 
 import apiClient, {
   ApiClientError,
   ApiClientResponse,
 } from "../services/api-client";
-
 import { UserSignUpData as FormValues } from "../types";
 
-import ScreenContainer from "../ui/ScreenContainer";
 import Form from "../ui/Form";
-import FormRow from "../ui/FormRow";
 import InputContainer from "../ui/InputContainer";
 import Input from "../ui/Input";
 import ErrorText from "../ui/ErrorText";
 import SuceessIcon from "../ui/SuccessIcon";
+import { handleGoogleAuth } from "../utils/auth";
+import { RootState } from "../store";
+import { useNavigate } from "react-router-dom";
 
 const initialValues: FormValues = {
   email: "",
@@ -33,7 +34,6 @@ interface FormFieldType {
   name: keyof FormValues;
   label: string;
   type: "text" | "password" | "number";
-  had_sibling: boolean;
 }
 
 const formFeilds: FormFieldType[] = [
@@ -41,32 +41,22 @@ const formFeilds: FormFieldType[] = [
     name: "email",
     label: "Email",
     type: "text",
-    had_sibling: false,
   },
   {
     name: "first_name",
     label: "First Name",
     type: "text",
-    had_sibling: true,
   },
   {
     name: "last_name",
     label: "Last Name",
     type: "text",
-    had_sibling: true,
   },
 
   {
     name: "password",
     label: "Passowrd",
     type: "password",
-    had_sibling: false,
-  },
-  {
-    name: "password2",
-    label: "Confirm Passowrd",
-    type: "text",
-    had_sibling: false,
   },
 ];
 
@@ -92,13 +82,26 @@ const signupSchema = Yup.object().shape({
         "Password Must Contain 1 Special Charater and 1 upper case  1 lower case password  1 number ",
     })
     .required("Password Required"),
-
-  password2: Yup.string()
-    .oneOf([Yup.ref("password")], "Passwords didnt match")
-    .required("Please Confirm the Password "),
 });
 
 const NewSignup = () => {
+  const [googleAuthErr, setGoogleAuthError] = useState(false);
+  // useGoogleOneTapLogin({
+  //   onSuccess: (res) => console.log(res),
+  //   onError: (err) => console.log(err),
+  //   googleAccountConfigs: {
+  //     client_id:
+  //       "296061655793-btom7bmad6ugdt93200u7j3uk22ijevl.apps.googleusercontent.com",
+  //   },
+  // });
+
+  useGoogleOneTapLogin({
+    onSuccess: (res: CredentialResponse) =>
+      res.credential && handleGoogleAuthClick(res.credential),
+  });
+
+  const user = useSelector((state: RootState) => state.auth.user);
+  const navigate = useNavigate();
   const formike = useFormik<FormValues>({
     initialValues,
     onSubmit,
@@ -138,6 +141,16 @@ const NewSignup = () => {
   const erros = formike.errors;
   const touched = formike.touched;
 
+  function handleGoogleAuthClick(id_token: string) {
+    handleGoogleAuth(id_token);
+
+    if (user !== null) {
+      navigate("/");
+    } else {
+      setGoogleAuthError(true);
+    }
+  }
+
   function onSubmit(values: FormValues, actions: any) {
     console.log(values);
     apiClient
@@ -152,7 +165,6 @@ const NewSignup = () => {
               first_name: "",
               last_name: "",
               password: "",
-              password2: "",
             },
           });
         }
@@ -165,51 +177,29 @@ const NewSignup = () => {
   }
 
   return (
-    <ScreenContainer>
-      <Form title="Signup" onSubmit={(e: any) => formike.handleSubmit(e)}>
-        <FormRow>
-          {formFeilds
-            .filter((field: FormFieldType) => field.had_sibling)
-            .map((field: FormFieldType, index) => (
-              <div className="flex flex-col flex-1" key={index}>
-                <Input
-                  key={index}
-                  name={field.name}
-                  type={field.type}
-                  label={field.label}
-                  placeholder={field.label}
-                  value={formike.values[field.name]}
-                  onChange={formike.handleChange}
-                  onBlur={formike.handleBlur}
-                />
-                {erros[field.name] && touched[field.name] && (
-                  <ErrorText>{erros[field.name]}</ErrorText>
-                )}
-              </div>
-            ))}
-        </FormRow>
-
-        {formFeilds
-          .filter((field: FormFieldType) => !field.had_sibling)
-          .map((field: FormFieldType, index) => (
-            <React.Fragment key={index}>
-              <Input
-                name={field.name}
-                type={field.type}
-                label={field.label}
-                placeholder={field.label}
-                value={formike.values[field.name]}
-                onChange={formike.handleChange}
-                onBlur={formike.handleBlur}
-              />
+    <div className="h-screen  flex items-center justify-center">
+      <Form title="SignUp" onSubmit={(e: any) => formike.handleSubmit(e)}>
+        {formFeilds.map((field: FormFieldType, index) => (
+          <React.Fragment key={index}>
+            <Input
+              name={field.name}
+              type={field.type}
+              label={field.label}
+              placeholder={field.label}
+              value={formike.values[field.name]}
+              onChange={formike.handleChange}
+              onBlur={formike.handleBlur}
+            />
+            <div className="mx-1 flex items-center justify-start">
               {erros[field.name] && touched[field.name] && (
                 <ErrorText>{erros[field.name]}</ErrorText>
               )}
-            </React.Fragment>
-          ))}
+            </div>
+          </React.Fragment>
+        ))}
         <InputContainer>
-          <p className="text-gray-500 dark:text-gray-400">
-            Already Have and Acount{" "}
+          <p className="text-gray-500  text-sm">
+            Already Have an Acount{" "}
             <a
               href="#"
               className="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
@@ -217,10 +207,13 @@ const NewSignup = () => {
               SignIn
             </a>
           </p>
+          {googleAuthErr && (
+            <p className="text-red-600 m-2">{"try to login with email"}</p>
+          )}
         </InputContainer>
         <Toaster />
       </Form>
-    </ScreenContainer>
+    </div>
   );
 };
 

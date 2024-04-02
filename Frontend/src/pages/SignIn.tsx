@@ -1,13 +1,12 @@
 import SigninForm from "../components/SigninForm";
-import Navbar from "../components/Navbar";
-import ScreenContainer from "../ui/ScreenContainer";
+
 const SignIn = () => {
-  return (
-    <ScreenContainer>
-      <Navbar />
-      <SigninForm />;
-    </ScreenContainer>
-  );
+  // const user = useSelector((state: RootState) => state.auth.user);
+  // const navigate = useNavigate();
+  // if (user != null) {
+  //   navigate(-1);
+  // }
+  return <SigninForm />;
 };
 
 export default SignIn;

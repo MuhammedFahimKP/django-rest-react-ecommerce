@@ -49,12 +49,7 @@ class Google:
 
 def login_user(email):
         social_user = authenticate(email=email,password=settings.SOCIAL_AUTH_PASSWORD)
-        return {
-            "email":social_user.email,
-            "fullname":social_user.get_full_name,
-            "access_token":f"{social_user.tokens['access']}",
-            "refresh_token":f"{social_user.tokens['refresh']}"                            
-       }
+        return get_user_details_and_tokens(social_user)
        
 
           
@@ -66,7 +61,7 @@ def register_social_user(email,first_name,last_name):
               if  user[0].auth_provider == 'google':                               
                      return login_user(email)           
               else:
-                     return f'please login with your {user[0].auth_provider} account '
+                     raise AuthenticationFailed ({'email' :f'please login with your {user[0].auth_provider} account'})
               
        else:
               user_data = {
@@ -140,7 +135,23 @@ def user_exists_or_not(**kwargs) -> bool:
        if user.exists():
               return True 
        
+
        return False
+
+
+def get_user_details_and_tokens(user:MyUser):
+       return {
+              'access':user.tokens.get('access'),
+              'refresh':user.tokens.get('refresh'),
+              'user':{
+                     'email':user.email,
+                     'first_name':user.first_name,
+                     'last_name':user.last_name,
+                     'role':user.role
+              }
+       }
+
+
 
        
 

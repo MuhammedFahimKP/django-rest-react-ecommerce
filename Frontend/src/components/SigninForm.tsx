@@ -1,8 +1,9 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 
-import { UseDispatch, useDispatch } from "react-redux";
-
+import { CredentialResponse, useGoogleOneTapLogin } from "@react-oauth/google";
 import { useFormik } from "formik";
+
 import * as Yup from "yup";
 
 import { useNavigate } from "react-router-dom";
@@ -10,8 +11,8 @@ import { useNavigate } from "react-router-dom";
 import { UserSignInData } from "../types";
 
 import { setUser, setAuthTokens } from "../store/authenticationSlice";
+import { RootState } from "../store";
 
-import ScreenContainer from "../ui/ScreenContainer";
 import Form from "../ui/Form";
 import Input from "../ui/Input";
 import ErrorText from "../ui/ErrorText";
@@ -20,6 +21,7 @@ import apiClient, {
   ApiClientResponse,
 } from "../services/api-client";
 
+import { handleGoogleAuth } from "../utils/auth";
 import { EncryptString } from "../utils/hashing";
 
 interface FormField {
@@ -54,6 +56,20 @@ const initialValues: UserSignInData = {
 };
 
 const SigninForm = () => {
+  const user = useSelector((state: RootState) => state.auth.user);
+
+  function handleGoogleAuthClick(id_token: string) {
+    if (user === null) {
+      handleGoogleAuth(id_token);
+    }
+    return;
+  }
+
+  useGoogleOneTapLogin({
+    onSuccess: (res: CredentialResponse) =>
+      res.credential && handleGoogleAuthClick(res.credential),
+  });
+
   const navigate = useNavigate();
 
   const formike = useFormik<UserSignInData>({
@@ -110,24 +126,26 @@ const SigninForm = () => {
   }
 
   return (
-    <Form title={"SignIn"} onSubmit={(e: any) => formike.handleSubmit(e)}>
-      {formFields.map((field, index) => (
-        <React.Fragment key={index}>
-          <Input
-            name={field.name}
-            label={field.label}
-            type={field.type}
-            onBlur={formike.handleBlur}
-            onChange={formike.handleChange}
-            placeholder={field.label}
-            value={formike.values[field.name]}
-          />
-          {errors[field.name] && touched[field.name] && (
-            <ErrorText>{errors[field.name]}</ErrorText>
-          )}
-        </React.Fragment>
-      ))}
-    </Form>
+    <div className="h-screen  flex items-center justify-center">
+      <Form title={"SignIn"} onSubmit={(e: any) => formike.handleSubmit(e)}>
+        {formFields.map((field, index) => (
+          <React.Fragment key={index}>
+            <Input
+              name={field.name}
+              label={field.label}
+              type={field.type}
+              onBlur={formike.handleBlur}
+              onChange={formike.handleChange}
+              placeholder={field.label}
+              value={formike.values[field.name]}
+            />
+            {errors[field.name] && touched[field.name] && (
+              <ErrorText>{errors[field.name]}</ErrorText>
+            )}
+          </React.Fragment>
+        ))}
+      </Form>
+    </div>
   );
 };
 

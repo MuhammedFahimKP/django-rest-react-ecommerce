@@ -1,80 +1,69 @@
-import { Carousel, IconButton } from "@material-tailwind/react";
-import { FaCaretLeft, FaCaretRight } from "react-icons/fa";
-export default function CarouselTransition() {
-  const images = [
-    "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/7/25/9be788ff-39a4-4214-99d0-fc97505aae5a1658752545685-USPA_Desk_Banner.jpg",
-    "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/31/4031994d-9092-4aa7-aea1-f52f2ae5194f1654006594976-Activewear_DK.jpg",
-    "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/3/e384cb32-690c-4ccf-a6cb-61df36960bb21651599573972-Workwear_Desk.jpg",
-  ];
+const slides = [
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/7/25/9be788ff-39a4-4214-99d0-fc97505aae5a1658752545685-USPA_Desk_Banner.jpg",
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/31/4031994d-9092-4aa7-aea1-f52f2ae5194f1654006594976-Activewear_DK.jpg",
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/3/e384cb32-690c-4ccf-a6cb-61df36960bb21651599573972-Workwear_Desk.jpg",
+];
+
+import { useState, useEffect } from "react";
+import {
+  BsChevronLeft as ChevronLeft,
+  BsChevronRight as ChevronRight,
+} from "react-icons/bs";
+
+export default function Carousel({}) {
+  const autoSlide = true;
+  const autoSlideInterval = 3000;
+  const [curr, setCurr] = useState(0);
+
+  const prev = () =>
+    setCurr((curr) => (curr === 0 ? slides.length - 1 : curr - 1));
+  const next = () =>
+    setCurr((curr) => (curr === slides.length - 1 ? 0 : curr + 1));
+
+  useEffect(() => {
+    if (!autoSlide) return;
+    const slideInterval = setInterval(next, autoSlideInterval);
+    return () => clearInterval(slideInterval);
+  }, []);
   return (
-    <>
-      <Carousel
-        placeholder={"skdj"}
-        transition={{ duration: 1, ease: "easeInOut" }}
-        className={"text-black" + "bg-red-400"}
-        autoplay={true}
-        loop={true}
-        prevArrow={({ handlePrev }) => (
-          <IconButton
-            variant="text"
-            placeholder={"prev"}
-            onClick={handlePrev}
-            className="!absolute top-2/4 left-4 -translate-y-2/4 text-gray-900 text-lg"
+    <div className="">
+      <div className="overflow-hidden relative z-30">
+        <div
+          className="flex transition-transform ease-out duration-500"
+          style={{ transform: `translateX(-${curr * 100}%)` }}
+        >
+          {slides.map((image, index) => (
+            <img src={image} className=" object-contain " key={index} />
+          ))}
+        </div>
+        <div className="opacity-0 absolute inset-0  lg:opacity-100 flex items-center justify-between p-4">
+          <button
+            onClick={prev}
+            className="p-1 rounded-full shadow bg-white/80 text-gray-800 hover:bg-white"
           >
-            <FaCaretLeft />
-          </IconButton>
-        )}
-        nextArrow={({ handleNext }) => (
-          <IconButton
-            variant="text"
-            placeholder={"next"}
-            onClick={handleNext}
-            className="!absolute top-2/4 right-4 -translate-y-2/4 text-gray-900 text-lg "
+            <ChevronLeft size={30} />
+          </button>
+          <button
+            onClick={next}
+            className="p-1 rounded-full shadow bg-white/80 text-gray-800 hover:bg-white"
           >
-            <FaCaretRight />
-          </IconButton>
-        )}
-      >
-        {images.map((img, index) => (
-          <img
-            src={img}
-            key={index}
-            alt="image 1"
-            className="lg:object-contain object-cover  object-right bg-gray-200"
-          />
-        ))}
-      </Carousel>
-      <div className="text-red-700">hai</div>
-    </>
+            <ChevronRight size={30} />
+          </button>
+        </div>
+
+        <div className="absolute bottom-4 right-0 left-0">
+          <div className="flex items-center justify-center gap-2">
+            {slides.map((_, i) => (
+              <div
+                className={`
+              transition-all w-3 h-3 bg-white rounded-full
+              ${curr === i ? "p-2" : "bg-opacity-50"}
+            `}
+              />
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
-// import { Carousel, Typography, Button } from "@material-tailwind/react";
-
-// export default function CarouselWithContent() {
-//   return (
-//     <>
-//       <Carousel
-//         placeholder={"hai"}
-//         transition={{ duration: 2 }}
-//         className="rounded-xl"
-//       >
-//         <img
-//           src="https://images.unsplash.com/photo-1497436072909-60f360e1d4b1?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2560&q=80"
-//           alt="image 1"
-//           className="h-full w-full object-cover"
-//         />
-//         <img
-//           src="https://images.unsplash.com/photo-1493246507139-91e8fad9978e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2940&q=80"
-//           alt="image 2"
-//           className="h-full w-full object-cover"
-//         />
-//         <img
-//           src="https://images.unsplash.com/photo-1518623489648-a173ef7824f3?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=2762&q=80"
-//           alt="image 3"
-//           className="h-full w-full object-cover"
-//         />
-//       </Carousel>
-//       <div className="text-red-500 text-4xl">Hai</div>
-//     </>
-//   );
-// }

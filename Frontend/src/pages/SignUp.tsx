@@ -1,11 +1,7 @@
 import NewSignup from "../components/NewSignup";
-import ScreenContainer from "../ui/ScreenContainer";
+
 const SignUp = () => {
-  return (
-    <ScreenContainer>
-      <NewSignup />;
-    </ScreenContainer>
-  );
+  return <NewSignup />;
 };
 
 export default SignUp;

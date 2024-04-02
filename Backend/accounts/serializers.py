@@ -208,6 +208,8 @@ class UserSignInSerializer(serializers.ModelSerializer):
 
 class GoogleSiginSerializer(serializers.Serializer):
     access_token = serializers.CharField(min_length=6)
+    
+    
 
     # validating the access token using the google python client
     def validate_access_token(self,access_token):

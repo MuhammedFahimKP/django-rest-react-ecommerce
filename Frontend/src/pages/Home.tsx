@@ -3,38 +3,61 @@ import { useNavigate } from "react-router";
 import { logout } from "../store/authenticationSlice";
 
 import Carousel from "../components/Carousel";
+import LatestArrivals from "../components/LatestArrivals";
 
-// import useSWR from "swr";
-// import { fetcher } from "../services/token-client";
-// import { UserModelResponse } from "../types";
-
-// import Hero from "../components/Hero";
 import { RootState } from "../store";
 import Navbar from "../components/Navbar";
 import ScreenContainer from "../ui/ScreenContainer";
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import PaginationButtons from "../ui/PaginationButtons";
+import Footer from "../components/Footer";
+
+interface LatestArrival {
+  name: string;
+  img: string;
+  brand: string;
+}
+
 const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const user = useSelector((state: RootState) => state.auth.user);
-  // console.log(currentUser);
-  // const userId = currentUser?.id;
-  // const user = useSWR<UserModelResponse>(`users/${userId}/`, fetcher, {
-  //   refreshInterval: 1000,
-  // });
-  // console.log(currentUser);
+  const [latestArrivals, setLatestArrivals] = useState<LatestArrival[] | []>(
+    []
+  );
+
+  useEffect(() => {
+    axios.get("/latestArrivel.json").then((res: AxiosResponse) => {
+      setLatestArrivals(res.data);
+    });
+  }, []);
 
   const handleLogout = () => {
     dispatch(logout());
     navigate("signin/");
   };
-
+  console.log(latestArrivals);
   return (
     <ScreenContainer>
       <Navbar />
       <Carousel />
-      {/* <Slider /> */}
-      {/* <Hero /> */}
+
+      <div className="flex flex-col  items-center ">
+        <div className="grid grid-cols-2   m-4 lg:grid-cols-4 md:grid-cols-2  w-10/12  md:w-8/12  gap-4  p-4">
+          {latestArrivals.map((product: LatestArrival, index) => (
+            <LatestArrivals
+              key={index}
+              name={product.name}
+              img={product.img}
+              brand={product.brand}
+            />
+          ))}
+        </div>
+        <PaginationButtons />
+      </div>
+      <div className=" flex w-full justify-between items-center"></div>
       <div className="w-full h-screen">
         <div className="w-full p-6">
           <button
@@ -52,6 +75,7 @@ const Home = () => {
           <p className="text-center items-center">Loading ...</p>
         )}
       </div>
+      <Footer />
     </ScreenContainer>
   );
 };

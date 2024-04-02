@@ -10,13 +10,33 @@
     "brand": "FREAKINS"
   },
   {
-    "name": "",
-    "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/27185510/2024/1/25/8d966b98-9ba1-48b3-b506-af4f8ff9d1fa1706182530001VanHeusenMenPrintedPartyShirt1.jpg",
-    "brand": "van Heusen"
+    "name": "Cotton Formal Trousers",
+    "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/17171056/2022/3/7/6dccfaf1-8c9d-45de-814d-06eeb757127e1646630690315-Dennisons-Men-Black-Pleated-Tapered-Fit-Solid-Trousers-37516-1.jpg",
+    "brand": "DENNISON"
+  },
+  {
+    "name": " Striped Polo Collar Slim Fit T-shirt",
+    "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/27083140/2024/1/25/653d7363-9ccb-4240-a602-b6c92ae7f2fd1706206602735USPoloAssnMenTypographyStripedPoloCollarAppliqueSlimFitT-shi1.jpg",
+    "brand": "USPA"
   },
   {
     "name": "Textured Pure Cotton Formal Shirt",
     "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/27185510/2024/1/25/8d966b98-9ba1-48b3-b506-af4f8ff9d1fa1706182530001VanHeusenMenPrintedPartyShirt1.jpg",
     "brand": "van Heusen"
+  },
+  {
+    "name": "Spread Collar Biker Jacket",
+    "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/27383992/2024/2/24/2ae6c659-7c26-46d8-9d4b-51c694207c181708761513700-FREAKINS-Men-Leather-Crop-Biker-Jacket-9741708761513461-1.jpg",
+    "brand": "FREAKINS"
+  },
+  {
+    "name": "Cotton Formal Trousers",
+    "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/17171056/2022/3/7/6dccfaf1-8c9d-45de-814d-06eeb757127e1646630690315-Dennisons-Men-Black-Pleated-Tapered-Fit-Solid-Trousers-37516-1.jpg",
+    "brand": "DENNISON"
+  },
+  {
+    "name": " Striped Polo Collar Slim Fit T-shirt",
+    "img": "https://assets.myntassets.com/h_720,q_90,w_540/v1/assets/images/27083140/2024/1/25/653d7363-9ccb-4240-a602-b6c92ae7f2fd1706206602735USPoloAssnMenTypographyStripedPoloCollarAppliqueSlimFitT-shi1.jpg",
+    "brand": "USPA"
   }
 ]
