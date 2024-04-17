@@ -1,58 +1,61 @@
-//These are Third party packages for smooth slideshow
-import { Zoom } from "react-slideshow-image";
-import "react-slideshow-image/dist/styles.css";
-import {
-  FaChevronLeft as ArrowLeftIcon,
-  FaChevronRight as ArrowRightIcon,
-} from "react-icons/fa";
+import { useRef } from "react";
+import { Swiper, SwiperSlide } from "swiper/react";
 
-const Slideshow = () => {
-  //Array of Images
-  const images = [
-    "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/7/25/9be788ff-39a4-4214-99d0-fc97505aae5a1658752545685-USPA_Desk_Banner.jpg",
-    "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/31/4031994d-9092-4aa7-aea1-f52f2ae5194f1654006594976-Activewear_DK.jpg",
-    "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/3/e384cb32-690c-4ccf-a6cb-61df36960bb21651599573972-Workwear_Desk.jpg",
-  ];
+import { Autoplay, Pagination } from "swiper/modules";
 
-  //These are custom properties for zoom effect while slide-show
-  const zoomInProperties = {
-    scale: 1,
-    class:
-      "flex justify-center md:items-center items-start w-screen h-screen relative bg-red-500",
-    duration: 1000,
-    transitionDuration: 300,
-    infinite: true,
-    prevArrow: (
-      <div className="ml-10 top-40 md:top-72">
-        <ArrowLeftIcon className="h-8 w-8 text-white cursor-pointer" />
-      </div>
-    ),
-    nextArrow: (
-      <div className="mr-10 top-40 md:top-72">
-        <ArrowRightIcon className="h-8 w-8 text-white cursor-pointer" />
-      </div>
-    ),
-  };
+import "swiper/css";
+import "swiper/css/pagination";
+
+const slides = [
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/7/25/9be788ff-39a4-4214-99d0-fc97505aae5a1658752545685-USPA_Desk_Banner.jpg",
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/31/4031994d-9092-4aa7-aea1-f52f2ae5194f1654006594976-Activewear_DK.jpg",
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/3/e384cb32-690c-4ccf-a6cb-61df36960bb21651599573972-Workwear_Desk.jpg",
+  "https://assets.myntassets.com/f_webp,w_980,c_limit,fl_progressive,dpr_2.0/assets/images/2022/5/3/b54399f0-6ed5-44b3-84b0-e9d5c1657aaa1651599573991-CR7_Desk_Baner.jpg",
+];
+
+const ActiveSlider = () => {
+  const paginater = useRef<HTMLDivElement | null>(null);
+
   return (
-    <div className="w-full  bg-slate-700">
-      <Zoom {...zoomInProperties}>
-        {images.map((each, index) => (
-          <div
-            key={index}
-            className="flex justify-center md:items-center items-start w-screen h-screen relative"
-          >
-            <img className="w-screen" src={each} />
-            {/* <h1 className="absolute md:top-60 top-24 inset-x-1/4 text-center z-10 md:text-6xl text-4xl bold text-white">
-              Hello, Nik
-            </h1>
-            <p className="absolute md:top-80 top-40 inset-x-1/4 text-center z-10 md:text-2xl text-xl bold text-white">
-              "Everything you can imagine is real."
-            </p> */}
-          </div>
+    <div className="flex items-center  relative justify-center flex-col h-[60wh] transition-transform ease-out duration-500 overflow-hidden  shadow-lg rounded-lg cursor-grab">
+      <Swiper
+        loop={true}
+        autoplay={{
+          delay: 2000,
+          reverseDirection: false,
+        }}
+        breakpoints={{
+          340: {
+            slidesPerView: 1,
+            spaceBetween: 15,
+          },
+          700: {
+            slidesPerView: 1,
+            spaceBetween: 15,
+          },
+        }}
+        pagination={{
+          el: paginater?.current,
+          type: "bullets",
+          clickable: true,
+          bulletClass: "bg-white bullets rounded-sm",
+          bulletActiveClass: "active",
+        }}
+        modules={[Pagination, Autoplay]}
+        className="max-w-full"
+      >
+        {slides.map((item) => (
+          <SwiperSlide className="w-full h-full " key={item}>
+            <img src={item} className="object-cover z-0" alt="" />
+          </SwiperSlide>
         ))}
-      </Zoom>
+        <div
+          ref={paginater}
+          className="flex absolute mx-auto left-0 right-0    z-50 overflow-hidden  justify-center   pr-5 items-center gap-2"
+        ></div>
+      </Swiper>
     </div>
   );
 };
 
-export default Slideshow;
+export default ActiveSlider;

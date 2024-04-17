@@ -21,3 +21,4 @@ const routes = createBrowserRouter([
 ]);
 
 export default routes;
+export const { navigate } = routes;

@@ -1,39 +1,56 @@
-interface Props {
+import { useEffect, useState } from "react";
+import axios, { AxiosResponse } from "axios";
+import ProductCard from "./ProductCard";
+
+export interface LatestArrival {
   name: string;
-  brand: string;
   img: string;
+  brand: string;
 }
 
-const LatestArrivals = ({ name, brand, img }: Props) => {
+const LatestArrivals = () => {
+  const [latestArrivals, setLatestArrivals] = useState<LatestArrival[] | []>(
+    []
+  );
+
+  useEffect(() => {
+    axios.get("/latestArrivel.json").then((res: AxiosResponse) => {
+      setLatestArrivals(res.data);
+    });
+  }, []);
+
   return (
-    <div className=" w-full flex rounded-lg flex-col relative items-center overflow-hidden shadow-2xl border-1 border-gray-300 justify-center">
-      <img className="object-cover rounded-lg" src={img} alt="" />
-      <div className="w-full h-2/8  absolute flex flex-col gap-1     bg-white bottom-0 rounded-b-lg font-extrabold font-sans">
-        <div className="flex items-center justify-start ">
-          <p
-            className={
-              "bg-red-600  font-thin text-white  text-sm  rounded-r-xl px-2 "
-            }
-          >
-            New
-          </p>
-        </div>
-        <div className="mx-2 ">
-          <p className="text-sm truncate ...  overflow-hidden text-center  black-white  ">
-            {name}
-          </p>
-        </div>
-        <div className="flex items-center justify-center m-2 mb-4">
-          <p
-            className={
-              "text-blue-500 text-xs  font-thin bg-sky-400/40 rounded-sm px-2 "
-            }
-          >
-            {brand}
-          </p>
-        </div>
+    <>
+      {/* title */}
+      <div className="text-center p-10">
+        <h1 className="font-bold text-4xl mb-4">Latest Arrivals</h1>
+        {/* <h1 className="text-3xl">Tailwind CSS</h1> */}
       </div>
-    </div>
+      {/* ✅ Grid Section - Starts Here 👇 */}
+      <section className="w-fit mx-auto grid grid-cols-1 lg:grid-cols-3 md:grid-cols-2 justify-items-center justify-center gap-y-20 gap-x-14 mt-10 mb-5">
+        {latestArrivals.map((product: LatestArrival) => (
+          <ProductCard
+            name={product.name}
+            img={product.img}
+            brand={product.brand}
+          />
+        ))}
+      </section>
+      {/* 🛑 Grid Section - Ends Here */}
+      {/* credit */}
+      <div className="text-center py-20 px-10">
+        <h2 className="font-bold text-2xl md:text-4xl mb-4">
+          Thanks to{" "}
+          <a
+            href="https://unsplash.com/@nixcreative"
+            className="underline font-black"
+          >
+            Tyler Nix
+          </a>{" "}
+          for those AMAZING product images!
+        </h2>
+      </div>
+    </>
   );
 };
 

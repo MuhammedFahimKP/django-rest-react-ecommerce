@@ -29,6 +29,7 @@
     "react-router-dom": "^6.22.3",
     "react-slideshow-image": "^4.3.1",
     "redux-persist": "^6.0.0",
+    "swiper": "^11.1.1",
     "swr": "^2.2.5",
     "yup": "^1.4.0"
   },

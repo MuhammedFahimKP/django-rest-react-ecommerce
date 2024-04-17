@@ -11,7 +11,7 @@ const axiosService = axios.create({
 });
 
 axiosService.interceptors.request.use(async (config) => {
-    const { access } = store.getState().auth;
+    const { access } = store.getState().persistedReducer.auth;
 
     if (access !== null) {
         config.headers.Authorization = 'Bearer ' + access;
@@ -37,7 +37,7 @@ axiosService.interceptors.response.use(
 
 // @ts-ignore
 const refreshAuthLogic = async (failedRequest) => {
-    const { refresh } = store.getState().auth;
+    const { refresh } = store.getState().persistedReducer.auth;
     if (refresh!== null) {
         return axios
             .post(
@@ -50,13 +50,13 @@ const refreshAuthLogic = async (failedRequest) => {
                 }
             )
             .then((resp) => {
-                const { access,refresh } = resp.data;
+                const { access } = resp.data;
                 failedRequest.response.config.headers.Authorization = 'Bearer ' + access;
-                store.dispatch(setAuthTokens({access:access,refresh:refresh}));
+                store.dispatch(setAuthTokens({access:access}));
             })
             .catch((err) => {
                 if (err.response && err.response.status === 401) {
-                    console.log('userlogouted')
+                    store.dispatch(logout())
                 }
             });
     }

@@ -1,4 +1,17 @@
 @tailwind base;
-
 @tailwind components;
 @tailwind utilities;
+
+.bullets {
+  opacity: 0.7;
+  width: 0.75rem;
+  height: 0.75rem;
+  /* border-radius: 9999px; */
+  opacity: 0.5;
+}
+
+.active {
+  width: 1rem !important;
+  height: 1rem !important;
+  opacity: 1 !important;
+}

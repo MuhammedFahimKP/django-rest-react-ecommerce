@@ -100,7 +100,9 @@ const NewSignup = () => {
       res.credential && handleGoogleAuthClick(res.credential),
   });
 
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector(
+    (state: RootState) => state.persistedReducer.auth.user
+  );
   const navigate = useNavigate();
   const formike = useFormik<FormValues>({
     initialValues,

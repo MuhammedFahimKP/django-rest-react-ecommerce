@@ -1,5 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit" ;
-import authSlice from "./authenticationSlice"
+
 import {
     FLUSH,
     PAUSE,
@@ -12,6 +12,10 @@ import {
 } from "redux-persist";
 import { combineReducers } from "@reduxjs/toolkit";
 import storage from "redux-persist/lib/storage";
+
+// slices
+import authSlice from "./authenticationSlice"
+import alertSlice from "./alertSlice";
 
 
 const rootReducer = combineReducers({
@@ -32,7 +36,7 @@ const persistedReducer = persistReducer(
 
 export const store = configureStore({
 
-    reducer : persistedReducer,
+    reducer : {persistedReducer,alertSlice}, 
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {
@@ -41,6 +45,12 @@ export const store = configureStore({
         }),
 })
 
+
 export const persistor = persistStore(store);
-export type RootState = ReturnType <typeof rootReducer>;
+
+
+export const {getState,dispatch} = store
+
+
+export type RootState = ReturnType <typeof store.getState>;
 export type AppDispact = typeof store.dispatch;  

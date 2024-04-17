@@ -211,7 +211,7 @@ class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
 class ListProductAPIView(generics.ListAPIView):
 
     serializer_class = ProductSerilizer
-    queryset         = Product.objects.all()
+    queryset         = Product.objects.all() 
 
     
     

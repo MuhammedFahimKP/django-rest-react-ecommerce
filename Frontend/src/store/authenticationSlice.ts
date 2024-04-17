@@ -21,9 +21,12 @@ const authenticationSlice =  createSlice({
     initialState,
     reducers:{
         
-        setAuthTokens(state:State,action:PayloadAction<{access:string , refresh:string }>){
+        setAuthTokens(state:State,action:PayloadAction<{access:string , refresh?:string }>){
             state.access  = action.payload.access
-            state.refresh = action.payload.refresh
+            
+            if (action.payload.refresh) {
+                state.refresh = action.payload.refresh
+            }
             
             
             

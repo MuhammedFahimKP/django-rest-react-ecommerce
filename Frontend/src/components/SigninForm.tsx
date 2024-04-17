@@ -56,7 +56,7 @@ const initialValues: UserSignInData = {
 };
 
 const SigninForm = () => {
-  const user = useSelector((state: RootState) => state.auth.user);
+  const user = useSelector((state: RootState) => state.persistedReducer.auth);
 
   function handleGoogleAuthClick(id_token: string) {
     if (user === null) {
