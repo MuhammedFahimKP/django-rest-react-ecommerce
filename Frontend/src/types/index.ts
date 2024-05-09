@@ -1,5 +1,3 @@
-
-
 export interface UserSignInData{
     email:string;
     password:string;
@@ -21,8 +19,73 @@ export interface UserModelResponse{
     role: 'user' | 'admin' | 'sub admin'
 }
 
+interface Product{
+    id:string,
+    name:string,
+    categoery:string,
+    brand:string,
+    slug:string,
+    colors:string[]
+    sizes:string[]
+}
+
+
+export interface ProductForm {
+    slug?:string;
+    name: string;
+    categoery: string;
+    brand: string;
+    is_active: any;
+    img: any;
+  }
+
+export interface CartItem{
+    
+    id:string,
+    img:string
+    name:string,
+    brand:string
+    color:string,
+    size:string,
+    quantity:number,
+    price:number,
+    stock:number,
+    sub_total:number,
+    
+}
+
+export interface Whishlist {
+    id:string,
+    name:string,
+    product:Product,
+}
 
 
 
+// admin side
+
+interface AdminModelData{
+    id:string;
+    name:string
+    created:string;
+    updated:string;
+    is_active:boolean;
+}
 
 
+export interface AdminProductSearchQuery{
+    name:string;
+    category:string;
+    brand:string;
+
+}
+export interface AdminProduct extends AdminModelData {
+    categoery: string; 
+    brand: string;
+    slug?:string;
+    img: string;
+  
+}
+
+export type AdminBrand = AdminModelData
+export type AdminCategory = AdminModelData

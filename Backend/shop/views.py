@@ -5,10 +5,9 @@ from rest_framework.filters import OrderingFilter
 
 
 from rest_framework import generics,status,renderers
-
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
-from rest_framework.decorators import authentication_classes,permission_classes
+from rest_framework.decorators import action,authentication_classes,permission_classes
 
 
 from .models import (
@@ -26,10 +25,25 @@ from .models import (
 
 from rest_framework.response import Response
 from .utils import get_or_none
-from .serializers import  CartItemSerializer,WishtListItemSerializer,ProductSerilizer,ProductVariantSerailizer
+from .serializers import ( 
+    CartCreateUpdateItemSerializer,
+    CartListSerailizer,
+    WishtListItemSerializer,
+    ProductSerilizer,
+    ProductVariantSerailizer,
+    LatestArrivalsSerailizer,
+)
 from .filters import ProductFilterSet
 
 
+
+
+class LatestArrivalsListView(generics.ListAPIView):
+    
+    serializer_class = LatestArrivalsSerailizer
+    queryset         = Product.objects.prefetch_related().all().order_by('-created')
+    
+    
 
 
 
@@ -45,13 +59,19 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
     """
 
 
-    serializer_class = CartItemSerializer
+    serializer_class = None
     queryset         = CartItem.objects.all()
     
     
+    def get_serializer_class(self):
+        if self.request.method  == 'POST':
+            return CartCreateUpdateItemSerializer
+        return CartListSerailizer
+    
+    
     
 
-
+    @action(detail=True,methods=['POST'])
     def create(self,request):
         """
 
@@ -113,7 +133,7 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
 @permission_classes([IsAuthenticated])
 class CartItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
-     serializer_class = CartItemSerializer
+     serializer_class = CartCreateUpdateItemSerializer
      queryset         = CartItem.objects.all()
      renderer_classes = []
      
@@ -211,7 +231,7 @@ class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
 class ListProductAPIView(generics.ListAPIView):
 
     serializer_class = ProductSerilizer
-    queryset         = Product.objects.all() 
+    queryset         = Product.objects.all().prefetch_related('categoery','brand','variants').all()
 
     
     
@@ -235,7 +255,7 @@ class ListProductAPIView(generics.ListAPIView):
     filterset_class  =  ProductFilterSet  
     ordering_fields  = ['created','updated','is_active','variants__price']   
     
-    renderer_classes = [renderers.JSONRenderer]
+    # renderer_classes = [renderers.JSONRenderer]
     """
     
     pagination_class for sort the product 

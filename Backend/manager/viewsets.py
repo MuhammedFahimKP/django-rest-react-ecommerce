@@ -1,14 +1,23 @@
-from ecom.mixins import JWTPermission
+
 from rest_framework import generics
 from rest_framework import viewsets,response,status
 from rest_framework.parsers import MultiPartParser,FormParser
+from rest_framework.response import Response
+from rest_framework.decorators import action
+
+from django_filters.rest_framework.backends import DjangoFilterBackend
+
+from ecom.mixins import JWTPermission
+
 from .serializers import (   
 
     AdminCategoerySerializer,
     AdminBrandSerializer,
     AdminColorSerializer,
     AdminSizeSerializer,
-    AdminProductSerializer,
+    AdminProductViewSerailizer,
+    AdminProductCreateSerailizer,
+    AdminProductUpdateSerailizer,
     AdminProductVariantSerializer,
     AdminProductVarintListSerializer,
 )
@@ -22,14 +31,14 @@ from shop.models import (
 )
 
 from .permissions import AdminOnly
-from rest_framework.response import Response
+
+from  .filters import AdminProductFilterSet
 
 
 
 
 
-
-class AdminCategoeryViewset(viewsets.ModelViewSet):
+class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
     
     permission_classes = [AdminOnly] 
     queryset           = Categoery.objects.all()
@@ -69,12 +78,70 @@ class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
     lookup_field       ='pk'    
 
 
-class AdminProductViewSet(JWTPermission,viewsets.ModelViewSet):
-
-    permission_classes = [AdminOnly]
-    queryset           = Product.objects.all()
-    serializer_class   = AdminProductSerializer
+class AdminProductViewSet(viewsets.ModelViewSet):
+    
+    
+    
+    
+    
+    
+    
+    # permission_classes = [AdminOnly]
+    queryset           = Product.objects.all().prefetch_related('categoery','brand','variants').all()
+    parser_classes     = (MultiPartParser, FormParser)
+    filter_backends    = [DjangoFilterBackend]
+    filterset_class    = AdminProductFilterSet
+    serializer_class   = None
     lookup_field       = 'pk'
+    
+    
+    def get_serializer_class(self):
+        
+        if  self.request.method == 'POST':
+            
+            return  AdminProductCreateSerailizer
+        
+        if self.request.method == 'PATCH':
+            return AdminProductUpdateSerailizer
+        
+        return AdminProductViewSerailizer
+    
+    
+    @action(detail=True,methods=['post'])
+    def create_product(self,request) -> Response:
+        
+        serializer =  self.get_serializer_class()
+        
+        serializer = serializer(data=request.data)
+        
+      
+        
+        if serializer.is_valid(raise_exception=True) :
+            
+            serializer.save()
+            
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
+    
+    @action(detail=True,methods=['patch'])
+    def update_product(self,request,slug) -> Response:
+        
+        serializer =  self.get_serializer_class()
+        
+        serializer = serializer(data=request.data)
+        
+        
+        if serializer.is_valid(raise_exception=True) :
+            
+            serializer.save()
+            
+            return Response(serializer.data,status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
+    
+    
+    
 
 
 

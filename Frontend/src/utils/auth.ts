@@ -20,7 +20,8 @@ function handleGoogleAuth(id:string) : null | State  {
         
     }).catch((err:ApiClientError) => {
         let error = err.response?.data
-        error  
+        error
+        console.log(error)  
         
     })
 

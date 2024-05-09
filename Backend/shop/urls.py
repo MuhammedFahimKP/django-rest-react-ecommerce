@@ -4,6 +4,9 @@ from . import views
 urlpatterns = [
 
     #listing all Products
+    
+    path('product-latest/',views.LatestArrivalsListView.as_view(),name='product-latest'),
+    
     path('product/',views.ListProductAPIView.as_view(),name="list-product"),
    
     #single Product 

@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 
-import { showCartAlert } from "../store/alertSlice";
+import { showCartAlert } from "../../store/alertSlice";
 import { BsCart4 } from "react-icons/bs";
 
 const CartBtn = () => {

@@ -8,21 +8,22 @@ import * as Yup from "yup";
 
 import { useNavigate } from "react-router-dom";
 
-import { UserSignInData } from "../types";
+import { UserSignInData } from "../../types";
 
-import { setUser, setAuthTokens } from "../store/authenticationSlice";
-import { RootState } from "../store";
+import { setUser, setAuthTokens } from "../../store/authenticationSlice";
+import { RootState } from "../../store";
 
-import Form from "../ui/Form";
-import Input from "../ui/Input";
-import ErrorText from "../ui/ErrorText";
+import Form from "../../ui/user/Form";
+import Input from "../../ui/user/Input";
+import ErrorText from "../../ui/user/ErrorText";
 import apiClient, {
   ApiClientError,
   ApiClientResponse,
-} from "../services/api-client";
+} from "../../services/api-client";
 
-import { handleGoogleAuth } from "../utils/auth";
-import { EncryptString } from "../utils/hashing";
+import { handleGoogleAuth } from "../../utils/auth";
+import { EncryptString } from "../../utils/hashing";
+import Logo from "../assets/blackLogo.svg";
 
 interface FormField {
   name: keyof UserSignInData;
@@ -126,26 +127,24 @@ const SigninForm = () => {
   }
 
   return (
-    <div className="h-screen  flex items-center justify-center">
-      <Form title={"SignIn"} onSubmit={(e: any) => formike.handleSubmit(e)}>
-        {formFields.map((field, index) => (
-          <React.Fragment key={index}>
-            <Input
-              name={field.name}
-              label={field.label}
-              type={field.type}
-              onBlur={formike.handleBlur}
-              onChange={formike.handleChange}
-              placeholder={field.label}
-              value={formike.values[field.name]}
-            />
-            {errors[field.name] && touched[field.name] && (
-              <ErrorText>{errors[field.name]}</ErrorText>
-            )}
-          </React.Fragment>
-        ))}
-      </Form>
-    </div>
+    <Form title="Welcome Back  " onSubmit={(e: any) => formike.handleSubmit(e)}>
+      {formFields.map((field, index) => (
+        <React.Fragment key={index}>
+          <Input
+            name={field.name}
+            label={field.label}
+            type={field.type}
+            onBlur={formike.handleBlur}
+            onChange={formike.handleChange}
+            placeholder={field.label}
+            value={formike.values[field.name]}
+          />
+          {errors[field.name] && touched[field.name] && (
+            <ErrorText>{errors[field.name]}</ErrorText>
+          )}
+        </React.Fragment>
+      ))}
+    </Form>
   );
 };
 

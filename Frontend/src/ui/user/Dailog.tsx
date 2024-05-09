@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import { useScrollBlock } from "../hooks/useScroll";
+import { useScrollBlock } from "../../hooks/useScroll";
 import { AiOutlineClose } from "react-icons/ai";
 type Redirection = {
   path: string;

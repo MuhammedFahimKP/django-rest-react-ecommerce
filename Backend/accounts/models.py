@@ -118,7 +118,6 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
         
         """Allow us to get a user's json web token by calling user.token."""
 
-
         refresh = RefreshToken.for_user(self)
         return {'refresh': str(refresh), 'access': str(refresh.access_token)}
 

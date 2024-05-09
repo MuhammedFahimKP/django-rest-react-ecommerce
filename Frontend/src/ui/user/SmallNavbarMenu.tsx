@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { navlinks } from "../utils/constants";
+import { navlinks } from "../../utils/constants";
 import { Link } from "react-router-dom";
 import { FaUser } from "react-icons/fa";
 import { IoMdHeart } from "react-icons/io";

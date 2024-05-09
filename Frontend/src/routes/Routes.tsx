@@ -1,21 +1,39 @@
 import { createBrowserRouter } from "react-router-dom";
-import SignIn from "../pages/SignIn";
-import SignUp from "../pages/SignUp";
-import Home from "../pages/Home";
-import ProtectedRoutes from "./ProtectedRoutes";
-// import PrivateRoute from "./PrivateRoute";
+import SignUp from "../pages/user/SignUp";
+import AdminHome from "../pages/admin/Home";
+import NewSignin from "../components/user/NewSignin";
+import Home from "../pages/user/Home";
+import Product from "../pages/admin/Product";
+import AddProduct from "../pages/admin/AddProduct";
+import EditProduct from "../pages/admin/EditProduct";
+import ProductViewPage from "../pages/admin/ProductViewPage";
+
 const routes = createBrowserRouter([
   {
-    path: "/auth",
-    element: <ProtectedRoutes />,
-    children: [{ path: "signin", element: <SignIn /> }],
+    path: "/",
+    element: <AdminHome />,
+    children: [
+      {
+        path: "product/",
+        element: <Product />,
+        children: [
+          { path: "add/", element: <AddProduct /> },
+          { path: "view/:id", element: <ProductViewPage /> },
+          { path: "edit/:id", element: <EditProduct /> },
+        ],
+      },
+    ],
+  },
+  {
+    path: "signin/",
+    element: <NewSignin />,
   },
   {
     path: "signup/",
     element: <SignUp />,
   },
   {
-    path: "/",
+    path: "user/",
     element: <Home />,
   },
 ]);

@@ -2,6 +2,10 @@ from shop.models import Categoery,Product,Brand,ProductVariant,ProductVariantIma
 from shop.utils import get_or_create,get_or_none
 from django.utils.text import slugify
 
+
+
+
+
 from shop.serializers import( 
     CategoerySerializer,
     BrandSerializer,
@@ -11,6 +15,8 @@ from shop.serializers import(
     ProductVariantImageSerializer,  
     ProductVariantSerailizer,
 )
+
+from accounts.exceptions import AlreadyExist
 from rest_framework import serializers
 
 class AdminCategoerySerializer(CategoerySerializer):
@@ -42,6 +48,98 @@ class AdminBrandSerializer(BrandSerializer):
         current_fields.insert(0,'id') 
         fields        = current_fields + ['is_active','created','updated']
        
+       
+class AdminProductCreateSerailizer(serializers.ModelSerializer):
+    
+    
+    categoery = serializers.PrimaryKeyRelatedField(queryset=Categoery.objects.all(),many=False)
+    brand     = serializers.PrimaryKeyRelatedField(queryset=Brand.objects.all(),many=False)
+    img       = serializers.ImageField()
+    
+    
+    
+    def validate(self,data):
+        
+        name = data['name']
+        product = Product.objects.filter(name__icontains=name)
+        
+        
+        
+        if product.exists():
+            raise AlreadyExist({'name':"product with same name already exists"})
+        
+        data['slug'] = slugify(name)
+        
+        return data
+    
+    
+    def create(self, validated_data):
+        instance = Product.objects.create(**validated_data)
+        
+        return instance
+    
+    
+    
+    class Meta:
+        
+        model = Product
+        fields = [
+            'name',
+            'categoery',
+            'brand',
+            'img',
+            'is_active'
+        ]
+        
+        
+class AdminProductUpdateSerailizer:
+    name      = serializers.CharField(required=False)
+    categoery = serializers.PrimaryKeyRelatedField(queryset=Categoery.objects.all(),many=False,required=False)
+    brand     = serializers.PrimaryKeyRelatedField(queryset=Brand.objects.all(),many=False,required=False)
+    img       = serializers.ImageField()
+    
+    
+    
+    
+    def validate(self,data):
+        
+        name = data['name']
+        product = Product.objects.filter(name__icontains=name)
+        
+        
+        
+        if product.exists():
+            raise AlreadyExist({'name':"product with same name already exists"})
+        
+        data['slug'] = slugify(name)
+        
+        return data
+    
+    
+    def update(self,instance,validated_data):
+        
+            instance.name      = validated_data.get('name',instance.name)
+            instance.categoery = validated_data.get('categoery',instance.categoery)
+            instance.brand     = validated_data.get('brand',instance.instance.brand)
+            instance.img       = validated_data.get('img',instance.img)
+            instance.is_active = validated_data.get('is_active',instance.is_active)
+            instance.save()
+            return instance
+    
+    
+    
+    class Meta:
+        
+        model = Product
+        fields = [
+            'name',
+            'categoery',
+            'brand',
+            'img',
+            'is_active'
+        ]  
+        
+           
 class AdminColorSerializer(ColorSerializer):
 
     is_active = serializers.BooleanField(required=False)
@@ -66,81 +164,121 @@ class AdminSizeSerializer(SizeSerializer):
         current_fields = SizeSerializer.Meta.fields.copy()
         current_fields.insert(0,'id')
         fields         = current_fields + ['is_active','created','updated']
+        
 
 
-class AdminProductSerializer(ProductSerilizer):
+
+class AdminProductViewSerailizer(serializers.ModelSerializer):
     
-    is_active = serializers.BooleanField(required=False)
+    name      = serializers.SerializerMethodField()
+    categoery = serializers.SerializerMethodField()
+    brand     = serializers.SerializerMethodField()
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-
-    brand     = AdminBrandSerializer()
-    categoery = AdminCategoerySerializer()
-
-    def validate(self,data):
-        print(data) 
-
-        try:
-
-            categoery  = Categoery.objects.get(name=data['categoery']['name'])
+    
+    
+    
+    def get_name(self,obj) -> str:
+        return obj.name
+    
+    def get_categoery(self,obj) -> str:
+        return obj.categoery.name
+    
+    def get_brand(self,obj) -> str:
+        return obj.brand.name
+    
+    class Meta:
+        model = Product
+        fields = [
             
-            data['categoery'] = categoery
+            'id',
+            'name',
+            'discription',
+            'categoery',
+            'brand',
+            'img',
+            'created',
+            'updated',
+            'is_active'
+        ]
+    
+    
+    
+    
+    
+# class AdminProductSerializer(ProductSerilizer):
+    
+#     is_active = serializers.BooleanField(required=False)
+#     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+#     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+
+#     brand     = AdminBrandSerializer()
+#     categoery = AdminCategoerySerializer()
+
+#     def validate(self,data):
+#         print(data) 
+
+#         try:
+
+#             categoery  = Categoery.objects.get(name=data['categoery']['name'])
+            
+#             data['categoery'] = categoery
 
 
-        except:
+#         except:
 
-            raise serializers.ValidationError(
+#             raise serializers.ValidationError(
 
-                'theres is no categoery in our db',
+#                 'theres is no categoery in our db',
                 
-            )
+#             )
 
         
-        try:
-            brand       = Brand.objects.get(name= data['brand']['name'])
-            data['brand'] = brand
-        except:
-            raise serializers.ValidationError('there is no brand exist in our db')
+#         try:
+#             brand       = Brand.objects.get(name= data['brand']['name'])
+#             data['brand'] = brand
+#         except:
+#             raise serializers.ValidationError('there is no brand exist in our db')
 
 
 
-        return data
+#         return data
 
 
 
     
 
-    class Meta:
+#     class Meta:
 
-        model          = ProductSerilizer.Meta.model
-        current_fields = ProductSerilizer.Meta.fields.copy()
-        current_fields.insert(0,'id')
-        fields         = current_fields + ['discription','is_active','created','updated'] 
+#         model          = ProductSerilizer.Meta.model
+#         current_fields = ProductSerilizer.Meta.fields.copy()
+#         current_fields.insert(0,'id')
+#         fields         = current_fields + ['discription','is_active','created','updated'] 
 
 
    
     
 
 
-    def create(self,validated_data):
+#     def create(self,validated_data):
 
-        active  = validated_data.get('is_active',None)
-        discription = validated_data.get('discription',None)
-        img         = validated_data['img']
+#         active  = validated_data.get('is_active',None)
+#         discription = validated_data.get('discription',None)
+#         img         = validated_data['img']
 
 
-        instance = Product(
-            name      = validated_data['name'],
-            img       = img if img else None,
-            categoery = validated_data['categoery'],
-            brand     = validated_data['brand'],
-            discription = discription,
-            is_active = active if active else False 
-        )
+#         instance = Product(
+#             name      = validated_data['name'],
+#             img       = img if img else None,
+#             categoery = validated_data['categoery'],
+#             brand     = validated_data['brand'],
+#             discription = discription,
+#             is_active = active if active else False 
+#         )
         
-        instance.save()
+#         instance.save()
        
-        return instance
+#         return instance
     
 
 class AdminProductVariantSerializer(serializers.Serializer):
@@ -262,11 +400,11 @@ class AdminProductVariantSerializer(serializers.Serializer):
         return instance
 
                 
-class AdminProductVarintListSerializer(AdminProductSerializer):
+class AdminProductVarintListSerializer(serializers.Serializer):
 
     
     img        = ProductVariantImageSerializer()
-    product    = AdminProductSerializer()
+    product    = AdminProductViewSerailizer()
     stock      = serializers.IntegerField()
     size       = AdminSizeSerializer()
     color      = AdminColorSerializer()

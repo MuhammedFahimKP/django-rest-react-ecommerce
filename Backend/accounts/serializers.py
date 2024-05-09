@@ -15,7 +15,7 @@ from .utils import (
 )
 from .thread import EmailThread
 from .task import send_mail
-from .exceptions import UserAlreadyExist
+from .exceptions import AlreadyExist
 
 
 
@@ -56,7 +56,7 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
     def validate(self,attrs):
         
         if user_exists_or_not(email=attrs['email']):
-            raise UserAlreadyExist({'email' : 'User with same Email already exists '})
+            raise AlreadyExist({'email' : 'User with same Email already exists '})
         
         password  = attrs.get('password','')
         password  = decrypt_string(password)

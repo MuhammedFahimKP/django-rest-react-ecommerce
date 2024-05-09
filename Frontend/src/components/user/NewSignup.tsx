@@ -10,16 +10,16 @@ import { CredentialResponse, useGoogleOneTapLogin } from "@react-oauth/google";
 import apiClient, {
   ApiClientError,
   ApiClientResponse,
-} from "../services/api-client";
-import { UserSignUpData as FormValues } from "../types";
+} from "../../services/api-client";
+import { UserSignUpData as FormValues } from "../../types";
 
-import Form from "../ui/Form";
-import InputContainer from "../ui/InputContainer";
-import Input from "../ui/Input";
-import ErrorText from "../ui/ErrorText";
-import SuceessIcon from "../ui/SuccessIcon";
-import { handleGoogleAuth } from "../utils/auth";
-import { RootState } from "../store";
+import Form from "../../ui/user/Form";
+import InputContainer from "../../ui/user/InputContainer";
+import Input from "../../ui/user/Input";
+import ErrorText from "../../ui/user/ErrorText";
+import SuceessIcon from "../../ui/user/SuccessIcon";
+import { handleGoogleAuth } from "../../utils/auth";
+import { RootState } from "../../store";
 import { useNavigate } from "react-router-dom";
 
 const initialValues: FormValues = {

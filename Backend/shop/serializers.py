@@ -132,10 +132,11 @@ class ProductVariantImageSerializer(serializers.ModelSerializer):
 
 class ProductVariantSerailizer(serializers.ModelSerializer):
    
-    
+    name   = serializers.SerializerMethodField()
     img     = ProductVariantImageSerializer()
     size    = serializers.SerializerMethodField()
     color   = serializers.SerializerMethodField()
+    
     
     
     
@@ -145,16 +146,21 @@ class ProductVariantSerailizer(serializers.ModelSerializer):
     def get_color(self,obj):
         return f"{obj.color.name}"
     
+    def get_name(self,obj):
+        return f"{obj.product.name}"
+    
     class Meta:
         model  = ProductVariant
         
         fields = [
-            'id',
-            'variant_id',
+            'name',
             'img',
             'size',
             'color',
-            'price',   
+            'price',
+            'stock'
+            
+            
         ]
 
 
@@ -196,13 +202,61 @@ class ProductSerilizer(serializers.ModelSerializer):
 
  
 
+class CartListSerailizer(serializers.Serializer):
+    
+    name = serializers.SerializerMethodField()
+    color = serializers.SerializerMethodField()
+    size = serializers.SerializerMethodField()
+    price = serializers.SerializerMethodField()
+    img   = serializers.SerializerMethodField()
+    stock = serializers.SerializerMethodField()
+    quantity = serializers.IntegerField(required=True)
+
+    url = serializers.HyperlinkedIdentityField(
+        view_name="cart-item-retrive-update-delete",
+        lookup_field = 'pk',
+        read_only = True
+    )
+
+    subtotal = serializers.SerializerMethodField()
+    
+    def get_name(self,obj):
+        return obj.product.product.name
+    
+    def get_color(self,obj):
+        return obj.product.color.name
+    
+    def get_size(self,obj):
+        return obj.product.size.name
+    
+    def get_price(self,obj):
+        return obj.product.price
+    
+    def get_img(self,obj):
+        return obj.product.img.img_1.url
+    
+    def get_stock(self,obj):
+        return obj.product.stock
+    
+    def get_subtotal(self,obj):
+        return obj.product.price * obj.quantity
+    
+    class Meta:
+        
+        fields = ['id','name','quantity','stock','subtotal','size','color','url']
+        model  = CartItem
+        
+    
+    
+    
+    
+    
 
 
 
+class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
 
-class CartItemSerializer(serializers.ModelSerializer):
-
-    product  = ProductSerilizer()
+    product  = serializers.PrimaryKeyRelatedField(many=False,queryset=ProductVariant.objects.all())
     quantity = serializers.IntegerField(required=True)
     url = serializers.HyperlinkedIdentityField(
         view_name="cart-item-retrive-update-delete",
@@ -234,7 +288,7 @@ class CartItemSerializer(serializers.ModelSerializer):
         
 
         
-        product = get_or_none(class_model=Product,name=data['product']['name'])
+        product = data['product']
         cart    = get_or_create(class_model=Cart,user=user)
 
 
@@ -246,7 +300,7 @@ class CartItemSerializer(serializers.ModelSerializer):
             )
 
 
-        data['product'] = product
+     
         data['cart'] = cart   
 
 
@@ -277,9 +331,6 @@ class CartItemSerializer(serializers.ModelSerializer):
 
             return instance 
 
-
-
-            
                         
 
         instance = CartItem.objects.create(
@@ -404,6 +455,24 @@ class WishtListItemSerializer(serializers.ModelSerializer):
 
         return instance 
     
+class LatestArrivalsSerailizer(serializers.ModelSerializer):
+    
+    brand = serializers.SerializerMethodField()
+    
+    
+    def get_brand(self,obj):
+        return obj.brand.name
+    
+    class Meta:
+        model = Product
+        fields = [
+            'name',
+            'slug',
+            'img',
+            'brand'
+        ]
+        
+            
     
 
 

@@ -16,10 +16,12 @@ import storage from "redux-persist/lib/storage";
 // slices
 import authSlice from "./authenticationSlice"
 import alertSlice from "./alertSlice";
-
+import cartSlice from "./cartSlice";
+import adminProductSearchSlice  from "../store/admin/productSearchSlice";
 
 const rootReducer = combineReducers({
     auth: authSlice,
+    
   })
 
 
@@ -36,7 +38,7 @@ const persistedReducer = persistReducer(
 
 export const store = configureStore({
 
-    reducer : {persistedReducer,alertSlice}, 
+    reducer : {persistedReducer,alertSlice,cartSlice,adminProductSearchSlice}, 
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
             serializableCheck: {

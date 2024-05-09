@@ -3,7 +3,7 @@ from django.contrib.auth import authenticate
 from django.conf import settings 
 from django.contrib.auth import get_user_model
 
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed,NotFound,NotAuthenticated
 
 from datetime import datetime, timedelta
 
@@ -47,9 +47,33 @@ class Google:
 
 
 
-def login_user(email):
-        social_user = authenticate(email=email,password=settings.SOCIAL_AUTH_PASSWORD)
-        return get_user_details_and_tokens(social_user)
+def login_user(email,password):
+       user = MyUser.objects.filter(email=email)
+       if user.exists():
+              user = user[0]
+              
+              if user.check_password(password) == False:
+                     raise AuthenticationFailed({'password':'inccrrect password'})
+              
+              if user.is_active == False:
+                     raise NotAuthenticated({'email':'not verified user'})
+                             
+              return get_user_details_and_tokens(user=user)
+       
+       raise  NotFound({'email':'user with email not found'})
+              
+              
+       
+       
+       
+       
+       
+
+
+
+# def login_user(email):
+#         social_user = authenticate(email=email,password=settings.SOCIAL_AUTH_PASSWORD)
+#         return get_user_details_and_tokens(social_user)
        
 
           
@@ -59,7 +83,7 @@ def register_social_user(email,first_name,last_name):
        user = MyUser.objects.filter(email=email)
        if user.exists():
               if  user[0].auth_provider == 'google':                               
-                     return login_user(email)           
+                     return login_user(email,password=settings.SOCIAL_AUTH_PASSWORD)           
               else:
                      raise AuthenticationFailed ({'email' :f'please login with your {user[0].auth_provider} account'})
               
@@ -76,7 +100,7 @@ def register_social_user(email,first_name,last_name):
               register_user.auth_provider = 'google'
               register_user.is_active = True
               register_user.save() 
-              return login_user(email=email)
+              return login_user(email=email,password=settings.SOCIAL_AUTH_PASSWORD)
                 
 
 import hashlib

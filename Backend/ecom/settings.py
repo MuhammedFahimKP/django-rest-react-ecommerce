@@ -62,9 +62,14 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
     
+    
+    
     #corsheaders apps
     'corsheaders',
 
+    #debug toolbar 
+    'debug_toolbar',
+    
     #celery_beat
     'django_celery_results',
     
@@ -74,6 +79,7 @@ INSTALLED_APPS = [
     #api docs
     'drf_spectacular'
 ]
+
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -86,9 +92,18 @@ MIDDLEWARE = [
     
     
     
-    #third party
-    'corsheaders.middleware.CorsMiddleware',
     
+    #cors headers
+    'corsheaders.middleware.CorsMiddleware',
+    #debug toolbar
+    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    
+]
+
+INTERNAL_IPS = [
+    # ...
+    "127.0.0.1",
+    # ...
 ]
 
 ROOT_URLCONF = 'ecom.urls'
@@ -97,7 +112,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-           'templates' / BASE_DIR, 
+             BASE_DIR / 'templates', 
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -217,6 +232,7 @@ REST_FRAMEWORK = {
 
 
 SIMPLE_JWT = {
+    
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=2),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=120),
     "ROTATE_REFRESH_TOKENS": False,
@@ -224,6 +240,7 @@ SIMPLE_JWT = {
     "UPDATE_LAST_LOGIN": False,
 
     "ALGORITHM": "HS256",
+    
     "SIGNING_KEY": SECRET_KEY,
     "VERIFYING_KEY": "",
     "AUDIENCE": None,
@@ -267,6 +284,7 @@ Google Auth Configration
 GOOGLE_CLIENT_ID     = os.environ.get('GOOGLE_CLIENT_ID')
 GOOGLE_CLIENT_SECRET = os.environ.get('GOOGLE_CLIENT_SECRET')
 SOCIAL_AUTH_PASSWORD = os.environ.get('SOCIAL_AUTH_PASSWORD') 
+
 
 
 
@@ -321,7 +339,8 @@ CELERY_BROKER_URL = config('CELERY_BROKER_REDIS_URL', default='redis://127.0.0.1
 CELERY_BEAT_SCHEDULER = 'django_celery_beat.schedulers.DatabaseSchedul'
 
 # #swager 
-# REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema' }
+REST_FRAMEWORK = { 'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema' }
+
 
 
 SPECTACULAR_SETTINGS = {

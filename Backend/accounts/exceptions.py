@@ -2,7 +2,7 @@ from django.utils.translation import gettext_lazy as  _
 from rest_framework import exceptions,status
 
 
-class UserAlreadyExist(exceptions.APIException):
+class AlreadyExist(exceptions.APIException):
     status_code = status.HTTP_409_CONFLICT
-    default_detail = _('User Already Exists.')
-    default_code = 'user already exists'
+    default_detail = _('Data Already Exists.')
+    default_code = 'data already exists'

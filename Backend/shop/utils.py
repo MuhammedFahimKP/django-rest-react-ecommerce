@@ -5,7 +5,7 @@ from django.core.exceptions import ObjectDoesNotExist
 
 
 
-def get_or_none(class_model,**kwargs) -> object or None:
+def get_or_none(class_model,**kwargs) -> object | None:
 
     #accepting models class and attributes
     try:

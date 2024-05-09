@@ -89,7 +89,7 @@ const Footer = () => {
                   placeholder="Your email"
                 />
                 <button
-                  className="relative h-auto inline-flex items-center justify-center rounded-full transition-colors
+                  className="relative h-auto inline-flex items-center justify-center  transition-colors
             text-sm sm:text-base font-medium py-3 px-4 sm:py-3.5 sm:px-6  disabled:bg-opacity/70 rounded-full bg-primary text-white hover:bg-primary/80 hover:text-white "
                 >
                   SUBSCRIBE

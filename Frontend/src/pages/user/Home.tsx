@@ -1,32 +1,32 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { logout } from "../store/authenticationSlice";
+import { logout } from "../../store/authenticationSlice";
 
-import ShopCard from "../ui/ShopCard";
-
-import { RootState } from "../store";
-import Navbar from "../components/Navbar";
+import { RootState } from "../../store";
+import Navbar from "../../components/user/Navbar";
 import { GrUserAdmin } from "react-icons/gr";
-import Dailog from "../ui/Dailog";
+import Dailog from "../../ui/user/Dailog";
 
-import ScreenContainer from "../ui/ScreenContainer";
-import { useEffect, useState } from "react";
-import axios, { AxiosResponse } from "axios";
-import PaginationButtons from "../ui/PaginationButtons";
-import Footer from "../components/Footer";
+import ScreenContainer from "../../ui/user/ScreenContainer";
+
+import Footer from "../../components/user/Footer";
 
 import { motion, useScroll } from "framer-motion";
 
-import Hero from "../components/Hero";
-import Slider from "../components/Slider";
+import Slider from "../../components/user/Slider";
 
-import Toaster from "../utils/components/Toster";
+import Toaster from "../../utils/components/Toster";
 
-import CartSec from "../ui/CartSec";
+import CartSec from "../../components/user/CartSec";
 
-import { dismissCartAlert } from "../store/alertSlice";
-import ShopBy from "../components/ShopBy";
-import LatestArrivals from "../components/LatestArrivals";
+import BottmNavbar from "../../components/user/BottmNavbar";
+
+import { dismissCartAlert } from "../../store/alertSlice";
+
+import LatestArrivals from "../../components/user/LatestArrivals";
+import Category from "../../components/user/Category";
+import ProductCard from "../../components/user/ProductCard";
+import { useState } from "react";
 
 export const CircleIndicator = () => {
   const { scrollYProgress } = useScroll();
@@ -56,16 +56,21 @@ const Home = () => {
     navigate("signin/");
   };
 
+  const [cartOpen, setCartOpen] = useState(false);
+
+  const onOpenOrClose = () => setCartOpen(!cartOpen);
+
   return (
     <>
       <ScreenContainer>
-        <Navbar />
+        <Navbar onOpen={onOpenOrClose} />
 
-        <div className="px-2 md:px-[3%] lg:px-[3%]  mt-4">
+        <div className="">
           <Slider />
         </div>
-        <Hero />
-        <div className=" flex w-full justify-between items-center"></div>
+        {/* <Hero /> */}
+
+        {/* <div className=" flex w-full justify-between items-center"></div>
         <div className="w-full h-screen">
           <div className="w-full p-6">
             <button
@@ -82,29 +87,15 @@ const Home = () => {
           ) : (
             <p className="text-center items-center">Loading ...</p>
           )}
-        </div>
-        <Toaster alert={alert}>
-          <Dailog
-            dismiss={() => dispatch(dismissCartAlert())}
-            icon={
-              <GrUserAdmin className="mx-auto mb-4 text-gray-400 w-12 h-12" />
-            }
-            enterLink={{
-              text: "signin",
-              path: "/signin",
-            }}
-            exitLink={{
-              text: "Not now",
-              path: "",
-            }}
-          >
-            Login Required
-          </Dailog>
-        </Toaster>
+        </div> */}
+        <Category />
         <LatestArrivals />
-        <CartSec />
+
+        {cartOpen && <CartSec onClose={onOpenOrClose} />}
 
         <Footer />
+
+        <BottmNavbar />
       </ScreenContainer>
     </>
   );

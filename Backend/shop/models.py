@@ -9,7 +9,6 @@ from accounts.models import MyUser
 
 
 
-
 # Create your models here.
 
 

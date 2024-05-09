@@ -1,4 +1,4 @@
-import axios,{AxiosError,AxiosResponse} from "axios";
+import axios,{AxiosError,AxiosRequestConfig,AxiosResponse,CanceledError} from "axios";
 import createAuthRefreshInterceptor from 'axios-auth-refresh';
 import  {getState,dispatch} from "../store"
 import  { setAuthTokens,logout} from "../store/authenticationSlice"
@@ -65,7 +65,7 @@ const refreshAuthLogic = async (failedRequest:AxiosError) => {
 
 createAuthRefreshInterceptor(apiClient, refreshAuthLogic);
 
-export function fetcher<T = any>(url: string) {
+export async function fetcher<T = any>(url: string) {
     return apiClient.get<T>(url).then((res) => {
         console.log(res)
         return res.data
@@ -84,3 +84,5 @@ export default apiClient
 
 export type ApiClientError  = AxiosError
 export type ApiClientResponse = AxiosResponse 
+export type ApiCLientRequestConfig = AxiosRequestConfig
+export  {CanceledError as ApiClientCanceledError}

@@ -20,19 +20,28 @@ from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
 from django.conf.urls.static import static
-
+from debug_toolbar import urls
 # schema_view  = get_swagger_view(title="Wild Fab API")
-from drf_spectacular.views import  SpectacularJSONAPIView , SpectacularSwaggerView
+from drf_spectacular.views import   SpectacularSwaggerView,SpectacularJSONAPIView
 
 urlpatterns = [
 
     path('ad/', admin.site.urls),
+    # path("schema/", SpectacularAPIView.as_view(), name="schema"),
+    # path(
+    #     "",
+    #     SpectacularSwaggerView.as_view(
+    #         template_name="swagger-ui.html", url_name="schema"
+    #     ),
+    #     name="swagger-ui",
+    # ),
     path('api/',SpectacularJSONAPIView.as_view(),name="schema"),
     path('',SpectacularSwaggerView.as_view()),
     path('users/',include('accounts.urls')),
     path('admin/',include('manager.routers')),
     path('shop/',include('shop.urls')),
     path('orders/',include('checkouts.urls')),
+    path('__debug__/', include('debug_toolbar.urls')),   
     
 ]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
 
