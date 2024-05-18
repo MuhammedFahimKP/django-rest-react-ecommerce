@@ -44,9 +44,7 @@ class Categoery(BaseModel):
 class Brand(BaseModel):
 
     name      = models.CharField(max_length=200,unique=True)
-
     slug      = models.SlugField(max_length=200,unique=True,null=True)
-    
     is_active = models.BooleanField(default=False)
 
 

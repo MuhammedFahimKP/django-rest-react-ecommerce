@@ -37,6 +37,7 @@ const AddProduct = () => {
   const initialValues: ProductForm = {
     name: "",
     categoery: "",
+    discription: "",
     brand: "",
     is_active: false,
     img: null,

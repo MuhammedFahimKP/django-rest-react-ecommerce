@@ -1,13 +1,13 @@
 import { useNavigate } from "react-router-dom";
 import {
   Avatar,
-  Chip,
   IconButton,
   Typography,
   Tooltip,
 } from "@material-tailwind/react";
 import type { AdminProduct } from "../../types";
 import { PencilIcon } from "@heroicons/react/24/outline";
+
 interface Props extends AdminProduct {
   classes: string;
 }
@@ -110,7 +110,7 @@ const ProductRow = ({
       </td>
       <td
         className={classes}
-        onClick={(e: any) => navigate("/product/view/" + id)}
+        onClick={(e: any) => navigate("/product/view/" + id + "/")}
       >
         <Tooltip content="Edit Product">
           <IconButton placeholder={undefined} variant="text">

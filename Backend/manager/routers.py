@@ -1,4 +1,5 @@
 from rest_framework.routers import DefaultRouter
+
 from .viewsets import (
     AdminCategoeryViewset,
     AdminBrandViewset,
@@ -41,6 +42,8 @@ router.register(
     basename='product'
 )
 
+
+
 router.register(
 
     'product-variant',
@@ -50,7 +53,10 @@ router.register(
 )
 
 
-urlpatterns = router.urls
+
+
+
+
 
 
 

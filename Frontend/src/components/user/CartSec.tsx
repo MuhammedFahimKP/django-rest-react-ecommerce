@@ -25,6 +25,8 @@ const CartSec = ({ onClose }: Props) => {
     (state: RootState) => state.cartSlice
   );
 
+  console.log(items);
+
   return (
     <div className="fixed inset-0 w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] font-[sans-serif] ">
       <div className="w-full max-w-md bg-white shadow-lg relative ml-auto h-screen">

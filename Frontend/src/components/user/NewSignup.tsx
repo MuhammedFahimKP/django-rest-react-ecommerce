@@ -171,11 +171,7 @@ const NewSignup = () => {
           });
         }
       })
-      .catch((err: ApiClientError) => {
-        if (err.response?.status === 409) {
-          formike.setErrors({ email: "email is already Taken" });
-        }
-      });
+      .catch((err: ApiClientError) => {});
   }
 
   return (

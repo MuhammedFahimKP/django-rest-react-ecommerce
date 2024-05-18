@@ -1,6 +1,10 @@
+from django.utils.text import slugify
+
 from shop.models import Categoery,Product,Brand,ProductVariant,ProductVariantImages,Size,Color
 from shop.utils import get_or_create,get_or_none
-from django.utils.text import slugify
+from accounts.exceptions import AlreadyExist
+
+
 
 
 
@@ -19,6 +23,144 @@ from shop.serializers import(
 from accounts.exceptions import AlreadyExist
 from rest_framework import serializers
 
+
+
+class AdminSizeVariaitonSerailizer(serializers.ModelSerializer):
+    
+    size = serializers.SerializerMethodField()
+    
+    def get_size(self,obj):
+        return obj.size.name
+    
+    
+    class Meta:
+        model = ProductVariant
+        fields =  [
+            'id',
+            'size',
+            'price',
+            'stock',
+        ]
+    
+
+class AdminSizeVariationCreateSerailizer(serializers.ModelSerializer):
+    
+    img   = serializers.PrimaryKeyRelatedField(queryset=ProductVariantImages.objects.all(),many=False)
+    size  = serializers.PrimaryKeyRelatedField(queryset=Size.objects.all(),many=False)
+    
+    def validate(self,data):
+        
+        product_varaint_img = data['img']
+        size                = data['size']
+        product_varation    = ProductVariant.objects.filter(img=product_varaint_img,size=size)
+        prduct_id           = product_varaint_img.img_id.split()[0]
+        product             = Product.objects.get(id=prduct_id)
+        color_id            = product_varaint_img.img_id.split()[1]
+        color               = Color.objects.get(id=color_id)
+        data['color']       = color
+        data['product']     = product
+        variant_id          = str(product.id) + " " + str(color.name) + " " + str(size.name)
+        data['variant_id']  = slugify(variant_id)
+        data['is_active']   = True
+        
+        
+        if data['stock'] < 100:
+            raise serializers.ValidationError({
+                'stock' : 'stock must be 100 or more'
+            })
+        
+        if  data['price'] < 1000 or data['price'] > 10000:
+            
+            raise serializers.ValidationError({
+                'price' : 'price range must be 1000 to 10000'
+            })
+            
+        
+        if product_varation.exists() :
+            raise AlreadyExist({
+                'size' : 'already exist for the same color'
+            })
+            
+        return data     
+    
+    def create(self,validated_data):
+        
+        for key,value in validated_data.items():
+            
+            print(f'{key}   {value}')
+        
+        instance = ProductVariant.objects.create(**validated_data)
+        return instance   
+            
+    
+    
+    class Meta :
+        model = ProductVariant
+        fields = [
+            'img',
+            'price',
+            'size',
+            'stock',
+        ]
+
+
+class AdminSizeVariationUpdateSerailizer(serializers.ModelSerializer):
+    
+    
+    price  = serializers.DecimalField(max_digits=16, decimal_places=2)
+    stock  = serializers.IntegerField()
+    size   = serializers.SerializerMethodField()
+    
+    def get_size(self,obj):
+        return obj.size.name
+    
+    
+    def validate(self, data):
+        
+        if not data['price'] and not data['stock']:  
+            raise serializers.ValidationError({
+                'not fields' : f'please provide any size or price '
+            })
+        
+        
+    def upate(self,instance,validated_data):
+        
+        instance.price   = validated_data.get('price',instance.price)
+        instance.stock   = validated_data.get('stock',instance.stock)
+        instance.save()
+        
+        return instance 
+    
+    class Meta:
+        
+        fields = [
+            
+            'price',
+            'size',
+            'stock',
+        
+        ]
+    
+
+class AdminProductVarationSerializer(serializers.ModelSerializer):    
+    
+    color = serializers.SerializerMethodField()
+    
+    
+    def get_color(self,obj):
+        
+        color_id = obj.img_id.split()[1]
+        color    = Color.objects.get(id=color_id)
+        
+        return f"{color.name}"
+
+    
+    class Meta:
+        
+        model  = ProductVariantImages
+        fields = ['id','img_id','color','img_1','img_2','img_3']
+        read_only_fields = ("img_1","img_2","img_3")
+    
 class AdminCategoerySerializer(CategoerySerializer):
      
     is_active = serializers.BooleanField(required=False) 
@@ -92,39 +234,39 @@ class AdminProductCreateSerailizer(serializers.ModelSerializer):
         ]
         
         
-class AdminProductUpdateSerailizer:
+class AdminProductUpdateSerailizer(serializers.ModelSerializer):
+    
     name      = serializers.CharField(required=False)
     categoery = serializers.PrimaryKeyRelatedField(queryset=Categoery.objects.all(),many=False,required=False)
     brand     = serializers.PrimaryKeyRelatedField(queryset=Brand.objects.all(),many=False,required=False)
     img       = serializers.ImageField()
     
     
-    
-    
     def validate(self,data):
         
-        name = data['name']
-        product = Product.objects.filter(name__icontains=name)
+        if 'name' in data.keys():
+            
+            name = data['name']
+            product = Product.objects.filter(name__icontains=name)
         
+            if product.exists():
+                raise AlreadyExist({'name':"product with same name already exists"})
         
-        
-        if product.exists():
-            raise AlreadyExist({'name':"product with same name already exists"})
-        
-        data['slug'] = slugify(name)
-        
+            data['slug'] = slugify(name)
         return data
     
     
     def update(self,instance,validated_data):
+
+        instance.name        = validated_data.get('name',instance.name)
+        instance.categoery   = validated_data.get('categoery',instance.categoery)
+        instance.brand       = validated_data.get('brand',instance.brand)
+        instance.img         = validated_data.get('img',instance.img)
+        instance.is_active   = validated_data.get('is_active',instance.is_active)
+        instance.discription = validated_data.get('discription',instance.discription)
+        instance.save()
         
-            instance.name      = validated_data.get('name',instance.name)
-            instance.categoery = validated_data.get('categoery',instance.categoery)
-            instance.brand     = validated_data.get('brand',instance.instance.brand)
-            instance.img       = validated_data.get('img',instance.img)
-            instance.is_active = validated_data.get('is_active',instance.is_active)
-            instance.save()
-            return instance
+        return instance
     
     
     
@@ -136,7 +278,8 @@ class AdminProductUpdateSerailizer:
             'categoery',
             'brand',
             'img',
-            'is_active'
+            'is_active',
+            'discription',
         ]  
         
            

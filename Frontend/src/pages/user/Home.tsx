@@ -27,6 +27,7 @@ import LatestArrivals from "../../components/user/LatestArrivals";
 import Category from "../../components/user/Category";
 import ProductCard from "../../components/user/ProductCard";
 import { useState } from "react";
+import { useData } from "../../hooks";
 
 export const CircleIndicator = () => {
   const { scrollYProgress } = useScroll();
@@ -50,6 +51,8 @@ const Home = () => {
   const user = useSelector(
     (state: RootState) => state.persistedReducer.auth.user
   );
+
+  const { data: Latest } = useData("shop/product-latest/");
 
   const handleLogout = () => {
     dispatch(logout());

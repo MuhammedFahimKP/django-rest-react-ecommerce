@@ -1,12 +1,58 @@
 import { useEffect, useState } from "react";
 import axios, { AxiosResponse } from "axios";
-import ProductCard from "./ProductCard";
+
 import apiClient from "../../services/api-client";
 
 export interface LatestArrival {
   name: string;
   img: string;
   brand: string;
+}
+
+function LatestCard({ name, img, brand }: LatestArrival) {
+  return (
+    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 overflow-hidden w-40 md:w-72 rounded-md">
+      <a href="#">
+        <img
+          src={img}
+          alt="Product image"
+          className="h-44 md:h-80 w-40  md:w-72 object-cover object-top"
+        />
+      </a>
+      <div className="px-4 py-3 w-40 md:w-72">
+        <span className="text-gray-400 mr-3 uppercase text-xs">{brand}</span>
+        <p className="text-sm  md:text-lg font-bold text-black truncate block capitalize">
+          {name}
+        </p>
+        <div className="flex items-center">
+          <p className="text-lg font-semibold text-black cursor-auto my-3">
+            $149
+          </p>
+          <del>
+            <p className="text-sm text-gray-600 cursor-auto ml-2">$199</p>
+          </del>
+          <div className="ml-auto">
+            <a href="#">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width={20}
+                height={20}
+                fill="currentColor"
+                className="bi bi-bag-plus"
+                viewBox="0 0 16 16"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M8 7.5a.5.5 0 0 1 .5.5v1.5H10a.5.5 0 0 1 0 1H8.5V12a.5.5 0 0 1-1 0v-1.5H6a.5.5 0 0 1 0-1h1.5V8a.5.5 0 0 1 .5-.5z"
+                />
+                <path d="M8 1a2.5 2.5 0 0 1 2.5 2.5V4h-5v-.5A2.5 2.5 0 0 1 8 1zm3.5 3v-.5a3.5 3.5 0 1 0-7 0V4H1v10a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V4h-3.5zM2 5h12v9a1 1 0 0 1-1 1H3a1 1 0 0 1-1-1V5z" />
+              </svg>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 const LatestArrivals = () => {
@@ -37,67 +83,9 @@ const LatestArrivals = () => {
         {/* <h1 className="text-3xl">Tailwind CSS</h1> */}
       </div>
 
-      <div className="grid grid-flow-row  lg:gap-8 px-2  lg:px-56  bg-blue-400 text-neutral-600 grid-cols-2 md:grid-cols-2 lg:grid-cols-3 ">
+      <div className="grid grid-cols-2  lg:grid-cols-3 place-items-center bg-red-400  min-w-sm   mx-auto mb-5 mt-5 gap-2 lg:gap-5 ">
         {latestArrivals.map((item: LatestArrival) => (
-          <div className="my-8 rounded hover:-translate-y-1 bg-red-500 p-0 w-40 lg:w-80 text-ellipsis ">
-            <a href="link" className="cursor-pointer">
-              <figure>
-                {/* Image */}
-                <img
-                  src={item.img}
-                  className="rounded-t h-40 lg:h-80 w-full object-cover"
-                />
-                <figcaption className="p-4">
-                  {item.name}
-                  <p
-                    className="text-lg mb-4 font-bold leading-relaxed text-gray-800 dark:text-gray-300"
-                    x-text="post.title"
-                  >
-                    {/* Post Title */}
-                  </p>
-                  {/* Description */}
-                  <small
-                    className="leading-5 text-gray-500 dark:text-gray-400"
-                    x-text="post.description"
-                  >
-                    {item.brand}
-                  </small>
-                </figcaption>
-              </figure>
-            </a>
-          </div>
-        ))}
-      </div>
-
-      <div className="flex items-center  justify-center bg-red-500 align-baseline ">
-        {latestArrivals.map((product: LatestArrival) => (
-          <div
-            className="max-w-xs bg-white 
-                      rounded-lg overflow-hidden
-                      shadow-lg card card4"
-          >
-            <img className="w-full" src={product.img} alt="Product Image" />
-            <div className="p-4">
-              <h3
-                className="text-xl font-semibold
-                             text-gray-800"
-              >
-                Product Name 4
-              </h3>
-              <p className="text-gray-600 mt-2">
-                here content goes for the card 4
-              </p>
-              <p className="text-gray-700 font-bold mt-2">$49.99</p>
-              <button
-                className="bg-blue-500 text-white 
-                             font-semibold py-2 px-4 mt-4 
-                             rounded-lg hover:bg-blue-600
-                             transition-all duration-300"
-              >
-                Add to Cart
-              </button>
-            </div>
-          </div>
+          <LatestCard brand={item.brand} img={item.img} name={item.name} />
         ))}
       </div>
     </>

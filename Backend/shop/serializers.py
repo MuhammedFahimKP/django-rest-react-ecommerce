@@ -132,22 +132,21 @@ class ProductVariantImageSerializer(serializers.ModelSerializer):
 
 class ProductVariantSerailizer(serializers.ModelSerializer):
    
-    name   = serializers.SerializerMethodField()
+    name    = serializers.SerializerMethodField()
     img     = ProductVariantImageSerializer()
     size    = serializers.SerializerMethodField()
     color   = serializers.SerializerMethodField()
     
     
     
-    
     def get_size(self,obj):
-        return f"{obj.size.name}"
+        return f"{obj.size}"
     
     def get_color(self,obj):
-        return f"{obj.color.name}"
+        return f"{obj.color}"
     
     def get_name(self,obj):
-        return f"{obj.product.name}"
+        return f"{obj.product}"
     
     class Meta:
         model  = ProductVariant
@@ -202,13 +201,13 @@ class ProductSerilizer(serializers.ModelSerializer):
 
  
 
-class CartListSerailizer(serializers.Serializer):
+class CartListSerailizer(serializers.ModelSerializer):
     
     name = serializers.SerializerMethodField()
     color = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
-    img   = serializers.SerializerMethodField()
+    img   = serializers.ImageField(source='product.img.img_1.url')
     stock = serializers.SerializerMethodField()
     quantity = serializers.IntegerField(required=True)
 
@@ -232,8 +231,6 @@ class CartListSerailizer(serializers.Serializer):
     def get_price(self,obj):
         return obj.product.price
     
-    def get_img(self,obj):
-        return obj.product.img.img_1.url
     
     def get_stock(self,obj):
         return obj.product.stock
@@ -243,9 +240,9 @@ class CartListSerailizer(serializers.Serializer):
     
     class Meta:
         
-        fields = ['id','name','quantity','stock','subtotal','size','color','url']
+        fields = ['id','name','quantity','stock','subtotal','size','color','url' ,'img','price']
         model  = CartItem
-        
+        read_only_fields = ['img']
     
     
     
@@ -457,11 +454,28 @@ class WishtListItemSerializer(serializers.ModelSerializer):
     
 class LatestArrivalsSerailizer(serializers.ModelSerializer):
     
-    brand = serializers.SerializerMethodField()
-    
+    brand     = serializers.SerializerMethodField()
+    colors    = serializers.SerializerMethodField('get_all_colors')
+    min_price = serializers.SerializerMethodField()
     
     def get_brand(self,obj):
         return obj.brand.name
+    
+    
+    def get_all_colors(self,obj):
+        
+        data = obj.variants.all().values_list('color__name', flat=True).distinct()
+        
+        return data
+        #ProductVariant.objects.filter(product=product_instance).
+        
+    def get_min_price(self,obj):
+        
+        price = obj.variants.order_by('price').first() 
+        
+        return price.price    
+        
+    
     
     class Meta:
         model = Product
@@ -469,7 +483,9 @@ class LatestArrivalsSerailizer(serializers.ModelSerializer):
             'name',
             'slug',
             'img',
-            'brand'
+            'min_price',
+            'brand',
+            'colors',
         ]
         
             

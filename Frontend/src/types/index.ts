@@ -1,3 +1,6 @@
+export type   DynamicObj  =  {
+    [key:string]:any
+}
 export interface UserSignInData{
     email:string;
     password:string;
@@ -31,12 +34,14 @@ interface Product{
 
 
 export interface ProductForm {
+    
     slug?:string;
     name: string;
     categoery: string;
     brand: string;
     is_active: any;
     img: any;
+    discription:string;
   }
 
 export interface CartItem{
@@ -62,6 +67,8 @@ export interface Whishlist {
 
 
 
+
+
 // admin side
 
 interface AdminModelData{
@@ -73,6 +80,12 @@ interface AdminModelData{
 }
 
 
+export interface AdminSize {
+
+    id:string;
+    name:string;
+
+}
 export interface AdminProductSearchQuery{
     name:string;
     category:string;
@@ -87,5 +100,37 @@ export interface AdminProduct extends AdminModelData {
   
 }
 
-export type AdminBrand = AdminModelData
+
+export interface UpdateSizeVariation {
+    id:string;
+    price?:number | string; 
+    stock?:number
+}
+
+export interface Variation{
+
+    id:string;
+    color:string;
+    img_1:string;
+    img_2:string;
+    img_3:string;
+    img_id:string;
+
+}
+
+export interface SizeVariation {
+    id:string;
+    size:string;
+    price:string | number;
+    stock : number ;
+}
+export interface VariationWithSize extends Variation {
+    size_varations:SizeVariation[] | []
+}
+
+
+
+
+export type AdminColor    = AdminModelData     
+export type AdminBrand    = AdminModelData
 export type AdminCategory = AdminModelData

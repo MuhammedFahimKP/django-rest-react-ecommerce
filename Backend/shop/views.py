@@ -41,7 +41,7 @@ from .filters import ProductFilterSet
 class LatestArrivalsListView(generics.ListAPIView):
     
     serializer_class = LatestArrivalsSerailizer
-    queryset         = Product.objects.prefetch_related().all().order_by('-created')
+    queryset         = Product.objects.prefetch_related('variants').filter(variants__isnull=False).distinct().order_by('-created')
     
     
 

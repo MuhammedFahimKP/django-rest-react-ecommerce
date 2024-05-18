@@ -1,4 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit" ;
+import {thunk,ThunkAction} from "redux-thunk"
 
 import {
     FLUSH,
@@ -18,6 +19,8 @@ import authSlice from "./authenticationSlice"
 import alertSlice from "./alertSlice";
 import cartSlice from "./cartSlice";
 import adminProductSearchSlice  from "../store/admin/productSearchSlice";
+import adminProductVariationSlice from "../store/admin/producVarationSlice"
+import currentProductSlice from "./currentProductSlice";
 
 const rootReducer = combineReducers({
     auth: authSlice,
@@ -38,12 +41,20 @@ const persistedReducer = persistReducer(
 
 export const store = configureStore({
 
-    reducer : {persistedReducer,alertSlice,cartSlice,adminProductSearchSlice}, 
+    reducer : {
+      
+      persistedReducer,
+      alertSlice,
+      cartSlice,
+      currentProductSlice,
+      adminProductSearchSlice,
+      adminProductVariationSlice
+      
+    }, 
     middleware: (getDefaultMiddleware) =>
         getDefaultMiddleware({
-            serializableCheck: {
-                ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
-            },
+            serializableCheck: false,
+          
         }),
 })
 

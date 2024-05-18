@@ -6,6 +6,7 @@ import { useDispatch } from "react-redux";
 const CartCard = ({
   id,
   color,
+  img,
   name,
   brand,
   quantity,
@@ -18,10 +19,7 @@ const CartCard = ({
       <div className="flex items-start justify-between gap-4 py-8">
         <div className="flex max-sm:flex-col gap-6">
           <div className="h-40 bg-gray-100 border-2   overflow-hidden shadow-2xl rounded ">
-            <img
-              src="https://readymadeui.com/product_img_2.webp"
-              className="w-full h-full object-contain shrink-0"
-            />
+            <img src={img} className="w-full h-full object-contain shrink-0" />
           </div>
           <div>
             <p className="text-md font-bold text-[#333]">{name}</p>

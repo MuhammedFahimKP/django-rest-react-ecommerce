@@ -18,17 +18,17 @@ const initialState:State = {
 
 const getCartItems = createAsyncThunk('getCartItems',async () => {
     const res = await apiClient.get('shop/cart/')
-    return res 
+    return res.data
 }) 
 
 const addToCart = createAsyncThunk('addToCart',async () => {
     const res = await apiClient.post('shop/cart/')
-    return res 
+    return res.data
 })
 
 const updateCartItem = createAsyncThunk('updateCartItem',async ({id,quantity} : {id:string,quantity:number}) => {
     const res  = await apiClient.patch(`shop/cart/${id}`,{quantity})
-    return res 
+    return res.data
 })
 
 

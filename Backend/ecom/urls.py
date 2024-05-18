@@ -38,7 +38,7 @@ urlpatterns = [
     path('api/',SpectacularJSONAPIView.as_view(),name="schema"),
     path('',SpectacularSwaggerView.as_view()),
     path('users/',include('accounts.urls')),
-    path('admin/',include('manager.routers')),
+    path('admin/',include('manager.urls')),
     path('shop/',include('shop.urls')),
     path('orders/',include('checkouts.urls')),
     path('__debug__/', include('debug_toolbar.urls')),   

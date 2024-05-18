@@ -38,7 +38,7 @@ const useData = <T>(endpoint:string,requestConfig ?:AxiosRequestConfig,deps?:any
 
       },deps ? [...deps] : []);
 
-    return { data , error , isLoading}
+    return { data , error , isLoading ,setData}
     
 }
 

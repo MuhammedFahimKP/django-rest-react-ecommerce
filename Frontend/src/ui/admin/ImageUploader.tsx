@@ -3,11 +3,11 @@ import { genrateImageUrl } from "../../utils/image";
 
 interface Props {
   name: string;
-  value: Blob | string;
+
   onChange: (e: ChangeEvent<HTMLInputElement>) => void;
 }
 
-const ImageUploader = ({ name, value, onChange }: Props) => {
+const ImageUploader = ({ name, onChange }: Props) => {
   const [image, setImage] = useState<null | string>();
 
   const changeEvent = (e: ChangeEvent<HTMLInputElement>) => {
@@ -33,7 +33,9 @@ const ImageUploader = ({ name, value, onChange }: Props) => {
         dark:text-neutral-500
         dark:file:bg-blue-500
         dark:hover:file:bg-blue-400
+
       "
+          name={name}
           onChange={changeEvent}
         />
       </label>

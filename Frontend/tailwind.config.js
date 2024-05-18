@@ -10,6 +10,7 @@ module.exports = withMT({
       pacifico: ['"Pacifico"'],
       ptsans: ['"PT Sans"'],
       roboto: ['"Roboto'],
+      bebas: ['"Bebas Neue"'],
     },
     extend: {
       colors: {

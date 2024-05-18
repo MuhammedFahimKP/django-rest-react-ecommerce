@@ -1,5 +1,5 @@
 
-from rest_framework import generics
+from rest_framework.exceptions import NotFound
 from rest_framework import viewsets,response,status
 from rest_framework.parsers import MultiPartParser,FormParser
 from rest_framework.response import Response
@@ -15,9 +15,11 @@ from .serializers import (
     AdminBrandSerializer,
     AdminColorSerializer,
     AdminSizeSerializer,
+    
     AdminProductViewSerailizer,
     AdminProductCreateSerailizer,
     AdminProductUpdateSerailizer,
+    AdminProductVarationSerializer,
     AdminProductVariantSerializer,
     AdminProductVarintListSerializer,
 )
@@ -27,12 +29,15 @@ from shop.models import (
     Color,
     Size,
     Product,
+    ProductVariantImages,
     ProductVariant
 )
 
 from .permissions import AdminOnly
 
 from  .filters import AdminProductFilterSet
+
+from .utils import is_valid_uuid
 
 
 
@@ -69,6 +74,46 @@ class AdminColorViewset(JWTPermission,viewsets.ModelViewSet):
     lookup_field       ='pk'
 
 
+
+class AdminVariationViewset(JWTPermission,viewsets.ModelViewSet):
+    
+    permission_classes = [AdminOnly]
+    queryset           = ProductVariantImages.objects.all()
+    serializer_class   = AdminProductVarationSerializer
+    lookup_field       = 'pk'
+    
+    
+    @action(detail=True,methods=['get'])
+    def get_all_varions(self,request):
+        return Response({'detail':'Not Found'},status=404)
+    
+    
+    
+    @action(detail=True,methods=['get'])
+    def get_variation_for_the_product(self,request,pk):
+        
+        print('hai')
+        
+        if pk == '':
+            
+            raise NotFound()
+        
+        
+        queryset = self.queryset.filter(image_id__startswith=pk)
+        
+        serializer = self.get_serializer_class()
+        serializer = serializer(data=queryset)
+        
+        return self.get_paginated_response(serializer.data)
+        
+    
+        
+        
+        
+    
+    
+    
+    
 
 class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
 
@@ -125,17 +170,22 @@ class AdminProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
     
     @action(detail=True,methods=['patch'])
-    def update_product(self,request,slug) -> Response:
+    def update_product(self,request,pk=None) -> Response:
         
+        pk         = is_valid_uuid()
+        
+        instance = self.get_queryset().filter(id=pk)
+        
+        if not instance.exist():
+            raise NotFound()
+         
+        instance   = instance.first()    
         serializer =  self.get_serializer_class()
-        
-        serializer = serializer(data=request.data)
-        
-        
+        serializer =  serializer(instance,data=request.data,context={'request':request})
+
         if serializer.is_valid(raise_exception=True) :
             
             serializer.save()
-            
             return Response(serializer.data,status=status.HTTP_200_OK)
         
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)

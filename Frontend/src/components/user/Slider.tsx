@@ -1,19 +1,30 @@
-import { useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
+import { useWindowDimensions } from "../../hooks/useWindow";
 
 import "swiper/css";
 import "swiper/css/pagination";
 
 import { Autoplay, Pagination } from "swiper/modules";
 
-const slides = [
-  "https://espanshe.com/cdn/shop/files/Canvas_acd48fd9-0078-4912-9c63-8d9f7b3957aa.png?v=1686303486&width=1800",
-  "https://espanshe.com/cdn/shop/files/Canvas_1_47165fe4-9b57-47d3-8c49-08d918abb33c.png?v=1686043542&width=1800",
-];
-
 const ActiveSlider = () => {
   const paginater = useRef<HTMLDivElement | null>(null);
-  console.log(paginater);
+  const [slides, setSlides] = useState<string[] | []>([]);
+  const { width } = useWindowDimensions();
+
+  useEffect(() => {
+    if (width < 700) {
+      setSlides([
+        "https://espanshe.com/cdn/shop/files/Canvas_3.png?v=1684475994&width=575",
+        "https://espanshe.com/cdn/shop/files/Canvas_10_9295a618-dd8e-4abc-a46d-a6f85d8080d5.png?v=1686306955&width=750",
+      ]);
+    } else {
+      setSlides([
+        "https://espanshe.com/cdn/shop/files/Canvas_acd48fd9-0078-4912-9c63-8d9f7b3957aa.png?v=1686303486&width=1800",
+        "https://espanshe.com/cdn/shop/files/Canvas_1_47165fe4-9b57-47d3-8c49-08d918abb33c.png?v=1686043542&width=1800",
+      ]);
+    }
+  }, [width]);
 
   return (
     <div className="flex relative mb-2 lg:mb-8 items-center z-10  justify-center flex-col h-[60wh] transition-transform ease-out duration-500 overflow-hidden  cursor-grab">
@@ -51,7 +62,7 @@ const ActiveSlider = () => {
               className="object-contain relative z-0 brightness-75"
               alt=""
             />
-            <div className="absolute flex flex-col   gap-2 bottom-0 z-50 top-[65%] left-[10%]  mx-auto">
+            <div className="absolute flex flex-col   gap-2 bottom-0 z-50 top-[55%] left-[10%] md:top-[60%]   mx-auto">
               <h1 className="font-pacifico text-7xl  text-white  ">
                 Mens Fashion
               </h1>

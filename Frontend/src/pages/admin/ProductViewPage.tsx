@@ -1,33 +1,59 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+
+import { Link, useNavigate, useParams } from "react-router-dom";
+import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import { Swiper, SwiperSlide } from "swiper/react";
-
-import type { ProductForm } from "../../types";
-import apiClient from "../../services/api-client";
-import { FaSave } from "react-icons/fa";
-import { ImBin } from "react-icons/im";
-
 import "swiper/css";
 
-function Varations() {
+import type { AdminBrand, AdminCategory, ProductForm } from "../../types";
+import apiClient, { ApiClientResponse } from "../../services/api-client";
+import { FaSave } from "react-icons/fa";
+import { ImBin } from "react-icons/im";
+import { useData } from "../../hooks";
+import { checkAnyCahngeOccured } from "../../utils/validators";
+import ImageChange from "../../components/admin/ImageChange";
+// import {
+//   Dialog,
+//   DialogBody,
+//   DialogHeader,
+//   DialogFooter,
+// } from "@material-tailwind/react";
+import { genrateImageUrl } from "../../utils/image";
+import { RootState } from "../../store";
+import toast, { Toaster } from "react-hot-toast";
+import ErrorText from "../../ui/user/ErrorText";
+import * as Yup from "yup";
+import AddColor from "../../components/admin/AddColor";
+
+interface Varation {
+  id: string;
+  img_1: string;
+  color: string;
+}
+
+interface ProductModel extends ProductForm {
+  id: string;
+}
+
+function Varations({ id, img_1, color }: Varation) {
   return (
-    <div className="relative grid h-[40rem] w-full max-w-[28rem] flex-col items-end justify-center overflow-hidden rounded-xl bg-white bg-clip-border text-center text-gray-700">
-      <div className="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent bg-[url('https://images.unsplash.com/photo-1552960562-daf630e9278b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80')] bg-cover bg-clip-border bg-center text-gray-700 shadow-none">
-        <div className="absolute inset-0 w-full h-full to-bg-black-10 bg-gradient-to-t from-black/80 via-black/50" />
-      </div>
+    <div className="relative  bg-red-400 h-96 w-72 grid  flex-col items-end justify-center overflow-hidden rounded-xl   text-center text-gray-700">
+      <Link
+        to={`/product/varaition/${id}/`}
+        className={
+          "absolute inset-0 m-0 overflow-hidden rounded-none " +
+          `bg-[url('${img_1}')]` +
+          " bg-transparent " +
+          " bg-cover bg-clip-border bg-center text-gray-700 shadow-none"
+        }
+        style={{ backgroundImage: "url(" + img_1 + ")" }}
+      ></Link>
       <div className="relative p-6 px-6 py-14 md:px-12">
         <h2 className="mb-6 block font-sans text-4xl font-medium leading-[1.5] tracking-normal text-white antialiased">
-          How we design and code open-source projects?
+          {color}
         </h2>
-        <h5 className="block mb-4 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-gray-400">
-          Tania Andrew
-        </h5>
-        <img
-          alt="Tania Andrew"
-          src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-          className="relative inline-block h-[74px] w-[74px] !rounded-full border-2 border-white object-cover object-center"
-        />
+        <h5 className="block mb-4 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-gray-400"></h5>
       </div>
     </div>
   );
@@ -35,43 +61,139 @@ function Varations() {
 
 const ProductViewPage = () => {
   const { id } = useParams();
-  const [product, setProduct] = useState<ProductForm>({
-    name: "",
-    brand: "",
-    categoery: "",
-    is_active: false,
-    img: "",
+
+  const validationSchema = Yup.object().shape({
+    name: Yup.string()
+      .required("please select provide name")
+      .min(3, "name must be more than 3 characters")
+      .max(50, "name must be less than 50 characters"),
+    img: Yup.mixed().required("please provide a image"),
+    brand: Yup.string().required("please select a brand"),
+    categoery: Yup.string().required("please select a categoery"),
+    discription: Yup.string()
+      .required("please provide discription")
+      .min(5, "discription must be 5 characters"),
   });
 
+  const initialValues: ProductForm = {
+    name: "",
+    img: "",
+    brand: "",
+    categoery: "",
+    discription: "",
+    is_active: "",
+  };
+
   const formike = useFormik({
-    initialValues: product,
-    onSubmit: (value) => console.log(value),
+    initialValues,
+    onSubmit: handleSubmit,
+    validationSchema,
     enableReinitialize: true,
   });
+  const navigate = useNavigate();
+  const [product, setCurrentProduct] = useState<ProductForm>({
+    name: "",
+    img: "",
+    brand: "",
+    categoery: "",
+    discription: "",
+    is_active: "",
+  });
+
+  const { data } = useData<Varation>(`admin/product-variations/${id}/`);
+  const { data: brands } = useData<AdminBrand>("admin/brand/");
+  const { data: categoery } = useData<AdminCategory>("admin/categoery/");
+
+  const { access } = useSelector(
+    (state: RootState) => state.persistedReducer.auth
+  );
+
+  const requestConfig = {
+    headers: {
+      "Content-Type": "multipart/form-data",
+      Authorization: "Bearer " + access,
+    },
+  };
 
   useEffect(() => {
     apiClient
-      .get(`admin/product/${id}/`)
+      .get<ProductModel>(`admin/product/${id}/`)
       .then((res) => {
-        setProduct(res.data);
-        formike.setValues(res.data);
+        setCurrentProduct({
+          brand: res.data.brand,
+          categoery: res.data.categoery,
+          name: res.data.name,
+          img: res.data.img,
+          discription: res.data.discription,
+          is_active: res.data.is_active,
+        });
+
+        formike.setValues({
+          brand: res.data.brand,
+          categoery: res.data.categoery,
+          name: res.data.name,
+          img: res.data.img,
+          discription: res.data.discription,
+          is_active: res.data.is_active,
+        });
       })
       .catch((err) => console.log(err));
   }, []);
 
-  console.log(formike.values);
+  function handleSubmit(values: ProductForm) {
+    const changed = checkAnyCahngeOccured<ProductForm>(product, values);
+    if (changed === false) {
+      toast.error("nothing changed");
+      return;
+    } else {
+      apiClient
+        .patch(`admin/product/${id}/`, changed, requestConfig)
+        .then((res) => res)
+        .catch((err) => err);
+    }
+  }
 
-  const numbers = [1, 2, 3];
+  function handleImg(event: ChangeEvent<HTMLInputElement>) {
+    if (event.target?.files) {
+      const img = event.target.files[0];
+      const proccessed_img = genrateImageUrl(img);
+      setCurrentProduct({ ...product, img: proccessed_img });
+      formike.setValues({ ...formike.values, img: img });
+    }
+  }
+
+  function handleDelete(e: FormEvent) {
+    e.preventDefault();
+    apiClient
+      .delete(`admin/product/${id}/`)
+      .then((res: ApiClientResponse) => {
+        navigate(`/product/`);
+      })
+      .catch((err) => console.log(err));
+  }
 
   return (
     <>
       <section className="container mx-auto px-4 md:px-6 py-8">
-        <form className="flex flex-col lg:flex-row lg:items-center gap-6  ">
-          <div className=" overflow-hidden flex-1 ">
+        <form
+          className="flex flex-col lg:flex-row lg:items-center gap-6  "
+          onSubmit={formike.handleSubmit}
+        >
+          <div className=" overflow-hidden flex-1 grid place-content-center">
             <img
-              src={formike.values.img}
-              className="rounded-lg object-fill w-full aspect-square"
+              src={product.img}
+              className="rounded-lg object-cover object-top w-full bg-clip aspect-square"
             />
+            <div className="">
+              <ImageChange
+                title=""
+                name={"img"}
+                handleChange={(e: any) => handleImg(e)}
+              />
+            </div>
+            {formike.errors.img && formike.touched.img && (
+              <ErrorText>{formike.errors.img}</ErrorText>
+            )}
           </div>
 
           <div className="lg:px-20 flex-1">
@@ -90,11 +212,14 @@ const ProductViewPage = () => {
                   onChange={formike.handleChange}
                   type="text"
                 />
+                {formike.errors.name && formike.touched.name && (
+                  <ErrorText>{formike.errors.name}</ErrorText>
+                )}
               </div>
 
               <div className="mt-3">
                 <label
-                  htmlFor="dicription"
+                  htmlFor="discription"
                   className="lg:text-lg text-xs  pl-2 text-slate-500"
                 >
                   Discription
@@ -102,57 +227,99 @@ const ProductViewPage = () => {
 
                 <textarea
                   rows={4}
-                  name="dicription"
+                  name="discription"
                   className="block w-full  py-2 px-3 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
-                  value="This is a brief description of the product. It highlights its features and unique selling points."
+                  value={formike.values.discription}
+                  onChange={formike.handleChange}
                 />
+                {formike.errors.discription && formike.touched.discription && (
+                  <ErrorText>{formike.errors.discription}</ErrorText>
+                )}
               </div>
 
               <div className="mt-3">
                 <label
-                  htmlFor="dicription"
+                  htmlFor="brand"
                   className="lg:text-lg text-xs  pl-2 text-slate-500"
                 >
                   Brand
                 </label>
-                <select className="font-bold mt-1 block w-full py-2 px-3 border border-gray-300  bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                  <option className=" appearance-none font-bold mt-1 block w-full py-8 px-10 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"></option>
+                <select
+                  name="brand"
+                  onChange={formike.handleChange}
+                  className="font-bold mt-1 block w-full py-2 px-3 border border-gray-300  bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                >
+                  {brands.map((item: AdminBrand) => (
+                    <option
+                      value={item.id}
+                      selected={item.name == formike.values.brand}
+                      className=" appearance-none font-bold mt-1 block w-full py-8 px-10 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    >
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
+                {formike.errors.brand && formike.touched.brand && (
+                  <ErrorText>{formike.errors.brand}</ErrorText>
+                )}
               </div>
 
               <div className="mt-3">
                 <label
-                  htmlFor="dicription"
+                  htmlFor="categoery"
                   className="lg:text-lg text-xs  pl-2 text-slate-500"
                 >
                   Categoery
                 </label>
-                <select className="font-bold mt-1 block w-full py-2 px-3 border border-gray-300  bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm">
-                  <option className=" appearance-none font-bold mt-1 block w-full py-8 px-10 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"></option>
+                <select
+                  name="categoery"
+                  className="font-bold mt-1 block w-full py-2 px-3 border border-gray-300  bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                  onChange={formike.handleChange}
+                >
+                  {categoery.map((item: AdminCategory) => (
+                    <option
+                      value={item.id}
+                      selected={item.name == formike.values.categoery}
+                      className=" appearance-none font-bold mt-1 block w-full py-8 px-10 border border-gray-300 bg-white rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 text-sm"
+                    >
+                      {item.name}
+                    </option>
+                  ))}
                 </select>
+                {formike.errors.categoery && formike.touched.categoery && (
+                  <ErrorText>{formike.errors.categoery}</ErrorText>
+                )}
               </div>
 
               <div className="flex items-center mt-4">
                 <label
-                  htmlFor="disabled-checkbox"
+                  htmlFor="is_active"
                   className="ms-2 text-sm text-slate-500   mr-4"
                 >
                   Activate
                 </label>
                 <input
-                  id="red-checkbox"
+                  name="is_active"
                   type="checkbox"
-                  value={"false"}
+                  checked={formike.values.is_active}
+                  value={formike.values.is_active}
+                  onChange={formike.handleChange}
                   className=" text-red-600 bg-gray-100 border-gray-300 rounded"
                 />
               </div>
 
               <div className="flex  items-center gap-2 mt-5">
-                <button className="bg-white border flex items-center  justify-center gap-3 border-red-700  rounded-md px-4 py-1 font-bold flex-1 ">
+                <button
+                  type="button"
+                  className="bg-white border flex items-center  justify-center gap-3 border-red-700  rounded-md px-4 py-1 font-bold flex-1 "
+                >
                   <ImBin className="size-4 " />
-                  Discard
+                  Delete
                 </button>
-                <button className="bg-black text-white border flex items-center gap-3  justify-center  rounded-md px-4 py-1  flex-1 ">
+                <button
+                  type={"submit"}
+                  className="bg-black text-white border flex items-center gap-3  justify-center  rounded-md px-4 py-1  flex-1 "
+                >
                   <FaSave className="size-4 " /> Save
                 </button>
               </div>
@@ -160,50 +327,40 @@ const ProductViewPage = () => {
           </div>
         </form>
 
-        <div className="grid place-content-center py-4 mt-14">
-          {numbers.length > 2  ? (<Swiper
-            breakpoints={{
-              340: {
-                slidesPerView: 1,
-                spaceBetween: 15,
-              },
-              700: {
-                slidesPerView: 1,
-                spaceBetween: 15,
-              },
-              900: {
-                slidesPerView: 3,
-                spaceBetween: 15,
-              },
-            }}
-            className="max-w-full "
-          >
-            {numbers.map((item: number) => (
-              <SwiperSlide key={item}>
-                <div className="relative grid h-[40rem] w-full max-w-[28rem] flex-col items-end justify-center overflow-hidden rounded-xl bg-white bg-clip-border text-center text-gray-700">
-                  <div className="absolute inset-0 m-0 h-full w-full overflow-hidden rounded-none bg-transparent bg-[url('https://images.unsplash.com/photo-1552960562-daf630e9278b?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=687&q=80')] bg-cover bg-clip-border bg-center text-gray-700 shadow-none">
-                    <div className="absolute inset-0 w-full h-full to-bg-black-10 bg-gradient-to-t from-black/80 via-black/50" />
-                  </div>
-                  <div className="relative p-6 px-6 py-14 md:px-12">
-                    <h2 className="mb-6 block font-sans text-4xl font-medium leading-[1.5] tracking-normal text-white antialiased">
-                      How we design and code open-source projects?
-                    </h2>
-                    <h5 className="block mb-4 font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-gray-400">
-                      Tania Andrew
-                    </h5>
-                    <img
-                      alt="Tania Andrew"
-                      src="https://images.unsplash.com/photo-1633332755192-727a05c4013d?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1480&q=80"
-                      className="relative inline-block h-[74px] w-[74px] !rounded-full border-2 border-white object-cover object-center"
-                    />
-                  </div>
-                </div>
-              </SwiperSlide>
+        <div className="mt-14 ">
+          <h1 className="text-3xl font-ptsans"> Colors </h1>
+          <div className="grid lg:grid-cols-3 place-items-center py-4 gap-6 mx-4  md:mx-40  ">
+            <AddColor id={id ? id : ""} />
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
             ))}
-          </Swiper>) : <div>
-            {numbers.map((item:number) => )}
-          </div> }
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+            {data.map((item: Varation) => (
+              <Varations id={item.id} img_1={item.img_1} color={item.color} />
+            ))}
+          </div>
         </div>
+        <Toaster position="top-center" reverseOrder={false} />
       </section>
     </>
   );
