@@ -3,9 +3,6 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
-import { Swiper, SwiperSlide } from "swiper/react";
-import "swiper/css";
-
 import type { AdminBrand, AdminCategory, ProductForm } from "../../types";
 import apiClient, { ApiClientResponse } from "../../services/api-client";
 import { FaSave } from "react-icons/fa";
@@ -13,12 +10,7 @@ import { ImBin } from "react-icons/im";
 import { useData } from "../../hooks";
 import { checkAnyCahngeOccured } from "../../utils/validators";
 import ImageChange from "../../components/admin/ImageChange";
-// import {
-//   Dialog,
-//   DialogBody,
-//   DialogHeader,
-//   DialogFooter,
-// } from "@material-tailwind/react";
+
 import { genrateImageUrl } from "../../utils/image";
 import { RootState } from "../../store";
 import toast, { Toaster } from "react-hot-toast";
@@ -66,7 +58,7 @@ const ProductViewPage = () => {
     name: Yup.string()
       .required("please select provide name")
       .min(3, "name must be more than 3 characters")
-      .max(50, "name must be less than 50 characters"),
+      .max(100, "name must be less than 100 characters"),
     img: Yup.mixed().required("please provide a image"),
     brand: Yup.string().required("please select a brand"),
     categoery: Yup.string().required("please select a categoery"),
@@ -137,7 +129,7 @@ const ProductViewPage = () => {
           is_active: res.data.is_active,
         });
       })
-      .catch((err) => console.log(err));
+      .catch((err) => new Error(err));
   }, []);
 
   function handleSubmit(values: ProductForm) {
@@ -349,15 +341,15 @@ const ProductViewPage = () => {
             {data.map((item: Varation) => (
               <Varations id={item.id} img_1={item.img_1} color={item.color} />
             ))}
-            {data.map((item: Varation) => (
+            {/* {data.map((item: Varation) => (
               <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {data.map((item: Varation) => (
+            ))} */}
+            {/* {data.map((item: Varation) => (
               <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {data.map((item: Varation) => (
+            ))} */}
+            {/* {data.map((item: Varation) => (
               <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
+            ))} */}
           </div>
         </div>
         <Toaster position="top-center" reverseOrder={false} />

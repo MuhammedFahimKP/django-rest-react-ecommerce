@@ -123,6 +123,7 @@ class ProductVariantImageSerializer(serializers.ModelSerializer):
     class Meta:
         model  = ProductVariantImages
         fields = [
+            'id',
             'img_id',
             'img_1',
             'img_2',
@@ -166,11 +167,14 @@ class ProductVariantSerailizer(serializers.ModelSerializer):
 class ProductSerilizer(serializers.ModelSerializer):
 
     name      = serializers.CharField(max_length=50,min_length=5)
-    brand     = BrandSerializer(read_only=True)
     categoery = CategoerySerializer(read_only=True)
     variants  = ProductVariantSerailizer(read_only=True,many=True)
     categoery = serializers.SerializerMethodField()
     brand     = serializers.SerializerMethodField()
+    
+    
+   
+         
     
     
     def get_categoery(self,obj):
@@ -201,13 +205,13 @@ class ProductSerilizer(serializers.ModelSerializer):
 
  
 
-class CartListSerailizer(serializers.ModelSerializer):
+class CartItemListSerailizer(serializers.ModelSerializer):
     
     name = serializers.SerializerMethodField()
     color = serializers.SerializerMethodField()
+    img  = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
-    img   = serializers.ImageField(source='product.img.img_1.url')
     stock = serializers.SerializerMethodField()
     quantity = serializers.IntegerField(required=True)
 
@@ -228,8 +232,14 @@ class CartListSerailizer(serializers.ModelSerializer):
     def get_size(self,obj):
         return obj.product.size.name
     
+    
     def get_price(self,obj):
-        return obj.product.price
+        return int(obj.product.price)
+    
+    def get_img(self,obj):
+        img_url =  obj.product.product.img.url 
+        return "http://127.0.0.1:8000/" + img_url
+    
     
     
     def get_stock(self,obj):
@@ -246,7 +256,33 @@ class CartListSerailizer(serializers.ModelSerializer):
     
     
     
+        
+class CartListSerializer(serializers.ModelSerializer):
     
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)        
+        self.fields['cart_items'].context.update(self.context)
+    
+    cart_items = CartItemListSerailizer(many=True,read_only=True)
+    
+    total      = serializers.SerializerMethodField()
+    
+    
+    def get_total(self,obj:Cart) -> int :
+        
+        total_price = 0 
+        
+        for item in obj.cart_items.all():
+           total_price += item.product.price * item.quantity
+           
+        return total_price   
+            
+    
+    class Meta:
+        
+        fields = ['total','cart_items']
+        model  = Cart
     
 
 
@@ -260,6 +296,16 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
         lookup_field = 'pk',
         read_only = True
     )
+    
+    subtotal = serializers.SerializerMethodField()
+    stock = serializers.SerializerMethodField()
+    
+    def get_stock(self,obj) -> int :
+        return obj.product.stock
+    
+    
+    def get_subtotal(self,obj):
+        return obj.product.price * obj.quantity
    
 
 
@@ -268,10 +314,12 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
 
         model  = CartItem
         fields = [
-
+            'id',
             'product',
             'quantity',
             'url',
+            'subtotal',
+            'stock',
 
 
         ]
@@ -280,25 +328,24 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
 
         request = self.context['request']
         user    = request.user
+        
+        if request.method  not in ['PUT ','PATCH']:
+            
+            product = data.get('product')
+            cart    = get_or_create(class_model=Cart,user=user)
+            
+             
+            if product is None:
+                raise serializers.ValidationError(
 
-       
+                    'tht in our db '
+                )
+
         
 
-        
-        product = data['product']
-        cart    = get_or_create(class_model=Cart,user=user)
-
-
-
-        if product is None:
-            raise serializers.ValidationError(
-
-                'tht in our db '
-            )
-
-
-     
-        data['cart'] = cart   
+            data['cart'] = cart   
+            
+        print(data)    
 
 
         return data
@@ -315,16 +362,20 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
             
             instance = instance[0]
             
-            if  validated_data['quantity'] == 0:
-
-                raise serializers.ValidationError (
-                    'quantity must be 1 or more'
-                )
+            quantity = validated_data['quantity']
             
-            if validated_data['quantity'] > instance.quantity:
+            
+            
+            if  quantity:
+                
+                if  quantity  == 0:
 
-                   instance.quantity =validated_data['quantity'] 
-                   instance.save()
+                    raise serializers.ValidationError (
+                        'quantity must be 1 or more'
+                    )
+
+                instance.quantity = instance.quantity + quantity 
+                instance.save()
 
             return instance 
 
@@ -342,7 +393,8 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
     
     def update(self, instance, validated_data):
 
-        quantity = validated_data.get('quantity', None)
+        quantity = validated_data.get('quantity')
+       
         
         # Check if quantity is zero, and delete the cart item if true
         if quantity and quantity == 0:
@@ -350,6 +402,8 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
             instance.delete()
 
         else:
+            
+            instance.quantity = quantity
 
             instance.save()
 
@@ -487,9 +541,60 @@ class LatestArrivalsSerailizer(serializers.ModelSerializer):
             'brand',
             'colors',
         ]
-        
-            
+
+class ProductSerilizerForVariantListing(serializers.ModelSerializer) :
+    
+    categoery = serializers.SerializerMethodField()
+    brand     = serializers.SerializerMethodField()
+    
+    
+    def get_categoery(self,obj):
+        return f"{obj.categoery.name}"
     
 
 
-
+    def get_brand(self,obj):
+        return f"{obj.brand.name}"
+    
+    class Meta:
+        model = Product
+        fields = [
+            'id',
+            'name',
+            'categoery',
+            'brand',
+            'discription',
+            'slug',
+        ]
+            
+    
+class ProductVariationListSerailizer(serializers.ModelSerializer):
+      
+    product  = ProductSerilizerForVariantListing(many=False,read_only=True)
+    
+    img      = ProductVariantImageSerializer()
+    
+    color    = serializers.SerializerMethodField()
+    size     = serializers.SerializerMethodField()
+    
+    
+    def get_color(self,obj):
+        return obj.color.name
+    
+    def get_size(self,obj) :
+        return obj.size.name
+    
+    
+    
+    class Meta:
+        model = ProductVariant
+        fields = [
+            'id',
+            'img',
+            'product',
+            'color',
+            'size',
+            'stock',
+            'price',
+        ]
+        

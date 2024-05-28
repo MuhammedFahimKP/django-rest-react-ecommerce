@@ -3,9 +3,16 @@
 from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
+from rest_framework.parsers import FormParser,MultiPartParser
 
 from shop.models import ProductVariantImages,ProductVariant
-from .serializers import AdminProductVarationSerializer,AdminSizeVariaitonSerailizer,AdminSizeVariationCreateSerailizer
+from .serializers import (
+    
+    AdminProductVarationSerializer,
+    AdminSizeVariaitonSerailizer,
+    AdminSizeVariationCreateSerailizer,
+    AdminColorVariationSerializer,
+)
 from .utils import is_valid_uuid
 
 
@@ -145,8 +152,25 @@ class SizeVariationCreateAPIview(generics.GenericAPIView) :
         
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
           
+class ColorVarationCreateUpdateView(generics.GenericAPIView) :
+   
+   serializer_class = AdminColorVariationSerializer
+   
+   parser_classes   = [FormParser,MultiPartParser]
+   
+   
+   def post(self,request):
+       
+       serializer  = self.get_serializer_class()
+       serializer  = serializer(data=request.data,context={'request':request})
         
-
+       if serializer.is_valid(raise_exception=True):
+            
+            serializer.save()
+            return Response(serializer.data,status=status.HTTP_201_CREATED)
+       
+       return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)   
+       
         
         
 

@@ -12,7 +12,7 @@ class BaseMiddleWare:
         
     def __call__(self,request):
         
-        print('Satrt ',self.middleware_name)
+        print('Start ',self.middleware_name)
         response = self.get_response(request)
         print('End' ,self.middleware_name)
         
@@ -24,4 +24,6 @@ class middle1(BaseMiddleWare):
 class middle2(BaseMiddleWare):
     middleware_name  = '2'
     
+class middle3(BaseMiddleWare):
+    middleware_name  = '3'
               

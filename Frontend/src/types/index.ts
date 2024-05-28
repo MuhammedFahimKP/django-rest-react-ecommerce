@@ -33,6 +33,14 @@ interface Product{
 }
 
 
+export interface LatestArrival {
+    name: string;
+    img: string;
+    brand: string;
+}
+
+
+
 export interface ProductForm {
     
     slug?:string;
@@ -55,7 +63,7 @@ export interface CartItem{
     quantity:number,
     price:number,
     stock:number,
-    sub_total:number,
+    subtotal:number,
     
 }
 
@@ -66,6 +74,46 @@ export interface Whishlist {
 }
 
 
+
+export interface ColorVariation {
+    id:string,
+    img_id:string,
+    img_1:string,
+    img_2:string,
+    img_3:string,
+}
+
+
+export interface ProductVariant {
+    
+    img:{
+        id:string,
+        img_1:string,
+        img_2:string,
+        img_3:string,
+    };
+    color:string,
+    price:string,
+    size:string,
+    stock:number,
+}
+export interface ProductResponseData{
+    name:string,
+    brand:string,
+    categoery:string,
+    img:string,
+    variants:ProductVariant[],
+    discription:string,
+    slug:string,
+
+}
+
+export interface SingleProductResponseData{
+    name:string,
+    discription:string,
+    
+
+}
 
 
 
@@ -127,6 +175,9 @@ export interface SizeVariation {
 export interface VariationWithSize extends Variation {
     size_varations:SizeVariation[] | []
 }
+
+
+
 
 
 

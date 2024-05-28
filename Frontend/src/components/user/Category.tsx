@@ -38,11 +38,15 @@ const Category = () => {
       name: "Hoodies",
       img: "https://espanshe.com/cdn/shop/collections/Category_-_Hoodies_sweatshirt_copy_large.jpg?v=1687420892",
     },
+    {
+      name: "Jackets",
+      img: "https://img.freepik.com/premium-photo/fashion-men-jacket-coat-dark-brown-color_800563-3287.jpg",
+    },
   ]);
 
   console.log(categories);
   return (
-    <div className="flex items-center justify-center">
+    <div className="flex items-center justify-center bg-red-800">
       <Swiper
         breakpoints={{
           340: {

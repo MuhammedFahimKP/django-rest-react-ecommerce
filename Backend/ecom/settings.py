@@ -28,7 +28,8 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = os.environ.get('SECURITY_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = config("DEBUG", default=1)
+# DEBUG = config("DEBUG", default=1)
+DEBUG = True
 
 
 ALLOWED_HOSTS = []
@@ -36,6 +37,7 @@ ALLOWED_HOSTS = []
 
 CORS_ALLOW_ALL_ORIGINS = True 
 CORS_URL_REGEX = r"^/api/.*"
+
 # Application definition
 
 INSTALLED_APPS = [
@@ -96,7 +98,9 @@ MIDDLEWARE = [
     #cors headers
     'corsheaders.middleware.CorsMiddleware',
     #debug toolbar
-    'debug_toolbar.middleware.DebugToolbarMiddleware'
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    
+  
     
 ]
 

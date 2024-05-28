@@ -11,22 +11,22 @@ const CartCard = ({
   brand,
   quantity,
   size,
-  sub_total,
+  subtotal,
 }: Props) => {
   const dispatch = useDispatch<any>();
   return (
     <div className="divide-y mt-4">
       <div className="flex items-start justify-between gap-4 py-8">
         <div className="flex max-sm:flex-col gap-6">
-          <div className="h-40 bg-gray-100 border-2   overflow-hidden shadow-2xl rounded ">
-            <img src={img} className="w-full h-full object-contain shrink-0" />
+          <div className="h-40 bg-gray-100 border-2 w-40   overflow-hidden shadow-2xl rounded ">
+            <img src={img} className="w-full h-full object-fill shrink-0" />
           </div>
           <div>
             <p className="text-md font-bold text-[#333]">{name}</p>
             <p className="text-gray-400 text-xs mt-1">{brand}</p>
             <h4 className="text-lg  text-[#333] mt-1">{size}</h4>
             <h4 className="text-lg  text-[#333] mt-1">{color}</h4>
-            <h4 className="text-xl font-bold text-[#333] mt-1">{sub_total}</h4>
+            <h4 className="text-xl font-bold text-[#333] mt-1">{subtotal}</h4>
             <div className="mt-6 flex  justify-center items-center font-bold text-2xl">
               <button
                 className="size-9 rounded-l-full   border-[1px] border-r-0 border-black "

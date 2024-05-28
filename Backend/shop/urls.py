@@ -8,6 +8,11 @@ urlpatterns = [
     path('product-latest/',views.LatestArrivalsListView.as_view(),name='product-latest'),
     
     path('product/',views.ListProductAPIView.as_view(),name="list-product"),
+    
+    path('variations/',views.ProductVariantRetriveAPIView.as_view(),name="variations"),
+    
+    
+    
    
     #single Product 
     path('product-single/<str:slug>/',views.ProductRetriveApiView.as_view(),name="single-product-retrive"),

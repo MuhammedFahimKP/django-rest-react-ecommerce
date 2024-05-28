@@ -22,6 +22,7 @@ const ActiveSlider = () => {
       setSlides([
         "https://espanshe.com/cdn/shop/files/Canvas_acd48fd9-0078-4912-9c63-8d9f7b3957aa.png?v=1686303486&width=1800",
         "https://espanshe.com/cdn/shop/files/Canvas_1_47165fe4-9b57-47d3-8c49-08d918abb33c.png?v=1686043542&width=1800",
+        "https://espanshe.com/cdn/shop/files/banner01.jpg?v=1714439659&width=4100 4100w",
       ]);
     }
   }, [width]);

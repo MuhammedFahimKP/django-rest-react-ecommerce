@@ -1,2 +1,3 @@
 import useData from "./useData";
-export  {useData}
+import useVariation from "./useVariation";
+export  {useData,useVariation}

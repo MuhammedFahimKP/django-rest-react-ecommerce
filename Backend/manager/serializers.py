@@ -18,6 +18,7 @@ from shop.serializers import(
     ProductSerilizer,
     ProductVariantImageSerializer,  
     ProductVariantSerailizer,
+    
 )
 
 from accounts.exceptions import AlreadyExist
@@ -288,6 +289,23 @@ class AdminColorSerializer(ColorSerializer):
     is_active = serializers.BooleanField(required=False)
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+    
+    
+    
+    
+    def validate(self, data):
+        
+        name = data.get('name')
+        
+        if not name is None:
+        
+            color  = Color.objects.filter(name__icontains=name) 
+            
+            if color.exists():
+                
+                raise AlreadyExist({'name' : 'color already exists'})
+
+        return data
 
     class Meta:
         model          = ColorSerializer.Meta.model
@@ -348,81 +366,7 @@ class AdminProductViewSerailizer(serializers.ModelSerializer):
     
     
     
-    
-# class AdminProductSerializer(ProductSerilizer):
-    
-#     is_active = serializers.BooleanField(required=False)
-#     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-#     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
 
-#     brand     = AdminBrandSerializer()
-#     categoery = AdminCategoerySerializer()
-
-#     def validate(self,data):
-#         print(data) 
-
-#         try:
-
-#             categoery  = Categoery.objects.get(name=data['categoery']['name'])
-            
-#             data['categoery'] = categoery
-
-
-#         except:
-
-#             raise serializers.ValidationError(
-
-#                 'theres is no categoery in our db',
-                
-#             )
-
-        
-#         try:
-#             brand       = Brand.objects.get(name= data['brand']['name'])
-#             data['brand'] = brand
-#         except:
-#             raise serializers.ValidationError('there is no brand exist in our db')
-
-
-
-#         return data
-
-
-
-    
-
-#     class Meta:
-
-#         model          = ProductSerilizer.Meta.model
-#         current_fields = ProductSerilizer.Meta.fields.copy()
-#         current_fields.insert(0,'id')
-#         fields         = current_fields + ['discription','is_active','created','updated'] 
-
-
-   
-    
-
-
-#     def create(self,validated_data):
-
-#         active  = validated_data.get('is_active',None)
-#         discription = validated_data.get('discription',None)
-#         img         = validated_data['img']
-
-
-#         instance = Product(
-#             name      = validated_data['name'],
-#             img       = img if img else None,
-#             categoery = validated_data['categoery'],
-#             brand     = validated_data['brand'],
-#             discription = discription,
-#             is_active = active if active else False 
-#         )
-        
-#         instance.save()
-       
-#         return instance
-    
 
 class AdminProductVariantSerializer(serializers.Serializer):
 
@@ -430,7 +374,7 @@ class AdminProductVariantSerializer(serializers.Serializer):
 
     
     stock        = serializers.IntegerField()
-    img_1        = serializers.ImageField(required=True,)
+    img_1        = serializers.ImageField(required=True)
     img_2        = serializers.ImageField(required=True)
     img_3        = serializers.ImageField(required=True)
     product      = serializers.CharField() 
@@ -572,7 +516,49 @@ class AdminProductVarintListSerializer(serializers.Serializer):
 
 
 
-
+class AdminColorVariationSerializer(serializers.ModelSerializer):
+    
+    product = serializers.PrimaryKeyRelatedField(write_only=True,read_only=False,queryset=Product.objects.all(),many=False,required=False)
+    color   = serializers.PrimaryKeyRelatedField(write_only=True,read_only=False ,queryset=Color.objects.all(),many=False,required=False)
+    img_1   = serializers.ImageField()
+    img_2   = serializers.ImageField()
+    img_3   = serializers.ImageField()
+     
+    def validate(self, data):
+        
+        img_id  =  str(data['product'].id)+ " " + str(data['color'].id)        
+        image   = ProductVariantImages.objects.filter(img_id=img_id)
+        
+        if image.exists():
+            
+            raise AlreadyExist({'color':'product alrady have same varaition '})
+        
+        
+        
+        
+        data['img_id'] = img_id
+        
+        data.pop('product')
+        
+        data.pop('color')
+        
+        
+        return data
+    
+    
+    def create(self, validated_data):
+        
+        instance = ProductVariantImages.objects.create(**validated_data)
+        
+        return instance
+    
+    
+    
+    class Meta:
+        
+        fields = ['id','img_id', 'img_1','img_2','img_3','color','product',] 
+        model  = ProductVariantImages
+        
 
 
 

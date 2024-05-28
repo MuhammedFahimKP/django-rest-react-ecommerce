@@ -3,7 +3,10 @@ from typing import Any
 from django.db import models
 from django.utils.safestring import mark_safe
 from BaseModels.models import BaseModel
+
+
 from accounts.models import MyUser
+
 
 
 
@@ -130,12 +133,15 @@ class ProductVariant(BaseModel):
     variant_id      = models.CharField(max_length=500,unique=True,null=True)
     slug            = models.SlugField(max_length=400,unique=True,null=True)
     product         = models.ForeignKey(Product,related_name="variants",on_delete=models.CASCADE)
-    img             = models.ForeignKey(ProductVariantImages,on_delete=models.CASCADE,default=None)
+    img             = models.ForeignKey(ProductVariantImages,related_name='product',on_delete=models.CASCADE,default=None)
     color           = models.ForeignKey(Color,on_delete=models.CASCADE,null=True)
     size            = models.ForeignKey(Size,null=True,on_delete=models.CASCADE)
     price           = models.DecimalField(default=0.0,decimal_places=2,max_digits=15)
     stock           = models.PositiveIntegerField(default=0)
     is_active       = models.BooleanField(default=False)
+    
+    
+    
 
     def __str__(self) -> str:
         return f'{self.product} {self.size} {self.color}'

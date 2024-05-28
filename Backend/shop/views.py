@@ -1,4 +1,6 @@
 from django_filters.rest_framework import DjangoFilterBackend
+from django.db.models import Prefetch
+
 from rest_framework.pagination import LimitOffsetPagination
 from rest_framework.filters import OrderingFilter
 
@@ -8,6 +10,7 @@ from rest_framework import generics,status,renderers
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.decorators import action,authentication_classes,permission_classes
+from rest_framework.exceptions import NotFound
 
 
 from .models import (
@@ -18,6 +21,7 @@ from .models import (
      WishListItem,
      Product,
      ProductVariant,
+     ProductVariantImages,
      
 
 )
@@ -27,13 +31,16 @@ from rest_framework.response import Response
 from .utils import get_or_none
 from .serializers import ( 
     CartCreateUpdateItemSerializer,
-    CartListSerailizer,
+    CartListSerializer,
     WishtListItemSerializer,
     ProductSerilizer,
     ProductVariantSerailizer,
     LatestArrivalsSerailizer,
+    ProductVariationListSerailizer,
+    
+
 )
-from .filters import ProductFilterSet
+from .filters import ProductFilterSet,ProductVariantFilterSet
 
 
 
@@ -66,9 +73,24 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
     def get_serializer_class(self):
         if self.request.method  == 'POST':
             return CartCreateUpdateItemSerializer
-        return CartListSerailizer
     
     
+    
+    
+    def list(self,request):
+        
+        instance   = Cart.objects.filter(user=request.user)
+        instance   = instance.first()
+        serializer = CartListSerializer(instance,many=False,context={'request':request})
+        
+        return Response(serializer.data,status=status.HTTP_200_OK)
+        
+        
+        
+        
+    
+        
+        
     
 
     @action(detail=True,methods=['POST'])
@@ -97,6 +119,8 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
             self.perform_create(serializer)
 
             headers = self.get_success_headers(serializer.data)
+            
+            print('hai')
             
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         return Response(serializer.errors,status=404)
@@ -135,9 +159,20 @@ class CartItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
 
      serializer_class = CartCreateUpdateItemSerializer
      queryset         = CartItem.objects.all()
-     renderer_classes = []
-     
      lookup_field     = 'pk'     
+     
+     
+     
+     
+     def get_serializer_class(self):
+         
+        if self.request.method in ['PUT','PATCH'] :
+            
+            print('put') 
+          
+        return CartCreateUpdateItemSerializer
+     
+     
 
      """
 
@@ -231,9 +266,7 @@ class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPI
 class ListProductAPIView(generics.ListAPIView):
 
     serializer_class = ProductSerilizer
-    queryset         = Product.objects.all().prefetch_related('categoery','brand','variants').all()
-
-    
+    queryset         = Product.objects.all().prefetch_related('categoery','brand',Prefetch('variants',queryset=ProductVariant.objects.select_related('color','size','img'))).filter(variants__isnull=False).distinct()    
     
     """
     
@@ -245,24 +278,19 @@ class ListProductAPIView(generics.ListAPIView):
     """
     
     
-    filter_backends  = [DjangoFilterBackend,OrderingFilter]
-    
-    
-    
-    
-    
+    filter_backends  = [DjangoFilterBackend,OrderingFilter]    
     
     filterset_class  =  ProductFilterSet  
     ordering_fields  = ['created','updated','is_active','variants__price']   
     
-    # renderer_classes = [renderers.JSONRenderer]
+    
     """
     
     pagination_class for sort the product 
     
     """ 
-    pagination_class = LimitOffsetPagination
-    pagination_class.page = 100
+    
+    
     
      
 
@@ -279,15 +307,21 @@ class ProductRetriveApiView(generics.RetrieveAPIView):
 
 
 
-class ProductVariantRetriveApiView(generics.RetrieveAPIView):
+
+
+class ProductVariantRetriveAPIView(generics.ListAPIView):
     
-    serializer_class = ProductVariantSerailizer
+    serializer_class = ProductVariationListSerailizer
     queryset         = ProductVariant.objects.all()
-    lookup_field     = 'variant_id' 
-     
+    filter_backends  = [DjangoFilterBackend] 
+    filterset_class  = ProductVariantFilterSet
+         
 
 
-     
+        
+        
+        
+        
      
 
 

@@ -25,7 +25,7 @@ import { dismissCartAlert } from "../../store/alertSlice";
 
 import LatestArrivals from "../../components/user/LatestArrivals";
 import Category from "../../components/user/Category";
-import ProductCard from "../../components/user/ProductCard";
+
 import { useState } from "react";
 import { useData } from "../../hooks";
 

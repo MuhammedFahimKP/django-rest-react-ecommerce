@@ -1,0 +1,96 @@
+[
+  {
+    "name": "jeans",
+    "categoery": "jeans",
+    "brand": "us polo assn",
+    "img": "http://127.0.0.1:8000/media/product/jeans.webp",
+    "variants": [],
+    "discription": "jeans",
+    "slug": "jeans"
+  },
+  {
+    "name": "half slevee t shirt",
+    "categoery": "t shirts",
+    "brand": "hrx",
+    "img": "http://127.0.0.1:8000/media/product/tshirts.webp",
+    "variants": [],
+    "discription": "dsds",
+    "slug": "half-slevee-t-shirt"
+  },
+  {
+    "name": "CR",
+    "categoery": "t shirts",
+    "brand": "levis",
+    "img": "http://127.0.0.1:8000/media/product/aadhaar.jpg",
+    "variants": [],
+    "discription": null,
+    "slug": null
+  },
+  {
+    "name": "Muhammed Fahim KP",
+    "categoery": "jeans",
+    "brand": "levis",
+    "img": "http://127.0.0.1:8000/media/product/jeans_Umqp8MY.webp",
+    "variants": [],
+    "discription": null,
+    "slug": null
+  },
+  {
+    "name": "ddssdsjxnc",
+    "categoery": "Jackets",
+    "brand": "nike",
+    "img": "http://127.0.0.1:8000/media/product/aadhaar_OHgVMtz.jpg",
+    "variants": [],
+    "discription": null,
+    "slug": null
+  },
+  {
+    "name": "Therma-FIT Midweight Puffer Jacket",
+    "categoery": "Jackets",
+    "brand": "nike",
+    "img": "http://127.0.0.1:8000/media/product/sportswear-windrunner-midweight-puffer-jacket-WWnd5N.png",
+    "variants": [
+      {
+        "name": "Therma-FIT Midweight Puffer Jacket",
+        "img": {
+          "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+          "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+          "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+          "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+        },
+        "size": "m",
+        "color": "Black",
+        "price": "5400.00",
+        "stock": 1000
+      },
+      {
+        "name": "Therma-FIT Midweight Puffer Jacket",
+        "img": {
+          "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+          "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+          "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+          "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+        },
+        "size": "xxl",
+        "color": "Black",
+        "price": "10000.00",
+        "stock": 3000
+      },
+      {
+        "name": "Therma-FIT Midweight Puffer Jacket",
+        "img": {
+          "img_id": "535326fa-3d4b-4712-9647-84a76a611fa9 635d235f-9a8f-4654-822c-1bdfc39f0dcd",
+          "img_1": "http://127.0.0.1:8000/media/prdv1/pd1v1img1.jpg",
+          "img_2": "http://127.0.0.1:8000/media/prdv2/pd1v1img2.jpg",
+          "img_3": "http://127.0.0.1:8000/media/prdv3/pd1v1img3.jpg"
+        },
+        "size": "xs",
+        "color": "Black",
+        "price": "1000.00",
+        "stock": 100
+      }
+    ],
+    "discription": "This cool-weather classic is the perfect upgrade for your outerwear arsenal. Nike Therma-FIT technology helps manage your body's natural heat to help keep you warm in cold-weather conditions.Thanks to water- and wind-resistant outer fabric, this iconic puffer helps keep you dry in wet conditions. Plus, it's designed to feel relaxed around the shoulders, chest and body for an athletic fit you can layer.",
+    "slug": "sportswear-wind-runner-therma-fit-puffer-jackets"
+  }
+]

@@ -28,6 +28,7 @@ const EditProduct = () => {
     name: "",
     categoery: "",
     brand: "",
+    discription: "",
     is_active: false,
     img: "",
   };

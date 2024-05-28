@@ -5,9 +5,9 @@ from rest_framework_simplejwt.authentication import JWTAuthentication
 
 class JWTPermission():
      
-    
-    authentication_classes = [JWTAuthentication]
-    permission_classes = [permissions.IsAuthenticated]
+    pass
+    # authentication_classes = [JWTAuthentication]
+    # permission_classes = [permissions.IsAuthenticated]
 
     
 

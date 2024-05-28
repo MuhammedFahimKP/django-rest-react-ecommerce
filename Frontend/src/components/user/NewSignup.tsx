@@ -171,7 +171,7 @@ const NewSignup = () => {
           });
         }
       })
-      .catch((err: ApiClientError) => {});
+      .catch((err: ApiClientError) => err);
   }
 
   return (

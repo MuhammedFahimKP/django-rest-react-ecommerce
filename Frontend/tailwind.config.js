@@ -11,6 +11,7 @@ module.exports = withMT({
       ptsans: ['"PT Sans"'],
       roboto: ['"Roboto'],
       bebas: ['"Bebas Neue"'],
+      ubuntu: ['"Ubuntu Sans Mono"'],
     },
     extend: {
       colors: {

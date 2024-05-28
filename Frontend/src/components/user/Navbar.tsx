@@ -13,6 +13,7 @@ import { HiOutlineShoppingBag } from "react-icons/hi2";
 
 import { useWindowDimensions } from "../../hooks/useWindow";
 import { useState } from "react";
+import CartSec from "./CartSec";
 
 interface Props {
   onOpen: () => void;
@@ -21,6 +22,7 @@ interface Props {
 const Navbar = ({ onOpen }: Props) => {
   const { width } = useWindowDimensions();
   const [open, setOpen] = useState(false);
+  const [openCart, setOpenCart] = useState(false);
 
   function openMobileMenu() {
     if (width > 900) return;
@@ -60,7 +62,10 @@ const Navbar = ({ onOpen }: Props) => {
             </span>
           </button>
 
-          <button className="text-white text-3xl " onClick={onOpen}>
+          <button
+            className="text-white text-3xl "
+            onClick={() => setOpenCart(!openCart)}
+          >
             <HiOutlineShoppingBag />
           </button>
         </div>
@@ -69,6 +74,7 @@ const Navbar = ({ onOpen }: Props) => {
           <LgMenu />
         </div> */}
       </nav>
+      {openCart && <CartSec onClose={() => setOpenCart(!openCart)} />}
     </>
   );
 };

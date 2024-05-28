@@ -110,7 +110,7 @@ const ProductRow = ({
       </td>
       <td
         className={classes}
-        onClick={(e: any) => navigate("/product/view/" + id + "/")}
+        onClick={(e: any) => navigate("view/" + id + "/")}
       >
         <Tooltip content="Edit Product">
           <IconButton placeholder={undefined} variant="text">

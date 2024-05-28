@@ -45,7 +45,7 @@ from .utils import is_valid_uuid
 
 class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
     
-    permission_classes = [AdminOnly] 
+     
     queryset           = Categoery.objects.all()
     serializer_class   = AdminCategoerySerializer
     lookup_field       ='pk'
@@ -60,7 +60,7 @@ class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
 
 class AdminBrandViewset(JWTPermission,viewsets.ModelViewSet):
 
-    permission_classes = [AdminOnly]
+    
     queryset           = Brand.objects.all()
     serializer_class   = AdminBrandSerializer
     lookup_field       = 'pk'
@@ -68,16 +68,30 @@ class AdminBrandViewset(JWTPermission,viewsets.ModelViewSet):
 
 class AdminColorViewset(JWTPermission,viewsets.ModelViewSet):
 
-    permission_classes = [AdminOnly]
+    
     queryset           = Color.objects.all()
     serializer_class   = AdminColorSerializer
     lookup_field       ='pk'
+    
+    
+    
+    
+        
+        
+        
+        
+        
+        
+        
+                
+
+    
 
 
 
 class AdminVariationViewset(JWTPermission,viewsets.ModelViewSet):
     
-    permission_classes = [AdminOnly]
+    
     queryset           = ProductVariantImages.objects.all()
     serializer_class   = AdminProductVarationSerializer
     lookup_field       = 'pk'
@@ -117,10 +131,14 @@ class AdminVariationViewset(JWTPermission,viewsets.ModelViewSet):
 
 class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
 
-    permission_classes = [AdminOnly]
+    
     queryset           = Size.objects.all()
     serializer_class   = AdminSizeSerializer
     lookup_field       ='pk'    
+    
+
+    
+    
 
 
 class AdminProductViewSet(viewsets.ModelViewSet):
@@ -131,7 +149,7 @@ class AdminProductViewSet(viewsets.ModelViewSet):
     
     
     
-    # permission_classes = [AdminOnly]
+    # 
     queryset           = Product.objects.all().prefetch_related('categoery','brand','variants').all()
     parser_classes     = (MultiPartParser, FormParser)
     filter_backends    = [DjangoFilterBackend]
@@ -197,7 +215,7 @@ class AdminProductViewSet(viewsets.ModelViewSet):
 
 class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
 
-    # permission_classes = [AdminOnly]
+    # 
     queryset           = ProductVariant.objects.all()
     
     lookup_field       = 'pk'

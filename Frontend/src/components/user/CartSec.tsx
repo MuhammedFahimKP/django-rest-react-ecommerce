@@ -6,9 +6,15 @@ import { getCartItems } from "../../store/cartSlice";
 
 import CartCard from "../../ui/user/CartCard";
 
+import Lottie from "lottie-react";
+
 import { RootState } from "../../store";
 
 import { CartItem } from "../../types";
+
+import NewCartItem from "../../ui/user/NewCartItem";
+
+import emptyCartAnimation from "../../assets/lotties/emptyCartLottie.json";
 
 interface Props {
   onClose: () => void;
@@ -21,11 +27,9 @@ const CartSec = ({ onClose }: Props) => {
     dispatch(getCartItems());
   }, []);
 
-  const { items, totalprice } = useSelector(
+  const { cart_items: items, total: totalprice } = useSelector(
     (state: RootState) => state.cartSlice
   );
-
-  console.log(items);
 
   return (
     <div className="fixed inset-0 w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] font-[sans-serif] ">
@@ -51,9 +55,9 @@ const CartSec = ({ onClose }: Props) => {
             </button>
           </div>
 
-          {items.length > 0 &&
+          {items.length > 0 ? (
             items.map((item: CartItem) => (
-              <CartCard
+              <NewCartItem
                 id={item.id}
                 color={item.color}
                 size={item.size}
@@ -63,23 +67,33 @@ const CartSec = ({ onClose }: Props) => {
                 name={item.name}
                 price={item.price}
                 stock={item.stock}
-                sub_total={item.sub_total}
+                subtotal={item.subtotal}
               />
-            ))}
+            ))
+          ) : (
+            <div className="w-full mt-36 mx-auto  flex flex-col items-center ">
+              <Lottie className="size-72 " animationData={emptyCartAnimation} />
+              <h1 className="text-2xl mt-4  font-pacifico">
+                Shop Bag is Empty{" "}
+              </h1>
+            </div>
+          )}
         </div>
-        <div className="p-6 absolute bottom-0 w-full border-t bg-white">
-          <ul className="text-[#333] divide-y">
-            <li className="flex flex-wrap gap-4 text-md font-bold">
-              Total <span className="ml-auto"> {totalprice}</span>
-            </li>
-          </ul>
-          <button
-            type="button"
-            className="mt-6 text-md px-6 py-2.5 w-full bg-blue-600 hover:bg-blue-700 text-white rounded"
-          >
-            Check out
-          </button>
-        </div>
+        {items.length > 1 && (
+          <div className="p-6 absolute bottom-0 w-full border-t bg-white">
+            <ul className="text-[#333] divide-y">
+              <li className="flex flex-wrap gap-4 text-md font-bold">
+                Total <span className="ml-auto"> {totalprice}</span>
+              </li>
+            </ul>
+            <button
+              type="button"
+              className="mt-6 text-md px-6 py-2.5 w-full bg-blue-600 hover:bg-blue-700 text-white rounded"
+            >
+              Check out
+            </button>
+          </div>
+        )}
       </div>
     </div>
   );
