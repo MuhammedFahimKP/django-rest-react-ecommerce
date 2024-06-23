@@ -1,6 +1,8 @@
 from rest_framework import serializers
 from accounts.serializers import UserViewSerailizer
+from accounts.exceptions import AlreadyExist
 from .utils import get_or_none,get_or_create
+
 
 from .models import (
     Categoery,
@@ -238,7 +240,7 @@ class CartItemListSerailizer(serializers.ModelSerializer):
     
     def get_img(self,obj):
         img_url =  obj.product.product.img.url 
-        return "http://127.0.0.1:8000/" + img_url
+        return "http://127.0.0.1:8000" + img_url
     
     
     
@@ -409,102 +411,8 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
 
         return instance 
 
-class WishtListItemSerializer(serializers.ModelSerializer):
-
-    product  = ProductSerilizer()
-    
-   
 
 
-
-    class Meta:
-
-        model  = WishListItem
-        fields = [
-            'product',
-        ]
-
-    def validate(self,data):
-
-        request = self.context['request']
-        user    = request.user
-
-        
-        product  = get_or_none(class_model=Product,name=data['product']['name'])
-        wishlist = get_or_create(class_model=WishList,user=user)
-
-
-
-
-        if product is None:
-
-            raise serializers.ValidationError(
-
-                'there  no product in our db '
-            )
-            
-
-        data['wishlist']  = wishlist
-        data['product']   = product
-
-        
-
-
-        return data
-
-
-         
-
-
-    def create(self,validated_data):
-
-        instance = WishListItem.objects.filter(wishlist=validated_data['whishlist'],product=validated_data['product'])
-
-        if  instance.exists():
-            
-            instance = instance[0]
-            
-            if  validated_data['quantity'] == 0:
-
-                raise serializers.ValidationError (
-                    'quantity must be 1 or more'
-                )
-            
-
-            instance.quantity += validated_data['quantity'] 
-            instance.save()
-            return instance 
-        
-
-
-
-            
-                        
-
-        instance = WishListItem.objects.create(
-
-            wishlist    = validated_data['wishlist'],
-            product     = validated_data['product'],
-            quantity    = validated_data['quantity'],
-        )
-
-
-        return instance
-    
-    def update(self, instance, validated_data):
-
-        quantity = validated_data.get('quantity', None)
-        
-        # Check if quantity is zero, and delete the cart item if true
-        if quantity and quantity == 0:
-            
-            instance.delete()
-
-        else:
-
-            instance.save()
-
-        return instance 
     
 class LatestArrivalsSerailizer(serializers.ModelSerializer):
     
@@ -534,13 +442,80 @@ class LatestArrivalsSerailizer(serializers.ModelSerializer):
     class Meta:
         model = Product
         fields = [
+            'id',
             'name',
             'slug',
             'img',
             'min_price',
             'brand',
             'colors',
+            
         ]
+
+class WhishListItemProductSerailizer(serializers.ModelSerializer):
+    
+    class Meta :
+        
+        model = Product
+        
+        fields = [
+            'id',
+            'name',
+            'slug',
+            'img',
+            'brand',
+            'categoery',
+            'discription',
+        ]
+    
+        
+class WishListItemCreateSerializer(serializers.ModelSerializer):
+
+    product  = serializers.PrimaryKeyRelatedField(many=False,queryset=Product.objects.all())
+
+
+    class Meta:
+
+        model  = WishListItem
+        fields = [
+            'product',
+        ]
+
+    def validate(self,data):
+
+        request      = self.context['request']
+        user         = request.user
+
+        
+        product      = data['product']
+        wishlist     = get_or_create(class_model=WishList,user=user)
+        data['wishlist'] = wishlist
+        whish_items  =  WishListItem.objects.filter(wishlist=wishlist,product=product)
+        
+        if  whish_items.exists():           
+            raise AlreadyExist({'product':'product already  exist in whishlist'})
+        
+        return data
+    
+    
+    def create(self, validated_data):
+        instance = WishListItem.objects.create(**validated_data)
+        return instance
+    
+class WishListItemsListSerailizer(serializers.ModelSerializer):
+    
+    product  = WhishListItemProductSerailizer(many=False)
+    
+    class Meta:
+        model = WishListItem
+        
+        fields = [
+            'product'
+        ]    
+    
+    
+
+                    
 
 class ProductSerilizerForVariantListing(serializers.ModelSerializer) :
     

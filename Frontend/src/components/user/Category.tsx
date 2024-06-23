@@ -1,6 +1,7 @@
 import { useState } from "react";
 
 import { Swiper, SwiperSlide } from "swiper/react";
+import { Autoplay } from "swiper/modules";
 import "swiper/css";
 
 interface Categoery {
@@ -20,7 +21,7 @@ const Category = () => {
     },
     {
       name: "Baggy",
-      img: "https://espanshe.com/cdn/shop/collections/4M6A7849copy_large.webp?v=1711710923",
+      img: "https://i5.walmartimages.com/asr/66d9fd97-7bde-477d-b825-9e839fa149c7.a45fa778c634856733f826f9298a76a3.jpeg?odnHeight=768&odnWidth=768&odnBg=FFFFFF",
     },
     {
       name: "Cargo",
@@ -46,8 +47,14 @@ const Category = () => {
 
   console.log(categories);
   return (
-    <div className="flex items-center justify-center bg-red-800">
+    <div className="flex items-center justify-center ">
       <Swiper
+        autoplay={{
+          delay: 1000,
+          reverseDirection: false,
+        }}
+        modules={[Autoplay]}
+        loop={true}
         breakpoints={{
           340: {
             slidesPerView: 5,
@@ -68,11 +75,11 @@ const Category = () => {
           <SwiperSlide key={item.name}>
             <a
               href="#"
-              className="relative  flex flex-col items-center  w-full py-6 truncate"
+              className="relative  flex flex-col items-center  w-full py-6 truncate "
             >
               <img
                 src={item.img}
-                className="object-contain md:h-[200px] lg:h-[300px] relative z-0 rounded-full "
+                className="md:h-[200px]  shadow-lg  lg:h-[300px]  rounded-lg "
                 alt=""
               />
               <h1 className="font-pacifico mt-4 text-xs lg:text-5xl text-black  ">

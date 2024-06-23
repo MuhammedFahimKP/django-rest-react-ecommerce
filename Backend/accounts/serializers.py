@@ -11,7 +11,6 @@ from .utils import (
     register_social_user,
     verify_token,
     user_exists_or_not,
-    decrypt_string
 )
 from .thread import EmailThread
 from .task import send_mail
@@ -59,7 +58,6 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
             raise AlreadyExist({'email' : 'User with same Email already exists '})
         
         password  = attrs.get('password','')
-        password  = decrypt_string(password)
         attrs['password'] =  password
         
         return attrs   
@@ -148,7 +146,7 @@ class UserSignInSerializer(serializers.ModelSerializer):
         """
         email     = attrs.get('email')
         password  = attrs.get('password')
-        password  = decrypt_string(password) 
+       
 
         
         
@@ -316,7 +314,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
 class ShippingAddressSerializer(serializers.ModelSerializer):
     
     
-    user     = UserViewSerailizer(read_only=True) 
+    # user     = UserViewSerailizer(read_only=True) 
     state    = serializers.ChoiceField(choices=ShippingAddress.state_choices)
     pin_code = serializers.CharField(max_length=6,min_length=4)
     
@@ -325,10 +323,9 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     def create(self,validated_data):
         
         request  = self.context.get('request',None)
-        user = {
-            'user':request.user
-        } 
-        validated_data.update(user)
+        user = request.user
+
+        validated_data['user'] = user
         instance = ShippingAddress.objects.create(**validated_data)
         
         return instance 
@@ -336,8 +333,8 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     
     class Meta:
         model  =  ShippingAddress
-        fields =  '__all__'
-
+        fields = '__all__'
+        exclude = 'user' 
 
 
 

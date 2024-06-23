@@ -28,13 +28,20 @@ const ProductRow = ({
     <tr key={id}>
       <td className={classes}>
         <div className="flex items-center gap-3">
-          <Avatar
+          {/* <Avatar
             placeholder={undefined}
             src={img}
             alt={name}
-            size="sm"
+            size="md"
             className="rounded-none"
+          /> */}
+
+          <img
+            src={img}
+            alt=""
+            className="rounded-md object-fill h-16 w-14 mr-5"
           />
+
           <div className="flex flex-col">
             <Typography
               placeholder={undefined}

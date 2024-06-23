@@ -10,7 +10,7 @@ import { useNavigate } from "react-router-dom";
 
 import { UserSignInData } from "../../types";
 
-import { setUser, setAuthTokens } from "../../store/authenticationSlice";
+import { setUser, setAuthTokens } from "../../slices/authenticationSlice";
 import { RootState } from "../../store";
 
 import Form from "../../ui/user/Form";

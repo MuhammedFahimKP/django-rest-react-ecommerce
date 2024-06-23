@@ -4,7 +4,7 @@ import { ImBin } from "react-icons/im";
 import apiClient from "../../services/api-client";
 import { useEffect, useState } from "react";
 import { SizeVariation } from "../../types";
-import { getVariation } from "../../store/admin/producVarationSlice";
+import { getVariation } from "../../slices/admin/producVarationSlice";
 
 import SizeCard from "../../ui/admin/SizeCard";
 import { useSelector, useDispatch } from "react-redux";

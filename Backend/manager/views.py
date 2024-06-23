@@ -4,14 +4,18 @@ from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
 from rest_framework.parsers import FormParser,MultiPartParser
+from rest_framework.pagination import LimitOffsetPagination
 
-from shop.models import ProductVariantImages,ProductVariant
+
+
+from shop.models import Product,ProductVariantImages,ProductVariant
 from .serializers import (
     
     AdminProductVarationSerializer,
     AdminSizeVariaitonSerailizer,
     AdminSizeVariationCreateSerailizer,
     AdminColorVariationSerializer,
+    AdminProductViewSerailizer,
 )
 from .utils import is_valid_uuid
 
@@ -175,3 +179,9 @@ class ColorVarationCreateUpdateView(generics.GenericAPIView) :
         
 
 
+
+class ProductListAPIView(generics.ListAPIView) :
+    
+    serializer_class = AdminProductViewSerailizer
+    queryset         = Product.objects.all().prefetch_related('categoery','brand','variants').all()
+    pagination_class = LimitOffsetPagination

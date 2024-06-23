@@ -1,10 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 import { useDispatch, useSelector } from "react-redux";
 
-import { getCartItems } from "../../store/cartSlice";
-
-import CartCard from "../../ui/user/CartCard";
+import { clearCart, getCartItems } from "../../slices/cartSlice";
 
 import Lottie from "lottie-react";
 
@@ -15,6 +13,9 @@ import { CartItem } from "../../types";
 import NewCartItem from "../../ui/user/NewCartItem";
 
 import emptyCartAnimation from "../../assets/lotties/emptyCartLottie.json";
+import CartCardSkeleton from "../skeletons/CartCardSkeleton";
+
+import { makeArrayFromRange } from "../../utils/other-utils";
 
 interface Props {
   onClose: () => void;
@@ -23,18 +24,36 @@ interface Props {
 const CartSec = ({ onClose }: Props) => {
   const dispatch = useDispatch<any>();
 
+  const [loders, setLoaders] = useState<number[] | []>([]);
+
   useEffect(() => {
+    setLoaders(makeArrayFromRange(5));
     dispatch(getCartItems());
+
+    return () => {
+      dispatch(clearCart());
+    };
   }, []);
 
-  const { cart_items: items, total: totalprice } = useSelector(
-    (state: RootState) => state.cartSlice
-  );
+  const {
+    cart_items: items,
+    total: totalprice,
+    checkoutable,
+    loading,
+    error,
+  } = useSelector((state: RootState) => state.cartSlice);
+
+  console.log(checkoutable);
 
   return (
-    <div className="fixed inset-0 w-full h-full z-[1000] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)] font-[sans-serif] ">
+    <div className="fixed font-ubuntu inset-0 w-full h-full z-[50] before:fixed before:inset-0 before:w-full before:h-full before:bg-[rgba(0,0,0,0.5)]  ">
       <div className="w-full max-w-md bg-white shadow-lg relative ml-auto h-screen">
-        <div className="overflow-scroll no-scrollbar   p-6 h-[calc(100vh-135px)]">
+        <div
+          className={
+            "overflow-scroll no-scrollbar   p-6 " +
+            `${loading ? "h-[100vh]" : "h-[calc(100vh-135px)]"}`
+          }
+        >
           <div className="flex items-center gap-4 text-gray-800">
             <h3 className="text-2xl font-bold flex-1">Shopping cart</h3>
             <button onClick={() => onClose()}>
@@ -55,7 +74,12 @@ const CartSec = ({ onClose }: Props) => {
             </button>
           </div>
 
-          {items.length > 0 ? (
+          {loading &&
+            loders.map((value: number) => (
+              <CartCardSkeleton key={`cartCardSkeleton-${value}`} />
+            ))}
+
+          {items.length > 0 && checkoutable == false ? (
             items.map((item: CartItem) => (
               <NewCartItem
                 id={item.id}
@@ -70,17 +94,21 @@ const CartSec = ({ onClose }: Props) => {
                 subtotal={item.subtotal}
               />
             ))
-          ) : (
+          ) : error === null && loading === false ? (
             <div className="w-full mt-36 mx-auto  flex flex-col items-center ">
               <Lottie className="size-72 " animationData={emptyCartAnimation} />
               <h1 className="text-2xl mt-4  font-pacifico">
                 Shop Bag is Empty{" "}
               </h1>
             </div>
+          ) : (
+            <div className="w-full mt-36 mx-auto  flex flex-col items-center ">
+              <h1 className="text-2xl mt-4  font-pacifico">{error}</h1>
+            </div>
           )}
         </div>
-        {items.length > 1 && (
-          <div className="p-6 absolute bottom-0 w-full border-t bg-white">
+        {error === null && items.length > 0 && checkoutable === false && (
+          <div className="p-6 absolute bottom-0 w-full border-t bg-white font-ubuntu">
             <ul className="text-[#333] divide-y">
               <li className="flex flex-wrap gap-4 text-md font-bold">
                 Total <span className="ml-auto"> {totalprice}</span>
@@ -88,7 +116,7 @@ const CartSec = ({ onClose }: Props) => {
             </ul>
             <button
               type="button"
-              className="mt-6 text-md px-6 py-2.5 w-full bg-blue-600 hover:bg-blue-700 text-white rounded"
+              className="mt-6 text-md px-6 py-2.5 w-full  bg-black text-white rounded-lg "
             >
               Check out
             </button>

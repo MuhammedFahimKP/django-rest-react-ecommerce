@@ -13,7 +13,7 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 
-import { updateSizeVariation } from "../../store/admin/producVarationSlice";
+import { updateSizeVariation } from "../../slices/admin/producVarationSlice";
 import { useDispatch } from "react-redux";
 import apiClient from "../../services/api-client";
 import { type SizeVariation as Props } from "../../types";

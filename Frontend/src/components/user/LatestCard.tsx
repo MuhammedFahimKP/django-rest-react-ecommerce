@@ -1,27 +1,79 @@
-import type { LatestArrival } from "../../types";
+import { useNavigate } from "react-router-dom";
+import type { LatestArrival as Props } from "../../types";
 
-export default function LatestCard({ name, img, brand }: LatestArrival) {
+import { TbHeartPlus } from "react-icons/tb";
+import { TiEye } from "react-icons/ti";
+import apiClient, { ApiClientErrorType } from "../../services/api-client";
+
+import toast from "react-hot-toast";
+import SuccessAlert from "../../ui/alerts/SuccessAlert";
+import ErrorAlert from "../../ui/alerts/ErrorAlert";
+export default function LatestCard({ id, name, img, brand, slug }: Props) {
+  const navigate = useNavigate();
+
+  const addToWhishList = async () => {
+    try {
+      const res = await apiClient.post("shop/wishlist/", {
+        product: id,
+      });
+
+      if (res.status == 200) {
+        toast.custom((t) => (
+          <SuccessAlert toast={t} successText="Product Added WishList" />
+        ));
+      }
+    } catch (err) {
+      if (err instanceof ApiClientErrorType) {
+        if (err.response?.status == 409) {
+          toast.custom((t) => (
+            <ErrorAlert toast={t} errorText="Product Already in WishList" />
+          ));
+
+          return;
+        }
+      }
+
+      toast.custom((t) => <ErrorAlert toast={t} errorText="Network Down" />);
+    }
+  };
+
   return (
-    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 overflow-hidden w-40 md:w-72 rounded-md">
-      <a href="#">
-        <img
-          src={img}
-          alt="Product image"
-          className="h-44 md:h-80 w-40  md:w-72 object-cover object-top"
-        />
-      </a>
+    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 overflow-hidden w-40 md:w-72 rounded-xl group ">
+      <div
+        style={{
+          backgroundImage: `url(${img})`,
+        }}
+        className="h-44 relative md:h-80 w-40   md:w-72    bg-cover bg-no-repeat group"
+      >
+        <div className="absolute top-0 left-0 right-0 bottom-0  h-full w-full : ">
+          <div className=" invisible h-full w-full  group-hover:visible transition-all duration-1000">
+            <div className="backdrop-brightness-50 h-full w-full  flex items-center justify-center ">
+              <div className="flex flex-col gap-4 ">
+                <button
+                  className="bg-white  p-1 md:p-2  text-black rounded-lg hover:text--500  "
+                  onClick={() => addToWhishList()}
+                >
+                  <TbHeartPlus className="size-7  font-bold" />
+                </button>
+                <button
+                  className="bg-white  p-1 md:p-2  text-black rounded-lg hover:text-gray-500  "
+                  onClick={() => {
+                    navigate(`/single/${slug}/`);
+                  }}
+                >
+                  <TiEye className="size-7  font-bold" />
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div className="px-4 py-3 w-40 md:w-72">
         <span className="text-gray-400 mr-3 uppercase text-xs">{brand}</span>
-        <p className="text-sm  md:text-lg font-bold text-black truncate block capitalize">
-          {name}
-        </p>
+        <p className="text-sm  md:text-lg font-bold text-black">{name}</p>
+
         <div className="flex items-center">
-          <p className="text-lg font-semibold text-black cursor-auto my-3">
-            $149
-          </p>
-          <del>
-            <p className="text-sm text-gray-600 cursor-auto ml-2">$199</p>
-          </del>
           <div className="ml-auto">
             <a href="#">
               <svg

@@ -31,9 +31,7 @@ from rest_framework.response import Response
 from .utils import get_or_none
 from .serializers import ( 
     CartCreateUpdateItemSerializer,
-    CartListSerializer,
-    WishtListItemSerializer,
-    ProductSerilizer,
+    CartListSerializer,WishListItemCreateSerializer,WishListItemsListSerailizer,    ProductSerilizer,
     ProductVariantSerailizer,
     LatestArrivalsSerailizer,
     ProductVariationListSerailizer,
@@ -197,10 +195,22 @@ class WishListItemsListCreateApiView(generics.ListCreateAPIView):
     """
 
 
-    serializer_class = WishtListItemSerializer
+    
+    
+    serializer_class = None
+    
     queryset         = WishListItem.objects.all()
 
     
+    
+    def get_serializer_class(self):
+        
+        if self.request.method == 'POST':
+            
+            return WishListItemCreateSerializer
+            
+        
+        return WishListItemsListSerailizer
 
 
     def create(self,request):
@@ -249,7 +259,7 @@ class WishListItemsListCreateApiView(generics.ListCreateAPIView):
 @permission_classes([IsAuthenticated])
 class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
-     serializer_class = WishtListItemSerializer
+     serializer_class = WishListItemsListSerailizer
      queryset         = WishListItem.objects.all()
      lookup_field     = 'pk'     
 
@@ -290,6 +300,7 @@ class ListProductAPIView(generics.ListAPIView):
     
     """ 
     
+    pagination_class = LimitOffsetPagination
     
     
      

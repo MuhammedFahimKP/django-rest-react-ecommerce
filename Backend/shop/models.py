@@ -187,7 +187,7 @@ class WishList(BaseModel):
 class WishListItem(BaseModel):
 
     wishlist  = models.ForeignKey(WishList,related_name="wishlist_items",on_delete=models.CASCADE)
-    product   = models.ForeignKey(ProductVariant,on_delete=models.CASCADE)
+    product   = models.ForeignKey(Product,on_delete=models.CASCADE)
     is_active = models.BooleanField(default=True)
 
 

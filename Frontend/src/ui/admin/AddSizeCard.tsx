@@ -5,7 +5,6 @@ import {
   DialogBody,
   DialogHeader,
   DialogFooter,
- 
 } from "@material-tailwind/react";
 import { IoAddSharp } from "react-icons/io5";
 import { useData } from "../../hooks";

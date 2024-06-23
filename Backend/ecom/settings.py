@@ -41,7 +41,9 @@ CORS_URL_REGEX = r"^/api/.*"
 # Application definition
 
 INSTALLED_APPS = [
-    
+     #socket
+     'daphne',
+     'channels',
     #django default apps
     
     'django.contrib.admin',
@@ -79,7 +81,9 @@ INSTALLED_APPS = [
     'django_filters',
     
     #api docs
-    'drf_spectacular'
+    'drf_spectacular',
+     
+    
 ]
 
 
@@ -133,6 +137,24 @@ TEMPLATES = [
 WSGI_APPLICATION = 'ecom.wsgi.application'
 
 
+
+ASGI_APPLICATION = 'ecom.asgi.application'
+
+
+
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': "channels.layers.InMemoryChannelLayer"
+    }
+}
+# CHANNEL_LAYERS = {
+#     "default": {
+#         "BACKEND": "channels_redis.core.RedisChannelLayer",
+#         "CONFIG": {
+#             "hosts": [('0.0.0.0', 6379)],
+#         },
+#     },
+# }
 
 """
 
@@ -226,13 +248,6 @@ STATIC_URL = 'static/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-REST_FRAMEWORK = {
-    'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.AllowAny',
-    ],
-    
-    
-}
 
 
 SIMPLE_JWT = {

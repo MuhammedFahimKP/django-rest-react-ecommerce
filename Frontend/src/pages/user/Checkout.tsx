@@ -1,5 +1,9 @@
 import React from "react";
 
+import { useDispatch, useSelector } from "react-redux";
+import { checkouted, uncheckouted } from "../../slices/cartSlice";
+import { RootState } from "../../store";
+
 import {
   Accordion,
   AccordionHeader,
@@ -8,12 +12,31 @@ import {
 
 import Navbar from "../../components/user/Navbar";
 
+import ShippingAdressContainer from "../../components/user/ShippingAdressContainer";
+
 const Checkout = () => {
   const [open, setOpen] = React.useState(0);
   const [alwaysOpen, setAlwaysOpen] = React.useState(true);
 
   const handleAlwaysOpen = () => setAlwaysOpen((cur) => !cur);
   const handleOpen = (value: number) => setOpen(open === value ? 0 : value);
+
+  const dispatch = useDispatch();
+
+  const cart = useSelector((state: RootState) => state.cartSlice);
+
+  console.log(cart);
+
+  React.useEffect(() => {
+    dispatch(checkouted());
+
+    function uncheckout() {
+      dispatch(uncheckouted());
+    }
+
+    return () => uncheckout();
+  }, []);
+
   return (
     <React.Fragment>
       <div className="lg:h-20  h-16 bg-black mb-0 sticky top-0 z-50 w-full">
@@ -27,10 +50,7 @@ const Checkout = () => {
             </div>
           </AccordionHeader>
           <AccordionBody>
-            We&apos;re not always in the position that we want to be at.
-            We&apos;re constantly growing. We&apos;re constantly making
-            mistakes. We&apos;re constantly trying to express ourselves and
-            actualize our dreams.
+            <ShippingAdressContainer />
           </AccordionBody>
         </Accordion>
         <Accordion placeholder={undefined} open={open === 1}>

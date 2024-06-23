@@ -1,4 +1,4 @@
-import { useWindowDimensions } from "../../hooks/useWindow";
+import { useWindowDimensions } from "../../hooks";
 
 const BottmNavbar = () => {
   const { width } = useWindowDimensions();

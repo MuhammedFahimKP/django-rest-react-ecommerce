@@ -31,9 +31,16 @@ const LatestArrivals = () => {
         {/* <h1 className="text-3xl">Tailwind CSS</h1> */}
       </div>
 
-      <div className="grid grid-cols-2  lg:grid-cols-3 place-items-center bg-red-400  min-w-sm   mx-auto mb-5 mt-5 gap-2 lg:gap-5 ">
+      <div className="grid grid-cols-2  lg:grid-cols-3 place-items-center   min-w-sm   mx-auto mb-5 mt-5 gap-2 lg:gap-5 ">
         {latestArrivals.map((item: LatestArrival) => (
-          <LatestCard brand={item.brand} img={item.img} name={item.name} />
+          <LatestCard
+            id={item.id}
+            brand={item.brand}
+            img={item.img}
+            name={item.name}
+            slug={item.slug}
+            color={item.color}
+          />
         ))}
       </div>
     </>

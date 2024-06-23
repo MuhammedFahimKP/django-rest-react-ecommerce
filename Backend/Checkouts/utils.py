@@ -3,7 +3,7 @@ import razorpay
 from django.conf import settings
 
 
-razorpay_client : object = razorpay.Client(auth=(settings.RAZOR_PAY_KEY,settings.RAZOR_PAY_SECRETE_KEY))
+razorpay_client = razorpay.Client(auth=(settings.RAZOR_PAY_KEY,settings.RAZOR_PAY_SECRETE_KEY))
 
 
 class RazorPay:
@@ -17,12 +17,15 @@ class RazorPay:
             'amount':float(amount),
             'currency':currency
         }
+    
         
         payment_order = razorpay_client.order.create(data=data)
         return payment_order
     
     @staticmethod
     def verfiy_payment(order_id:str,payment_id:str,signature:str) -> dict:
+        
+    
         
         data = {
             'razorpay_order_id': order_id,

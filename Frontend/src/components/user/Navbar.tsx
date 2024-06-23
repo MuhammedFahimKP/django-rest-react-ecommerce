@@ -11,7 +11,7 @@ import { CiHeart } from "react-icons/ci";
 import { RiMenu5Fill } from "react-icons/ri";
 import { HiOutlineShoppingBag } from "react-icons/hi2";
 
-import { useWindowDimensions } from "../../hooks/useWindow";
+import { useWindowDimensions } from "../../hooks";
 import { useState } from "react";
 import CartSec from "./CartSec";
 

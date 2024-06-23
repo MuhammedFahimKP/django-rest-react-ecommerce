@@ -1,5 +1,10 @@
+
+
 import django_filters
+
+
 from  shop.models import Product
+
 
 
 class AdminProductFilterSet(django_filters.FilterSet):

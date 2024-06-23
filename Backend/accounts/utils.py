@@ -179,26 +179,6 @@ def get_user_details_and_tokens(user:MyUser):
 
        
 
-from cryptography.hazmat.primitives.ciphers import Cipher, algorithms, modes
-from cryptography.hazmat.backends import default_backend
-from base64 import b64decode
-
-import secrets
-
-
-def decrypt_string(encrypted_string):
-       
-    key = settings.DECRYPT_KEY
-    
-    
-    
-    encrypted_string = base64.decode(encrypted_string)
-    cipher = AES.new(key.encode('utf-8'),AES.MODE_ECB)
-    return unpad(cipher.decrypt(encrypted_string),16)
-    
-                                            
-
-
 
     
     

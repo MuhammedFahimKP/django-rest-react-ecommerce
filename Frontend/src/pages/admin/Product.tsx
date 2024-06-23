@@ -1,17 +1,26 @@
 import { useEffect, useState } from "react";
-import { useOutlet } from "react-router-dom";
+import { useOutlet, useSearchParams } from "react-router-dom";
 
-import DropDownList from "../../ui/admin/DropDownList";
+import { MenuItem, Checkbox, Typography } from "@material-tailwind/react";
+
+import DropDownMenu from "../../ui/admin/DropDownMenu";
 import SearchBox from "../../ui/admin/SearchBox";
 import apiClient from "../../services/api-client";
 import ProductList from "../../components/admin/ProductList";
+import SortSelector from "../../ui/admin/SortSelector";
+
 import {
   setBrand,
   setCategory,
   setName,
-} from "../../store/admin/productSearchSlice";
+} from "../../slices/admin/productSearchSlice";
+
+import { AdminProductSortData } from "../../utils/constants";
+import { getAllSearchParams } from "../../utils/other-utils";
+
 import { useDispatch } from "react-redux";
-import { MdOutlineAdd } from "react-icons/md";
+import { MdNewReleases, MdOutlineAdd } from "react-icons/md";
+import { setProduct } from "../../slices/currentProductSlice";
 
 interface AdminBrandResponse {
   id: string;
@@ -32,9 +41,47 @@ interface AdminCategoeryResponse {
 
 const Product = () => {
   const outlet = useOutlet();
+
+  if (outlet) return outlet;
+
+  const dispatch = useDispatch();
+
   const [brands, setBrands] = useState<AdminBrandResponse[] | []>([]);
   const [category, setCategoery] = useState<AdminCategoeryResponse[] | []>([]);
-  const dispatch = useDispatch();
+
+  const [productFIlterParams, setProductFilterParams] = useSearchParams();
+
+  const setCurrentFilter = (queryParam: string, value: string) => {
+    console.log(productFIlterParams.entries());
+    setProductFilterParams((prevParams: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      newParams.append(queryParam, value);
+      return newParams;
+    });
+  };
+
+  const removeCurrentFilter = (queryParam: string, value: string) => {
+    setProductFilterParams((prevParams: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      newParams.delete(queryParam, value);
+
+      return newParams;
+    });
+
+    alert(productFIlterParams.entries());
+  };
+  const updateSortFilter = (prevValue: string, newValue: string) =>
+    setProductFilterParams((prevParams: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParams);
+
+      if (newParams.has("ordering")) {
+        newParams.delete("ordering", prevValue);
+      }
+
+      newValue !== "" && newParams.append("ordering", newValue);
+
+      return newParams;
+    });
 
   useEffect(() => {
     apiClient
@@ -47,9 +94,7 @@ const Product = () => {
       .catch((err) => console.log(err));
   }, []);
 
-  return outlet ? (
-    outlet
-  ) : (
+  return (
     <div className="w-5/6 bg-red-500 h-full">
       <div className="flex flex-col   h-[35%]  lg:h-48  bg-[#f5f7fa] px-8 py-0 text-black ">
         <div className="mt-4 flex items-center justify-between lg:mt-8 h-fit     ">
@@ -92,37 +137,97 @@ const Product = () => {
             <SearchBox onSearch={(text: string) => dispatch(setName(text))} />
           </div>
           <div className="flex items-center justify-normal gap-5">
-            <DropDownList
-              title="Brand"
-              dispatcher={(brandText: string) => dispatch(setBrand(brandText))}
-            >
-              {brands.length > 0 &&
-                brands.map((brand: AdminBrandResponse) => (
-                  <option value={brand.name}>{brand.name}</option>
-                ))}
-            </DropDownList>
-            <DropDownList
-              title="Category"
-              dispatcher={(categoryText: string) =>
-                dispatch(setCategory(categoryText))
+            <DropDownMenu title="Brand">
+              {brands.map((brand: AdminBrandResponse) => (
+                <MenuItem
+                  placeholder={undefined}
+                  className="flex gap-3"
+                  key={brand.id}
+                >
+                  <Checkbox
+                    crossOrigin={undefined}
+                    id={`brand-checkbox${brand.id}`}
+                    label={
+                      <Typography
+                        placeholder={undefined}
+                        color="blue-gray"
+                        className="font-medium  ml-2"
+                      >
+                        {brand.name}
+                      </Typography>
+                    }
+                    ripple={false}
+                    onChange={() => {
+                      productFIlterParams.getAll("brand").includes(brand.name)
+                        ? removeCurrentFilter("brand", brand.name)
+                        : setCurrentFilter("brand", brand.name);
+                    }}
+                    checked={
+                      productFIlterParams.getAll("brand").includes(brand.name)
+                        ? true
+                        : false
+                    }
+                    className="hover:before:opacity-0"
+                    containerProps={{
+                      className: "p-0",
+                    }}
+                  />
+                </MenuItem>
+              ))}
+            </DropDownMenu>
+
+            <DropDownMenu title="Category">
+              {category.map((category: AdminBrandResponse) => (
+                <MenuItem
+                  placeholder={undefined}
+                  className="flex gap-3"
+                  key={category.id}
+                >
+                  <Checkbox
+                    crossOrigin={undefined}
+                    id={`category-checkbox${category.id}`}
+                    label={
+                      <Typography
+                        placeholder={undefined}
+                        color="blue-gray"
+                        className="font-medium  ml-2"
+                      >
+                        {category.name}
+                      </Typography>
+                    }
+                    ripple={false}
+                    onChange={() => {
+                      productFIlterParams
+                        .getAll("category")
+                        .includes(category.name)
+                        ? removeCurrentFilter("category", category.name)
+                        : setCurrentFilter("category", category.name);
+                    }}
+                    checked={
+                      productFIlterParams
+                        .getAll("category")
+                        .includes(category.name)
+                        ? true
+                        : false
+                    }
+                    className="hover:before:opacity-0"
+                    containerProps={{
+                      className: "p-0",
+                    }}
+                  />
+                </MenuItem>
+              ))}
+            </DropDownMenu>
+            <SortSelector
+              sortChangeHandler={(prevValue: string, newValue: string) =>
+                updateSortFilter(prevValue, newValue)
               }
-            >
-              {category.map((category: AdminCategoeryResponse) => (
-                <option value={category.name}>{category.name}</option>
-              ))}
-            </DropDownList>
-            <DropDownList
-              title="Sort By"
-              dispatcher={(categoryText: string) => console.log(categoryText)}
-            >
-              {category.map((category: AdminCategoeryResponse) => (
-                <option value={category.name}>{category.name}</option>
-              ))}
-            </DropDownList>
+              sortFileds={AdminProductSortData}
+            />
           </div>
         </div>
       </div>
-      <ProductList />
+      <ProductList filterParams={productFIlterParams} />
     </div>
   );
 };

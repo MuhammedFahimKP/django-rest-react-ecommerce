@@ -25,10 +25,10 @@ urlpatterns = [
     path('cart/<str:pk>/',views.CartItemReteriveUpdateDestroyAPIView.as_view(),name="cart-item-retrive-update-delete"),  
 
     # wishlistitems getting and creating view
-    path('whishlist/',views.WishListItemsListCreateApiView.as_view(),name="wish-items-create-and-update-view"),
+    path('wishlist/',views.WishListItemsListCreateApiView.as_view(),name="wish-items-create-and-update-view"),
 
     # single wishlist item getting and updating and delete view
-    path('whishlist/<str:pk>/',views.WishListItemReteriveUpdateDestroyAPIView.as_view(),name="wish-item-retrive-update-delete"),
+    path('wishlist/<str:pk>/',views.WishListItemReteriveUpdateDestroyAPIView.as_view(),name="wish-item-retrive-update-delete"),
 
 
 ]

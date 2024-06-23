@@ -56,55 +56,41 @@
 
 import { useEffect, useState } from "react";
 
-import { useProduct } from "../../hooks/useProduct";
+import { usePaginatedAdminProduct } from "../../hooks/useProduct";
+
+import { ChevronUpDownIcon } from "@heroicons/react/24/outline";
 
 import {
-  MagnifyingGlassIcon,
-  ChevronUpDownIcon,
-} from "@heroicons/react/24/outline";
-import { PencilIcon, UserPlusIcon } from "@heroicons/react/24/solid";
-import {
   Card,
-  CardHeader,
-  Input,
   Typography,
   Button,
   CardBody,
-  Chip,
   CardFooter,
-  Tabs,
-  TabsHeader,
-  Tab,
-  Avatar,
-  IconButton,
-  Tooltip,
-  useSelect,
 } from "@material-tailwind/react";
-
-import apiClient, {
-  type ApiClientError,
-  type ApiClientResponse,
-} from "../../services/api-client";
 
 import { AdminProduct } from "../../types";
 import ProductRow from "../../ui/admin/ProductRow";
-import { RootState } from "../../store";
-import { useSelector } from "react-redux";
 
-const TABS = [
-  {
-    label: "All",
-    value: "all",
-  },
-  {
-    label: "Monitored",
-    value: "monitored",
-  },
-  {
-    label: "Unmonitored",
-    value: "unmonitored",
-  },
-];
+import AdminProductRowSkeleton from "../skeletons/AdminProductRowSkeleton";
+import {
+  makeArrayFromRange,
+  getAllSearchParams,
+} from "../../utils/other-utils";
+
+// const TABS = [
+//   {
+//     label: "All",
+//     value: "all",
+//   },
+//   {
+//     label: "Monitored",
+//     value: "monitored",
+//   },
+//   {
+//     label: "Unmonitored",
+//     value: "unmonitored",
+//   },
+// ];
 
 const TABLE_HEAD = [
   "Product",
@@ -163,9 +149,21 @@ const TABLE_ROWS = [
   },
 ];
 
-export default function SortableTable() {
-  const deps = useSelector((state: RootState) => state.adminProductSearchSlice);
-  const { data } = useProduct([deps]);
+interface Props {
+  filterParams: URLSearchParams;
+}
+
+export default function SortableTable({ filterParams }: Props) {
+  const [limit] = useState(4);
+
+  const { data, currentPage, next, prev, updateFilters, pages, loading } =
+    usePaginatedAdminProduct(3, 1000);
+
+  const [loadingArray] = useState(makeArrayFromRange(limit));
+
+  useEffect(() => {
+    updateFilters(getAllSearchParams(filterParams));
+  }, [filterParams]);
 
   return (
     <div className="cursor-pointer h-full">
@@ -198,6 +196,13 @@ export default function SortableTable() {
               </tr>
             </thead>
             <tbody>
+              {loading &&
+                loadingArray.map((_, index) => (
+                  <AdminProductRowSkeleton
+                    classes={"p-4"}
+                    key={"Admin" + "product" + "skeleton" + index}
+                  />
+                ))}
               {data.map(
                 (
                   {
@@ -210,9 +215,9 @@ export default function SortableTable() {
                     created,
                     updated,
                   }: AdminProduct,
-                  index
+                  index: number
                 ) => {
-                  const isLast = index === TABLE_ROWS.length - 1;
+                  const isLast = index === limit - 1;
                   const classes = isLast
                     ? "p-4"
                     : "p-4 border-b border-blue-gray-50";
@@ -246,13 +251,23 @@ export default function SortableTable() {
             color="blue-gray"
             className="font-normal"
           >
-            Page 1 of 10
+            Page {currentPage} of {pages}
           </Typography>
           <div className="flex gap-2">
-            <Button placeholder={undefined} variant="outlined" size="sm">
+            <Button
+              placeholder={undefined}
+              variant="outlined"
+              size="sm"
+              onClick={prev}
+            >
               Previous
             </Button>
-            <Button placeholder={undefined} variant="outlined" size="sm">
+            <Button
+              placeholder={undefined}
+              variant="outlined"
+              size="sm"
+              onClick={next}
+            >
               Next
             </Button>
           </div>

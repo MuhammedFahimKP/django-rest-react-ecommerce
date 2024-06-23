@@ -8,7 +8,7 @@ import apiClient, { ApiClientResponse } from "../../services/api-client";
 import { FaSave } from "react-icons/fa";
 import { ImBin } from "react-icons/im";
 import { useData } from "../../hooks";
-import { checkAnyCahngeOccured } from "../../utils/validators";
+import { checkAnyCahngeOccured } from "../../utils/other-utils";
 import ImageChange from "../../components/admin/ImageChange";
 
 import { genrateImageUrl } from "../../utils/image";

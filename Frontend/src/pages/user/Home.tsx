@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
-import { logout } from "../../store/authenticationSlice";
+import { logout } from "../../slices/authenticationSlice";
 
 import { RootState } from "../../store";
 import Navbar from "../../components/user/Navbar";
@@ -21,7 +21,7 @@ import CartSec from "../../components/user/CartSec";
 
 import BottmNavbar from "../../components/user/BottmNavbar";
 
-import { dismissCartAlert } from "../../store/alertSlice";
+import { dismissCartAlert } from "../../slices/alertSlice";
 
 import LatestArrivals from "../../components/user/LatestArrivals";
 import Category from "../../components/user/Category";
@@ -64,11 +64,11 @@ const Home = () => {
   const onOpenOrClose = () => setCartOpen(!cartOpen);
 
   return (
-    <>
+    <div className="scroller">
       <ScreenContainer>
         <Navbar onOpen={onOpenOrClose} />
 
-        <div className="">
+        <div className="scrollbar-thumb-black scrollbar-thin scrollbar-track-gray-100">
           <Slider />
         </div>
         {/* <Hero /> */}
@@ -100,7 +100,7 @@ const Home = () => {
 
         <BottmNavbar />
       </ScreenContainer>
-    </>
+    </div>
   );
 };
 
