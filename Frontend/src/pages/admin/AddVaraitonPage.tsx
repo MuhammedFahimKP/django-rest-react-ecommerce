@@ -11,13 +11,14 @@ import { Select, Option, Tooltip } from "@material-tailwind/react";
 
 import { useData } from "../../hooks";
 import { FaPlus } from "react-icons/fa";
-import type { AdminColor, AdminProduct, ColorVariation } from "../../types";
+import type { AdminColor, AdminProduct, ColorVariation } from "../../@types";
 
 import { FILE_REQUEST_CONFIG } from "../../utils/constants";
 
 import NotFound from "../../components/NotFound";
 import DelayComponent from "../../components/DelayComponent";
 import AddColorForm from "../../components/admin/AddColorForm";
+import ImageUploaderWithImage from "../../components/admin/ImageUploaderWithImage";
 
 import { useNavigate } from "react-router-dom";
 import { toast, Toaster } from "react-hot-toast";
@@ -284,43 +285,3 @@ const AddVaraitonPage = () => {
 };
 
 export default AddVaraitonPage;
-
-interface ImageUploaderProps {
-  name: string;
-  src: string;
-  handleChange: (e: ChangeEvent) => void;
-  className: string;
-  error?: string;
-}
-
-function ImageUploaderWithImage({
-  name,
-  src,
-  handleChange,
-  className,
-  error,
-}: ImageUploaderProps) {
-  return (
-    <>
-      <div className="flex flex-col justify-center mt-2 ">
-        <Tooltip content="add Image" placement="bottom">
-          <label
-            htmlFor={"dropzone-file" + name}
-            className="flex flex-col items-center justify-center     font-ptsans font-bold  rounded-md cursor-pointer "
-          >
-            <img src={src} alt="" className={className} />
-            <input
-              id={"dropzone-file" + name}
-              type="file"
-              className="hidden"
-              onChange={(e: any) => handleChange(e)}
-              name={name}
-              accept="image/*"
-            />
-          </label>
-        </Tooltip>
-        {error && <p className="text-sm text-red-500 ml-2 mt-2">{error}</p>}
-      </div>
-    </>
-  );
-}

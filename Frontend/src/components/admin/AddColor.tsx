@@ -6,7 +6,7 @@ const AddVaraitonPage = ({ id }: { id: string }) => {
   return (
     <div className="relative  bg-white shadow-lg boder-2 border-gray-600  h-96 w-72 grid  flex-col items-center justify-center overflow-hidden rounded-xl   text-center text-gray-700">
       <Link
-        to={`/product/variation/${id}/add/`}
+        to={`/admin/product/variation/${id}/add/`}
         className={
           "absolute inset-0 m-0 overflow-hidden rounded-none  bg-white " +
           "flex items-center justify-center" +

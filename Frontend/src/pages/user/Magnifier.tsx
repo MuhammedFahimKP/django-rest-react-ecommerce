@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 
-const ProductMagnifier = ({ src }: { src: string }) => {
+interface Props {
+  classes: string;
+  src: string;
+}
+
+const ProductMagnifier = ({ classes, src }: Props) => {
   const magnifierHeight = 100;
   const magnifieWidth = 100;
   const zoomLevel = 2;
@@ -11,10 +16,10 @@ const ProductMagnifier = ({ src }: { src: string }) => {
 
   return (
     <div className="container mx-auto px-10 lg:px-0 py-10 flex items-center justify-center">
-      <div className="relative h-[500px] w-[400px]   ">
+      <div className="relative  lg:w[500px] lg:h-[h-400px]   ">
         <img
           src={src}
-          className="w-full h-full aspect-square object-fill bg-clip-border rounded-xl"
+          className={classes}
           onMouseEnter={(e) => {
             const elem = e.currentTarget;
             const { width, height } = elem.getBoundingClientRect();

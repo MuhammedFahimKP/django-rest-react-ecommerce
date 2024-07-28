@@ -14,14 +14,20 @@ from rest_framework.exceptions import NotFound
 
 
 from .models import (
-     
+     Brand,
      Cart,
      CartItem,
-     WishList,
-     WishListItem,
+     Categoery,
+     Color,
+     
+    # WishList,
+    # WishListItem,
      Product,
      ProductVariant,
      ProductVariantImages,
+     Size,
+     
+     
      
 
 )
@@ -30,13 +36,17 @@ from .models import (
 from rest_framework.response import Response
 from .utils import get_or_none
 from .serializers import ( 
+    BrandSerializer,
     CartCreateUpdateItemSerializer,
-    CartListSerializer,WishListItemCreateSerializer,WishListItemsListSerailizer,    ProductSerilizer,
+    CartListSerializer,     
+    CategoerySerializer,
+    ColorSerializer,
+    ProductSerilizer,
     ProductVariantSerailizer,
     LatestArrivalsSerailizer,
     ProductVariationListSerailizer,
-    
-
+    SingleProductSerializer,
+    SizeSerializer,
 )
 from .filters import ProductFilterSet,ProductVariantFilterSet
 
@@ -78,7 +88,13 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
     def list(self,request):
         
         instance   = Cart.objects.filter(user=request.user)
-        instance   = instance.first()
+        
+        if not instance.exists():
+            
+            return Response({},status=200)
+            
+        instance = instance.first()
+             
         serializer = CartListSerializer(instance,many=False,context={'request':request})
         
         return Response(serializer.data,status=status.HTTP_200_OK)
@@ -184,91 +200,91 @@ class CartItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     
    
 
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
-class WishListItemsListCreateApiView(generics.ListCreateAPIView):
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([IsAuthenticated])
+# class WishListItemsListCreateApiView(generics.ListCreateAPIView):
     
-    """
+#     """
 
-    used jwt authentication class and  to ftech cartitems of current user
+#     used jwt authentication class and  to ftech cartitems of current user
     
-    """
+#     """
 
-
-    
-    
-    serializer_class = None
-    
-    queryset         = WishListItem.objects.all()
 
     
     
-    def get_serializer_class(self):
+#     serializer_class = None
+    
+#     queryset         = WishListItem.objects.all()
+
+    
+    
+#     def get_serializer_class(self):
         
-        if self.request.method == 'POST':
+#         if self.request.method == 'POST':
             
-            return WishListItemCreateSerializer
+#             return WishListItemCreateSerializer
             
         
-        return WishListItemsListSerailizer
+#         return WishListItemsListSerailizer
 
 
-    def create(self,request):
+#     def create(self,request):
 
-        serializer = self.get_serializer(data=request.data)
+#         serializer = self.get_serializer(data=request.data)
         
 
 
 
 
 
-        if serializer.is_valid(raise_exception=True):
-            self.perform_create(serializer)
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-        return Response(serializer.errors,status=404)
+#         if serializer.is_valid(raise_exception=True):
+#             self.perform_create(serializer)
+#             headers = self.get_success_headers(serializer.data)
+#             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+#         return Response(serializer.errors,status=404)
     
 
 
 
             
-    def get_queryset(self,*args, **kwargs):
+#     def get_queryset(self,*args, **kwargs):
             
-            #getting the wishlist  of current user if user does not have wishlist it return a None
+#             #getting the wishlist  of current user if user does not have wishlist it return a None
 
             
-            """
+#             """
 
-            user have wishlist then filtering the wishlistitems are related to wishlist 
-            otherwise returns empty list
+#             user have wishlist then filtering the wishlistitems are related to wishlist 
+#             otherwise returns empty list
 
-            """
+#             """
 
-            wishlist = get_or_none(class_model=WishList,user=self.request.user)
+#             wishlist = get_or_none(class_model=WishList,user=self.request.user)
 
-            if wishlist is not None :
-                qs = super().get_queryset(*args,**kwargs)
-                return qs.filter(wishlist=wishlist)
+#             if wishlist is not None :
+#                 qs = super().get_queryset(*args,**kwargs)
+#                 return qs.filter(wishlist=wishlist)
         
-            qs = WishListItem.objects.none()
-            return  qs
+#             qs = WishListItem.objects.none()
+#             return  qs
                 
 
 
-@authentication_classes([JWTAuthentication])
-@permission_classes([IsAuthenticated])
-class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+# @authentication_classes([JWTAuthentication])
+# @permission_classes([IsAuthenticated])
+# class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
 
-     serializer_class = WishListItemsListSerailizer
-     queryset         = WishListItem.objects.all()
-     lookup_field     = 'pk'     
+#      serializer_class = WishListItemsListSerailizer
+#      queryset         = WishListItem.objects.all()
+#      lookup_field     = 'pk'     
 
      
-     """
+#      """
 
-            getinging  the cartitem updating the
-            using put 
-     """
+#             getinging  the cartitem updating the
+#             using put 
+#      """
 
 
 
@@ -336,3 +352,53 @@ class ProductVariantRetriveAPIView(generics.ListAPIView):
      
 
 
+class SingleProductRetrivalAPIView(generics.GenericAPIView):
+    
+    serializer_class = SingleProductSerializer
+    
+    queryset         = Product.objects.all()
+    
+
+    
+    def get(self,request,slug):
+        
+        
+        try :
+            
+            product = Product.objects.get(slug=slug)
+            
+            
+        except Product.DoesNotExist:
+            
+            return Response({'product':'not found'},status=404)
+        
+        
+        serializer = self.get_serializer_class()
+        
+        serializer = serializer(product,context={'request':request})
+        
+        return Response(serializer.data,status=status.HTTP_200_OK)
+        
+        
+
+class ColoursListingAPIView(generics.ListAPIView):
+    queryset = Color.objects.all()
+    serializer_class = ColorSerializer
+class SizesListingAPIView(generics.ListAPIView):
+    
+    queryset = Size.objects.all()
+    serializer_class = SizeSerializer
+
+
+
+class CategoeryListingAPIView(generics.ListAPIView) :
+    
+    queryset = Categoery.objects.all()
+    serializer_class = CategoerySerializer 
+    
+    
+    
+class BrandListingAPIView(generics.ListAPIView):
+
+    queryset = Brand.objects.all()
+    serializer_class = BrandSerializer

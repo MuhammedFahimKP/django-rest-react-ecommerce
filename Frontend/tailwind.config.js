@@ -18,6 +18,10 @@ module.exports = withMT({
         2000: "2000ms",
       },
 
+      lineClamp: {
+        10: "10",
+      },
+
       transitionTimingFunction: {
         "custom-ease": "cubic-bezier(0.25, 0.8, 0.25, 1)",
         "custom-bounce": "cubic-bezier(0.68, -0.55, 0.27, 1.55)",
@@ -84,7 +88,24 @@ module.exports = withMT({
       },
     },
   },
-  plugins: [],
+  plugins: [
+    function ({ addUtilities, theme, e }) {
+      const utilities = Object.entries(theme("lineClamp")).map(
+        ([key, value]) => {
+          return {
+            [`.${e(`line-clamp-${key}`)}`]: {
+              overflow: "hidden",
+              display: "-webkit-box",
+              "-webkit-box-orient": "vertical",
+              "-webkit-line-clamp": value,
+            },
+          };
+        }
+      );
+
+      addUtilities(utilities, ["responsive"]);
+    },
+  ],
 });
 
 // export default {

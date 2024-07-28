@@ -3,7 +3,7 @@ from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
-from rest_framework.exceptions import AuthenticationFailed,NotFound
+from rest_framework.exceptions import AuthenticationFailed,NotFound,NotAuthenticated
 
 from .models import MyUser,ShippingAddress
 from .utils import (
@@ -243,6 +243,50 @@ class GoogleSiginSerializer(serializers.Serializer):
              
 
 
+class ChangePasswordSerializer(serializers.Serializer) :
+    
+    
+    password = serializers.CharField()
+    new_password = serializers.CharField()
+    
+    
+    def validate(self, data):
+        
+        
+        request = self.context.get('request')
+        user    = request.user
+        
+        password = data['password']
+        new_password = data['new_password']
+        
+        
+        if user.auth_provider == 'google':
+            
+            raise AuthenticationFailed({'password':'google user doesn t have password'})
+
+        
+        if user.check_password(password) == False :
+            
+            raise NotAuthenticated({'password':'not correct password'}) 
+        
+        if password == new_password  :
+            
+            raise serializers.ValidationError({'new_password':'passwords are same '})
+        
+        
+    
+        
+        return  data 
+        
+    
+    
+    
+    
+    
+    class Meta:
+        
+        fields = ['password', 'new_password',]
+
    
 
 
@@ -300,6 +344,7 @@ class UserUpdateSerializer(serializers.ModelSerializer):
             instance.save()
             return instance
         
+        
 
     class Meta:
             model = UserViewSerailizer.Meta.model
@@ -333,8 +378,7 @@ class ShippingAddressSerializer(serializers.ModelSerializer):
     
     class Meta:
         model  =  ShippingAddress
-        fields = '__all__'
-        exclude = 'user' 
+        exclude = ['user'] 
 
 
 

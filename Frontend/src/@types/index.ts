@@ -20,7 +20,7 @@ export interface UserModelResponse {
   role: "user" | "admin" | "sub admin";
 }
 
-interface Product {
+export interface Product {
   id: string;
   name: string;
   categoery: string;
@@ -65,6 +65,7 @@ export interface CartItem {
 export interface CartResponse {
   total: number;
   cart_items: CartItem[] | [];
+  itemErrors: { [key: string]: string };
 }
 
 export interface WishListProductItem extends LatestArrival {
@@ -84,9 +85,10 @@ export interface ColorVariation {
 }
 
 export interface ShippingAddress {
+  id: string;
   pin_code: string;
   city: string;
-  state: "Kerala" | "TamilNadu" | "Karnataka";
+  state: string;
   place: string;
   landmark: string;
   phone_no: string;
@@ -106,19 +108,99 @@ export interface ProductVariant {
   stock: number;
 }
 export interface ProductResponseData {
+  id: string;
   name: string;
   brand: string;
   categoery: string;
   img: string;
-  variants: ProductVariant[];
+  colors: string[];
+  min_price: number;
   discription: string;
   slug: string;
+}
+
+export interface Order {
+  id: string;
+  created: string | Date;
+  expected_delivery: string | null | Date;
+  payment: "ROZOR PAY" | "COD";
+  payment_status: "Pending" | "Paid";
+  status: "Placed" | "Delivered" | "Cancelled";
+  total_amount: number;
 }
 
 export interface SingleProductResponseData {
   name: string;
   discription: string;
 }
+
+export interface OrderProductResponse {
+  id: string;
+  product: {
+    id: string;
+    name: string;
+    img: string;
+    categoery: string;
+    brand: string;
+    discription: string;
+  };
+  img: {
+    img_1: string;
+    img_2: string;
+    img_3: string;
+  };
+  size: string;
+  color: string;
+  price: number;
+}
+
+export interface OrderItem {
+  id: string;
+  product: OrderProductResponse;
+  quantity: string;
+}
+
+export interface OrderFetchResponse extends Order {
+  orders: OrderItem[];
+}
+
+const j = {
+  id: "15d9502d-4a6b-4dcc-82d2-d4cbef1fe1c3",
+  orders: [
+    {
+      id: "a930c438-07bd-45bf-8e61-57e7884f8ef8",
+      product: {
+        product: "Men Navy Advanced Rapid Dry T-shirt",
+        img: {
+          id: "2cfe78f8-9200-4961-a982-618f10883764",
+          img_id:
+            "16e39d92-65b9-4829-8c41-20ba1960ce8b 4fe606ff-54bc-42c6-994c-0126ce311f04",
+          img_1:
+            "http://127.0.0.1:8000/media/prdv1/94412956-cdc5-46e6-ae24-ddf43753bb861646042819162-HRX-by-Hrithik-Roshan-Men-Navy-_kK2aLcX.webp",
+          img_2: "http://127.0.0.1:8000/media/prdv2/hrxblutshirt.jpg",
+          img_3: "http://127.0.0.1:8000/media/prdv3/hrxbluetshirt3.jpg",
+        },
+        size: "S",
+        color: "Navy",
+      },
+      quantity: 1,
+    },
+  ],
+  total_amount: "0.00",
+  created: "2024-07-12 12:26:22",
+  status: "Placed",
+  // address: {
+  //   state: "Kerala",
+  //   place: "Palazhi",
+  //   city: "PatheranKavu",
+  //   pin_code: "673014",
+  //   landmark: "Hilite Bussiness Park",
+  //   phone_no: "8921212828",
+  //   alter_phone_no: "9048005413",
+  // },
+  payment_type: "RAZOR PAY",
+  payment_status: "Pending",
+};
 
 // admin side
 
@@ -170,6 +252,22 @@ export interface SizeVariation {
 export interface VariationWithSize extends Variation {
   size_varations: SizeVariation[] | [];
 }
+
+export interface RazorPayResponse {
+  razorpay_signature: string;
+  razorpay_payment_id: string;
+
+  razorpay_order_id: string;
+}
+
+export interface TotalAmount {
+  gst: number;
+  shipping: number;
+  orginal: number;
+  total: number;
+}
+
+export type PaymentOptions = "COD" | "RAZOR PAY";
 
 export type AdminColor = AdminModelData;
 export type AdminBrand = AdminModelData;

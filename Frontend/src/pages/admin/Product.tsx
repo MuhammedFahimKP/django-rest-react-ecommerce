@@ -44,18 +44,41 @@ const Product = () => {
 
   if (outlet) return outlet;
 
-  const dispatch = useDispatch();
-
   const [brands, setBrands] = useState<AdminBrandResponse[] | []>([]);
   const [category, setCategoery] = useState<AdminCategoeryResponse[] | []>([]);
 
   const [productFIlterParams, setProductFilterParams] = useSearchParams();
 
+  const search = (searchQuery: string) => {
+    const QUERY_PARAM = "name";
+
+    setProductFilterParams((prevParams: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParams);
+      const param = newParams.get(QUERY_PARAM);
+
+      if (param?.length === 0 && searchQuery.length === 0) {
+        newParams.delete(QUERY_PARAM);
+      }
+
+      const value = param ? searchQuery : param + searchQuery;
+      newParams.set(QUERY_PARAM, value);
+
+      return newParams;
+    });
+  };
+
   const setCurrentFilter = (queryParam: string, value: string) => {
     console.log(productFIlterParams.entries());
     setProductFilterParams((prevParams: URLSearchParams) => {
       const newParams = new URLSearchParams(prevParams);
-      newParams.append(queryParam, value);
+
+      const existingValue = newParams.get(queryParam) || "";
+
+      // Append the new value, separated by a comma
+      const updatedValue = existingValue ? `${existingValue},${value}` : value;
+
+      newParams.set(queryParam, updatedValue);
+
       return newParams;
     });
   };
@@ -63,7 +86,18 @@ const Product = () => {
   const removeCurrentFilter = (queryParam: string, value: string) => {
     setProductFilterParams((prevParams: URLSearchParams) => {
       const newParams = new URLSearchParams(prevParams);
-      newParams.delete(queryParam, value);
+
+      const param = newParams.get(queryParam)?.split(",");
+
+      const paramIndex = param?.includes(value) ? param?.indexOf(value) : -1;
+
+      if (param?.length === 1) {
+        newParams.delete(queryParam);
+      } else {
+        paramIndex !== -1 &&
+          param?.splice(paramIndex, 1) &&
+          newParams.set(queryParam, param.join(","));
+      }
 
       return newParams;
     });
@@ -79,6 +113,15 @@ const Product = () => {
       }
 
       newValue !== "" && newParams.append("ordering", newValue);
+
+      return newParams;
+    });
+
+  const resetSortFilter = () =>
+    setProductFilterParams((prevParams: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParams);
+
+      newParams.delete("ordering");
 
       return newParams;
     });
@@ -134,7 +177,7 @@ const Product = () => {
         {/* product filter section  and search section  */}
         <div className="flex flex-col lg:flex-row items-center mt-3 lg:gap-16 ">
           <div className="flex items-center justify-center ">
-            <SearchBox onSearch={(text: string) => dispatch(setName(text))} />
+            <SearchBox onSearch={(text: string) => search(text)} />
           </div>
           <div className="flex items-center justify-normal gap-5">
             <DropDownMenu title="Brand">
@@ -158,12 +201,18 @@ const Product = () => {
                     }
                     ripple={false}
                     onChange={() => {
-                      productFIlterParams.getAll("brand").includes(brand.name)
+                      productFIlterParams
+                        .get("brand")
+                        ?.split(",")
+                        .includes(brand.name)
                         ? removeCurrentFilter("brand", brand.name)
                         : setCurrentFilter("brand", brand.name);
                     }}
                     checked={
-                      productFIlterParams.getAll("brand").includes(brand.name)
+                      productFIlterParams
+                        .get("brand")
+                        ?.split(",")
+                        .includes(brand.name)
                         ? true
                         : false
                     }
@@ -222,6 +271,7 @@ const Product = () => {
               sortChangeHandler={(prevValue: string, newValue: string) =>
                 updateSortFilter(prevValue, newValue)
               }
+              onReset={() => resetSortFilter()}
               sortFileds={AdminProductSortData}
             />
           </div>

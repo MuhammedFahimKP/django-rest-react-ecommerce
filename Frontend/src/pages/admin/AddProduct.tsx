@@ -6,7 +6,7 @@ import * as Yup from "yup";
 import ImageUploader from "../../ui/admin/ImageUploader";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import type { ProductForm, AdminBrand, AdminCategory } from "../../types";
+import type { ProductForm, AdminBrand, AdminCategory } from "../../@types";
 import { RootState } from "../../store";
 import { ChangeEvent, useState } from "react";
 

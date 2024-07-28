@@ -2,8 +2,15 @@ import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import Suspensed from "./Suspensed.tsx";
-
+import NewCheckout from "../pages/user/NewCheckout.tsx";
 import NotFound from "../components/NotFound";
+import Orders from "../pages/user/Orders.tsx";
+import Accounts from "../pages/user/Accounts.tsx";
+import ProfileSettings from "../pages/user/ProfileSettings.tsx";
+import Cart from "../pages/user/Cart.tsx";
+import ShopPage from "../pages/user/ShopPage.tsx";
+import OrderHistory from "../pages/user/OrderHistory.tsx";
+import SingleOrderPage from "../pages/user/SingleOrderPage.tsx";
 
 export function lazyImport<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
@@ -40,8 +47,40 @@ const Checkout = lazyImport(() => import("../pages/user/Checkout.tsx"));
 
 const routePatterns = [
   {
+    path: "shop-page/",
+    element: <ShopPage />,
+  },
+  {
+    path: "order/",
+    element: <SingleOrderPage />,
+  },
+  {
+    path: "orderHistory",
+    element: <OrderHistory />,
+  },
+
+  {
     path: "signin/",
-    element: <NewSignin />,
+    element: (
+      <Suspensed>
+        <NewSignin />
+      </Suspensed>
+    ),
+  },
+  {
+    path: "account/",
+    element: <Accounts />,
+    children: [
+      {
+        path: "orders/",
+        element: <Orders />,
+      },
+      {},
+      {
+        path: "profile/",
+        element: <ProfileSettings />,
+      },
+    ],
   },
   {
     path: "signup/",
@@ -127,6 +166,15 @@ const routePatterns = [
         <Socket />
       </Suspensed>
     ),
+  },
+
+  {
+    path: "check/",
+    element: <NewCheckout />,
+  },
+  {
+    path: "cart/",
+    element: <Cart />,
   },
 ];
 

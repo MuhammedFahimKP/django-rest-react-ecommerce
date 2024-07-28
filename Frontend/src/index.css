@@ -20,6 +20,10 @@
 } */
 
 /* HTML: <div class="loader"></div> */
+
+body {
+  overflow: visible !important;
+}
 .loader {
   width: 50px;
   aspect-ratio: 1;
@@ -108,4 +112,25 @@
 }
 .shimmer-bg {
   background: (to right, fade_out(#fff, 1) 0%, fade_out(#fff, 0.7) 100%);
+}
+
+@keyframes inAnimation {
+  0% {
+    opacity: 0;
+    visibility: hidden;
+  }
+  100% {
+    opacity: 1;
+    visibility: visible;
+  }
+}
+
+@keyframes outAnimation {
+  0% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+  }
 }

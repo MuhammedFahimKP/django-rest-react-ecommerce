@@ -1,7 +1,7 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
 
 import apiClient from "../services/api-client";
-import type { CartResponse } from "../types";
+import type { CartResponse } from "../@types";
 import { removeCartItem } from "../slices/cartSlice";
 
 const getCartItems = createAsyncThunk<CartResponse, void>(
@@ -26,7 +26,6 @@ const updateCartItem = createAsyncThunk(
   "updateCartItem",
   async ({ id, quantity }: { id: string; quantity: number }) => {
     const item = await apiClient.patch(`shop/cart/${id}/`, { quantity });
-
     return item.data;
   }
 );

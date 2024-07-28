@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 import apiClient, { type ApiClientResponse } from "../../services/api-client";
-import type { LatestArrival } from "../../types";
+import type { LatestArrival } from "../../@types";
 
 import LatestCard from "./LatestCard";
 

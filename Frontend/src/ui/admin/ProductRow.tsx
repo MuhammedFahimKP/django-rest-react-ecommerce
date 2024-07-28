@@ -5,7 +5,7 @@ import {
   Typography,
   Tooltip,
 } from "@material-tailwind/react";
-import type { AdminProduct } from "../../types";
+import type { AdminProduct } from "../../@types";
 import { PencilIcon } from "@heroicons/react/24/outline";
 
 interface Props extends AdminProduct {

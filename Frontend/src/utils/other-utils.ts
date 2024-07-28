@@ -1,5 +1,5 @@
 import { value } from "@material-tailwind/react/types/components/chip";
-import { DynamicObj } from "../types";
+import { DynamicObj } from "../@types";
 
 const errorFieldName: DynamicObj = {
   email: "Email",
@@ -7,6 +7,44 @@ const errorFieldName: DynamicObj = {
   last_name: "Name",
   password: "Password",
   password2: "Confirm Password",
+};
+
+const getDateAndDay = (dateToGet: string | Date): [string, string] => {
+  const date = new Date(dateToGet);
+  const year = date.getUTCFullYear();
+  const month = (date.getUTCMonth() + 1).toString().padStart(2, "0"); // getUTCMonth() returns month from 0-11, so add 1
+  const day = date.getUTCDate().toString().padStart(2, "0");
+
+  // Getting the day of the week
+  const daysOfWeek = [
+    "Sunday",
+    "Monday",
+    "Tuesday",
+    "Wednesday",
+    "Thursday",
+    "Friday",
+    "Saturday",
+  ];
+  const dayOfWeek = daysOfWeek[date.getUTCDay()];
+
+  const formattedDate = `${year}-${month}-${day}`;
+
+  return [dayOfWeek, formattedDate];
+};
+
+const getDateAndTime = (date: string | Date) => {
+  const convertedDate = new Date(date);
+  const dateAndTime = convertedDate.toLocaleString("en-GB", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true, // 24-hour format
+  });
+
+  return `on ${dateAndTime[0]} at ${dateAndTime[1]} `;
 };
 
 export function SignupValidator(key: string, value: string) {
@@ -96,4 +134,4 @@ export function getAllSearchParams(params: URLSearchParams) {
   return paramsObj;
 }
 
-export { errorFieldName };
+export { errorFieldName, getDateAndDay, getDateAndTime };

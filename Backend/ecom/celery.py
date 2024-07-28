@@ -1,6 +1,10 @@
 import os
+
+from django.conf import settings
+
 from celery import Celery 
-from decouple import config
+
+
 
 # set the default Django settings module for the 'celery' program.
 # this is also used in manage.py
@@ -15,7 +19,7 @@ app = Celery('ecom')
 app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.
-app.autodiscover_tasks()
+app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
 
 # We used CELERY_BROKER_URL in settings.py instead of:
 # app.conf.broker_url = ''

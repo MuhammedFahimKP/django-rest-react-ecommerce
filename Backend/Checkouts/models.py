@@ -1,10 +1,19 @@
+from zoneinfo import ZoneInfo
+
+
 from django.db import models
 from django.core.validators import MinValueValidator
+
+from datetime import timedelta ,datetime
+from django.utils import timezone
 
 
 from BaseModels.models import BaseModel
 from accounts.models import MyUser as User,ShippingAddress as Address
 from shop.models import ProductVariant
+
+
+
 # Create your models here.
 
 class Order(BaseModel):
@@ -12,7 +21,8 @@ class Order(BaseModel):
     payment_choices = [
         
         ("COD", "Cash On Delivery"),
-        ("RAZOR PAY","RAZOR PAY Payment")
+        ("RAZOR PAY","RAZOR PAY Payment"),
+        
     
     ]
     
@@ -46,6 +56,43 @@ class Order(BaseModel):
     
     
     
+    @property
+    def expected_delivery(self):
+        
+        if  self.status != 'Placed':
+                return  self.updated
+            
+            
+        now = datetime.now().date()
+        
+        current_time = datetime.now(ZoneInfo('UTC'))
+    
+    # Format it to the desired string format
+        
+                
+        excepted_date = self.created + timedelta(days=6)
+    
+        
+        if excepted_date < current_time:
+        # Order is overdue
+        
+            differnce =  (current_time -  excepted_date ).days
+            
+            return excepted_date + timedelta(days=differnce+6) 
+        
+        
+        
+
+        
+        # differnce = (excepted_date - now).days
+        
+        # if differnce > 0 :
+        #     return excepted_date + timedelta(days=3)
+    
+
+        
+        return excepted_date
+        
     
         
         

@@ -3,8 +3,11 @@ import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
-import type { AdminBrand, AdminCategory, ProductForm } from "../../types";
-import apiClient, { ApiClientResponse } from "../../services/api-client";
+import type { AdminBrand, AdminCategory, ProductForm } from "../../@types";
+import apiClient, {
+  ApiClientError,
+  ApiClientResponse,
+} from "../../services/api-client";
 import { FaSave } from "react-icons/fa";
 import { ImBin } from "react-icons/im";
 import { useData } from "../../hooks";
@@ -13,10 +16,15 @@ import ImageChange from "../../components/admin/ImageChange";
 
 import { genrateImageUrl } from "../../utils/image";
 import { RootState } from "../../store";
-import toast, { Toaster } from "react-hot-toast";
+
+import Swal from "sweetalert2";
+import toast from "react-hot-toast";
 import ErrorText from "../../ui/user/ErrorText";
 import * as Yup from "yup";
 import AddColor from "../../components/admin/AddColor";
+import SuccessAlert from "../../ui/alerts/SuccessAlert";
+import ErrorAlert from "../../ui/alerts/ErrorAlert";
+import NetworkErrorAlert from "../../ui/alerts/NetworkErrorAlert";
 
 interface Varation {
   id: string;
@@ -140,8 +148,18 @@ const ProductViewPage = () => {
     } else {
       apiClient
         .patch(`admin/product/${id}/`, changed, requestConfig)
-        .then((res) => res)
-        .catch((err) => err);
+        .then((res) => {
+          res.status === 200 &&
+            toast.custom((t) => (
+              <SuccessAlert toast={t} successText="Product Updated" />
+            ));
+        })
+        .catch((err: ApiClientError) => {
+          err &&
+            toast.custom((t) => (
+              <ErrorAlert toast={t} errorText={err.message} />
+            ));
+        });
     }
   }
 
@@ -154,14 +172,38 @@ const ProductViewPage = () => {
     }
   }
 
-  function handleDelete(e: FormEvent) {
-    e.preventDefault();
-    apiClient
-      .delete(`admin/product/${id}/`)
-      .then((res: ApiClientResponse) => {
-        navigate(`/product/`);
-      })
-      .catch((err) => console.log(err));
+  function handleDelete() {
+    Swal.fire({
+      title: "Are you sure?",
+      text: "delete the product",
+      icon: "warning",
+      customClass: {
+        container: "backdrop-blur-sm   font-ubuntu",
+        popup: "rounded-2xl",
+        title: "text-lg",
+        cancelButton: "bg-red-50 text-red-500 rounded-lg",
+        confirmButton: "bg-black text-white rounded-lg",
+      },
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete ",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        apiClient
+          .delete(`admin/product/${id}/`)
+          .then((res: ApiClientResponse) => {
+            res.status === 204 &&
+              toast.custom((t) => (
+                <SuccessAlert successText="Product Removed " toast={t} />
+              ));
+
+            res.status === 204 && navigate("/admin/product/");
+          })
+          .catch((err: ApiClientError) => {
+            err.message === "Network Error" &&
+              toast.custom((t) => <NetworkErrorAlert toast={t} />);
+          });
+      }
+    });
   }
 
   return (
@@ -174,11 +216,11 @@ const ProductViewPage = () => {
           <div className=" overflow-hidden flex-1 grid place-content-center">
             <img
               src={product.img}
-              className="rounded-lg object-cover object-top w-full bg-clip aspect-square"
+              className="rounded-lg object-fill   w-[400px] h-[500px]"
             />
             <div className="">
               <ImageChange
-                title=""
+                title="Change"
                 name={"img"}
                 handleChange={(e: any) => handleImg(e)}
               />
@@ -303,6 +345,7 @@ const ProductViewPage = () => {
               <div className="flex  items-center gap-2 mt-5">
                 <button
                   type="button"
+                  onClick={handleDelete}
                   className="bg-white border flex items-center  justify-center gap-3 border-red-700  rounded-md px-4 py-1 font-bold flex-1 "
                 >
                   <ImBin className="size-4 " />
@@ -326,33 +369,8 @@ const ProductViewPage = () => {
             {data.map((item: Varation) => (
               <Varations id={item.id} img_1={item.img_1} color={item.color} />
             ))}
-            {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))}
-            {/* {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))} */}
-            {/* {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))} */}
-            {/* {data.map((item: Varation) => (
-              <Varations id={item.id} img_1={item.img_1} color={item.color} />
-            ))} */}
           </div>
         </div>
-        <Toaster position="top-center" reverseOrder={false} />
       </section>
     </>
   );

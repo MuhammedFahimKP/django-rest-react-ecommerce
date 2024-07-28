@@ -1,4 +1,4 @@
-import type { CartItem as Props } from "../../types";
+import type { CartItem as Props } from "../../@types";
 import { ImBin } from "react-icons/im";
 import { updateCartItem } from "../../slices/cartSlice";
 import { useDispatch } from "react-redux";

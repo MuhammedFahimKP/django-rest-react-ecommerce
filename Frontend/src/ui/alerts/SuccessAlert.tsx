@@ -1,9 +1,5 @@
-import { toast as toster, type Toast } from "react-hot-toast";
-
-interface Props {
-  toast: Toast;
-  successText: string;
-}
+import { toast as toster } from "react-hot-toast";
+import { SuccessAlertProps as Props } from "./@types";
 
 const SuccessAlert = ({ toast, successText }: Props) => {
   return (

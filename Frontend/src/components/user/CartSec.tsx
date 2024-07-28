@@ -8,7 +8,7 @@ import Lottie from "lottie-react";
 
 import { RootState } from "../../store";
 
-import { CartItem } from "../../types";
+import { CartItem } from "../../@types";
 
 import NewCartItem from "../../ui/user/NewCartItem";
 

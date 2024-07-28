@@ -1,5 +1,4 @@
-import { useState } from "react";
-import type { ProductResponseData as Props } from "../../types";
+import type { ProductResponseData as Props } from "../../@types";
 import VariationCard from "./VariationCard";
 import { Link } from "react-router-dom";
 
@@ -8,19 +7,19 @@ const ProductCard = ({
   img,
   categoery,
   brand,
-  variants,
+  colors,
+  min_price,
   slug,
 }: Props) => {
-  const [colorID, setColorID] = useState("");
   console.log(slug);
 
   return (
-    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 overflow-hidden w-40 md:w-72 rounded-md">
+    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 overflow-hidden w-40 md:w-72 rounded-2xl">
       <Link to={`/single/${slug}/`}>
         <img
           src={img}
           alt="Product image"
-          className="h-44 md:h-80 w-40  md:w-72 object-cover object-top"
+          className="h-44 md:h-80  w-40  md:w-72  object-fill"
         />
       </Link>
       <div className="px-4 py-3 w-40 md:w-72">
@@ -32,8 +31,8 @@ const ProductCard = ({
           {categoery}
         </span>
 
-        {variants.length != 0 && (
-          <VariationCard variants={variants} setLinkValue={setColorID} />
+        {colors.length != 0 && (
+          <VariationCard colors={colors} min_price={min_price} />
         )}
 
         <div className="flex items-center">

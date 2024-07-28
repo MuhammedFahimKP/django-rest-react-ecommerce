@@ -1,7 +1,20 @@
 from rest_framework import serializers
-from .models import Order,OrderItems,Address,ProductVariant
-from shop.serializers import ProductVariantSerailizer 
+
+
+
 from accounts.serializers import ShippingAddressSerializer
+from accounts.models import ShippingAddress
+
+from shop.serializers import ProductVariantSerailizer , ProductVariantImageSerializer
+
+from shop.models import ProductVariant,Product
+
+
+
+from .models import Order,OrderItems
+
+
+
 
 
 
@@ -23,10 +36,12 @@ class OrderCreateSerializer(serializers.Serializer):
     """
     
     
-    product               = serializers.PrimaryKeyRelatedField(queryset=ProductVariant.objects.all(),many=True)
-    quantity              = serializers.DictField(child=serializers.IntegerField())
-    shipping_address      = serializers.PrimaryKeyRelatedField(queryset=Address.objects.all())
+  
+   
+    shipping_address      = serializers.PrimaryKeyRelatedField(queryset=ShippingAddress.objects.all(),many=False)
     payment_type          = serializers.ChoiceField(choices=Order.payment_choices)
+   
+    
     
     
     
@@ -47,19 +62,113 @@ class OrderCreateSerializer(serializers.Serializer):
     
     class Meta:
         
+        
+        
         fields = [
             
-            'product',
-            'quantity',
+            
             'shipping_address',
             'payment_type',
-            'payment_transation_id'
+            
+    
             
         ]
     
+
+class ProductSerailizer(serializers.ModelSerializer):
+    
+    categoery  = serializers.SerializerMethodField()
+    brand      = serializers.SerializerMethodField()
+    
+    def get_categoery(self,obj):
+        return obj.categoery.name
+    
+    
+    def get_brand(self,obj):
+        return obj.brand.name
     
     
     
+    
+    
+    
+    
+    class Meta:
+        
+        model = Product
+        
+        fields = [  
+            'id',
+            'name'  ,  
+            'slug' ,
+            'categoery',    
+            'img',         
+            'brand',       
+            'discription'
+        ]  
+
+
+class OrderItemProductSerailizer(serializers.ModelSerializer):
+    
+    product = ProductSerailizer()
+    img     = ProductVariantImageSerializer(read_only=True,many=False)
+    size    = serializers.SerializerMethodField()
+    color   = serializers.SerializerMethodField()
+    
+    
+    def get_size(self,obj):
+        return obj.size.name
+    
+    
+    
+    
+    def get_color(self,obj):
+        return obj.color.name
+
+    
+    
+    class Meta:
+        
+        fields = [
+            'id',
+            'product',
+            'img',
+            'size',
+            'color',
+            'price',
+        ]
+        model  = ProductVariant
+        
+        
+    
+
+    
+    
+
+class OrderItemSerializer(serializers.ModelSerializer):
+    
+    
+    product = OrderItemProductSerailizer(read_only=True,many=False)
+    
+    
+    
+    class Meta:
+        model  = OrderItems
+        fields = ['product','id','quantity']    
+    
+class OrderListSerializer(serializers.ModelSerializer):
+    
+    orders = OrderItemSerializer(read_only=True,many=True)
+    expected_delivery = serializers.SerializerMethodField()
+    
+    
+    def get_expected_delivery(self,obj):
+        return obj.expected_delivery
+    
+    class Meta:
+        model = Order
+        exclude = ['user','address']    
+        
         
         
         
@@ -127,39 +236,55 @@ class AdrressOrderListSerializer(ShippingAddressSerializer):
             'alter_phone_no',
         
         ]
-            
-            
-class OrderListSearializer(serializers.ModelSerializer):
+
+
+class AllOrdersListSerializer(serializers.ModelSerializer):
+    
+    expected_delivery = serializers.SerializerMethodField()
     
     
-    orders       = OrderItemSerializer(many=True)
-    address      = AdrressOrderListSerializer()
-    payment_type = serializers.SerializerMethodField()
-    created      = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-    
-    
-    
-    def get_payment_type(self,obj):
-        return obj.payment
-    
-    
-    
-    
+    def get_expected_delivery(self,obj):
+        return obj.expected_delivery
     
     class Meta:
-        model  = Order
-        fields = [
-            'id',
-            'orders',                  
-            'total_amount',  
-            'created', 
-            'status' ,        
-            'address',
-            'payment_type' ,      
-            'payment_status',
+        exclude = ['user' ,'address','updated']
+        # fields = '__all__' 
+        model = Order
+        
+
+
+            
+# class OrderListSearializer(serializers.ModelSerializer):
+    
+    
+#     orders       = OrderItemSerializer(many=True)
+#     address      = AdrressOrderListSerializer()
+#     payment_type = serializers.SerializerMethodField()
+#     created      = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+    
+    
+    
+#     def get_payment_type(self,obj):
+#         return obj.payment
+    
+    
+    
+    
+    
+#     class Meta:
+#         model  = Order
+#         fields = [
+#             'id',
+#             'orders',                  
+#             'total_amount',  
+#             'created', 
+#             'status' ,        
+#             'address',
+#             'payment_type' ,      
+#             'payment_status',
             
         
-        ]
+#         ]
     
    
         
@@ -217,7 +342,7 @@ class PaymentOrderVerifySerializer(serializers.Serializer):
     """
     
     payment_order_id   = serializers.CharField()
-    order_id           = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all()) 
+    order_id           = serializers.PrimaryKeyRelatedField(queryset=Order.objects.all(),many=False) 
     payment_id         = serializers.CharField()
     signature          = serializers.CharField()
     

@@ -1,39 +1,28 @@
-import {createSlice} from "@reduxjs/toolkit"
+import { createSlice } from "@reduxjs/toolkit";
 
-
-
-interface State{
-    cartAlert:{
-        showAlert:boolean;
-    }
+interface State {
+  user_not: boolean;
 }
 
-
-
-const initialState:State={
-    
-    cartAlert:{
-        showAlert:false
-    }
-    
-}
-
+const initialState: State = {
+  user_not: false,
+};
 
 const alertSlice = createSlice({
-    name:'alert',
-    initialState,
-    reducers:{
-        showCartAlert(state:State){
-            if (state.cartAlert.showAlert === true) return  
-            state.cartAlert.showAlert = true
-        },   
-        dismissCartAlert(state:State){
-            if (state.cartAlert.showAlert === false) return 
-            state.cartAlert.showAlert = false
-        }
-    }
-})
+  name: "alert",
+  initialState,
+  reducers: {
+    setUserRequired(state: State) {
+      alert(state.user_not);
+      state.user_not = true;
+      alert(state.user_not);
+    },
+    setUserRequiredFalse(state: State) {
+      state.user_not = false;
+    },
+  },
+});
 
-export const {showCartAlert ,dismissCartAlert} = alertSlice.actions
+export const { setUserRequired, setUserRequiredFalse } = alertSlice.actions;
 
-export default alertSlice.reducer
+export default alertSlice.reducer;

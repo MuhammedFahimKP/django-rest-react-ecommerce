@@ -212,6 +212,7 @@ class AdminProductCreateSerailizer(serializers.ModelSerializer):
             raise AlreadyExist({'name':"product with same name already exists"})
         
         data['slug'] = slugify(name)
+
         
         return data
     
@@ -231,7 +232,7 @@ class AdminProductCreateSerailizer(serializers.ModelSerializer):
             'categoery',
             'brand',
             'img',
-            'is_active'
+            'discription',
         ]
         
         

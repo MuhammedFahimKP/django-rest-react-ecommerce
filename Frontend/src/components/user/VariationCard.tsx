@@ -1,20 +1,9 @@
-import type { ProductVariant } from "../../types";
-import { useVariation } from "../../hooks";
-import { useEffect } from "react";
-import { color } from "framer-motion";
-
 interface Props {
-  variants: ProductVariant[];
-  setLinkValue: (value: string) => void;
+  colors: string[];
+  min_price: number;
 }
 
-const VariationCard = ({ variants, setLinkValue }: Props) => {
-  const { colors, minPrice } = useVariation(variants);
-
-  useEffect(() => {
-    setLinkValue(colors[0]);
-  });
-
+const VariationCard = ({ colors, min_price }: Props) => {
   return (
     <>
       <div className="z-50 w-full flex items-center justify-center px-4  gap-8 ">
@@ -26,7 +15,7 @@ const VariationCard = ({ variants, setLinkValue }: Props) => {
         ))}
       </div>
       <div>
-        <span>{minPrice}</span>
+        <span>{min_price}</span>
       </div>
     </>
   );

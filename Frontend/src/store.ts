@@ -1,7 +1,7 @@
-import { configureStore } from "@reduxjs/toolkit";
+import { configureStore, combineReducers } from "@reduxjs/toolkit";
 
 import { persistReducer, persistStore } from "redux-persist";
-import { combineReducers } from "@reduxjs/toolkit";
+
 import storage from "redux-persist/lib/storage";
 
 // slices
@@ -12,6 +12,8 @@ import wishlistSlice from "./slices/wishlistSlice";
 import adminProductSearchSlice from "./slices/admin/productSearchSlice";
 import adminProductVariationSlice from "./slices/admin/producVarationSlice";
 import currentProductSlice from "./slices/currentProductSlice";
+import checkoutSlice from "./slices/checkoutSlice";
+import orderSlice from "./slices/orderSlice";
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -35,6 +37,8 @@ export const store = configureStore({
     currentProductSlice,
     adminProductSearchSlice,
     adminProductVariationSlice,
+    checkoutSlice,
+    orderSlice,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

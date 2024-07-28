@@ -3,7 +3,7 @@ import { useEffect, Fragment } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState, AppDispact } from "../../store";
 
-import { WishlistItem } from "../../types";
+import { WishlistItem } from "../../@types";
 import { getWishlist } from "../../thunks";
 import Navbar from "../../components/user/Navbar";
 import Footer from "../../components/user/Footer";

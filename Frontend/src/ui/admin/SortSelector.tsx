@@ -9,12 +9,14 @@ import { ChangeEvent, useState } from "react";
 
 interface Props<T extends { label: string; query: string }> {
   sortChangeHandler: (prevValue: string, newValue: string) => void;
+  onReset: () => void;
   sortFileds: T[];
 }
 
 function SortSelector<T extends { label: string; query: string }>({
   sortFileds,
   sortChangeHandler,
+  onReset,
 }: Props<T>) {
   const [sortBy, setSortBy] = useState("");
 
@@ -26,6 +28,10 @@ function SortSelector<T extends { label: string; query: string }>({
         const prevValue = prev === "SortBy" ? "" : prev;
         if (prev !== value && value) {
           sortChangeHandler(prevValue, value);
+        }
+
+        if (value === "is_active") {
+          return "Published";
         }
 
         return value;
@@ -51,7 +57,7 @@ function SortSelector<T extends { label: string; query: string }>({
       >
         <MenuItem
           placeholder={"hai"}
-          onClick={(e: any) => handleClick(e)}
+          onClick={() => onReset()}
           value={"SortBy"}
         >
           SortBy

@@ -1,3 +1,6 @@
+import { useEffect, useState } from "react";
+
+import { useData } from "../../hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { logout } from "../../slices/authenticationSlice";
@@ -15,19 +18,14 @@ import { motion, useScroll } from "framer-motion";
 
 import Slider from "../../components/user/Slider";
 
-import Toaster from "../../utils/components/Toster";
-
 import CartSec from "../../components/user/CartSec";
 
 import BottmNavbar from "../../components/user/BottmNavbar";
 
-import { dismissCartAlert } from "../../slices/alertSlice";
+import SessionTimeOut from "../../components/SessionTimeOut";
 
 import LatestArrivals from "../../components/user/LatestArrivals";
 import Category from "../../components/user/Category";
-
-import { useState } from "react";
-import { useData } from "../../hooks";
 
 export const CircleIndicator = () => {
   const { scrollYProgress } = useScroll();
@@ -44,24 +42,20 @@ const Home = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
-  const alert = useSelector(
-    (state: RootState) => state.alertSlice.cartAlert.showAlert
-  );
-
-  const user = useSelector(
-    (state: RootState) => state.persistedReducer.auth.user
-  );
-
-  const { data: Latest } = useData("shop/product-latest/");
-
   const handleLogout = () => {
     dispatch(logout());
     navigate("signin/");
   };
 
+  const { user_not } = useSelector((state: RootState) => state.alertSlice);
+
+  useEffect(() => {}, [user_not]);
+
   const [cartOpen, setCartOpen] = useState(false);
 
   const onOpenOrClose = () => setCartOpen(!cartOpen);
+
+  alert(user_not);
 
   return (
     <div className="scroller">
@@ -100,6 +94,7 @@ const Home = () => {
 
         <BottmNavbar />
       </ScreenContainer>
+      {user_not && <SessionTimeOut />}
     </div>
   );
 };

@@ -3,7 +3,7 @@ import { useFormik } from "formik";
 import { AiOutlineStock } from "react-icons/ai";
 import { LuIndianRupee } from "react-icons/lu";
 import { RiDeleteBin6Line } from "react-icons/ri";
-import { DynamicObj } from "../../types";
+import { DynamicObj } from "../../@types";
 import * as Yup from "yup";
 import {
   Button,
@@ -16,7 +16,7 @@ import {
 import { updateSizeVariation } from "../../slices/admin/producVarationSlice";
 import { useDispatch } from "react-redux";
 import apiClient from "../../services/api-client";
-import { type SizeVariation as Props } from "../../types";
+import { type SizeVariation as Props } from "../../@types";
 import { AppDispact } from "../../store";
 
 const SizeCard = ({ id, size, price, stock }: Props) => {

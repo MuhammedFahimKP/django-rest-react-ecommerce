@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { CartItem, CartResponse } from "../types";
+import { CartItem, CartResponse } from "../@types";
 import { type ApiClientError } from "../services/api-client";
 import {
   addToCart,
@@ -17,6 +17,7 @@ interface State extends CartResponse {
 const initialState: State = {
   total: 0,
   cart_items: [],
+  itemErrors: {},
   checkoutable: false,
   loading: false,
   error: null,
@@ -50,17 +51,50 @@ const cartSlice = createSlice({
         console.log(state.checkoutable);
       }
     },
+
+    updateCartItemQuantity(
+      state: State,
+      action: PayloadAction<{
+        id: string;
+        quantity: number;
+        type: "INCRE" | "DECRE";
+      }>
+    ) {
+      state.cart_items.forEach((item: CartItem) => {
+        if (item.id === action.payload.id) {
+          action.payload.type === "INCRE" &&
+            (item.quantity += action.payload.quantity);
+
+          action.payload.type === "DECRE" &&
+            item.quantity != 0 &&
+            (item.quantity -= action.payload.quantity);
+        }
+      });
+    },
+
+    setItemError(state: State, action: PayloadAction<typeof state.itemErrors>) {
+      state.itemErrors = { ...state.itemErrors, ...action.payload };
+    },
+
+    removeItemError(state: State) {
+      state.itemErrors = {};
+    },
   },
   extraReducers: (builder: any) => {
     builder.addCase(
       getCartItems.fulfilled,
       (state: State, action: PayloadAction<CartResponse>) => {
-        state.cart_items = action.payload.cart_items;
-        state.total = action.payload.total;
+        state.cart_items = action.payload?.cart_items
+          ? action.payload.cart_items
+          : state.cart_items;
+
+        state.total = action.payload?.total
+          ? action.payload.total
+          : state.total;
+
         state.loading = false;
-        if (state.error !== null) {
-          state.error = null;
-        }
+
+        state.error = state.error ? null : state.error;
       }
     ),
       builder.addCase(getCartItems.pending, (state: State) => {
@@ -101,8 +135,13 @@ const cartSlice = createSlice({
   },
 });
 
-export const { checkouted, uncheckouted, clearCart, removeCartItem } =
-  cartSlice.actions;
+export const {
+  checkouted,
+  uncheckouted,
+  clearCart,
+  removeCartItem,
+  updateCartItemQuantity,
+} = cartSlice.actions;
 export { getCartItems, updateCartItem, addToCart, deletCartItem };
 
 export default cartSlice.reducer;

@@ -214,7 +214,7 @@ class AdminProductViewSet(viewsets.ModelViewSet):
     serializer_class   = None
     lookup_field       = 'pk'
     
-    ordering_fields  = ['created','updated','is_active']   
+    ordering_fields  = ['created','updated','is_active','name']   
     pagination_class =  CustomPageNumberPagination
     
     

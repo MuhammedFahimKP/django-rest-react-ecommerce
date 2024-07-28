@@ -1,3 +1,9 @@
+import { useReducer } from "react";
+
+import { useData } from "../../hooks";
+
+import type { Brand, Categoery, Color, Size } from "../../@types/filters";
+
 import {
   Card,
   Typography,
@@ -10,9 +16,14 @@ import {
 } from "@material-tailwind/react";
 
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
-import { useReducer } from "react";
 
-const FilterSideBar = () => {
+interface Props {
+  setParams: (key: string, value: string) => void;
+  removeParams: (key: string, value: string) => void;
+  searchParams: URLSearchParams;
+}
+
+const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
   interface Opener {
     brand: boolean;
     categoery: boolean;
@@ -49,21 +60,45 @@ const FilterSideBar = () => {
   }
 
   const [opener, dispatch] = useReducer(openerReducer, {
-    brand: true,
-    categoery: true,
-    size: true,
-    color: true,
+    brand: false,
+    categoery: false,
+    size: false,
+    color: false,
   });
+
+  const checkedOrNot = (key: string, value: string) => {
+    if (
+      searchParams.has(key) &&
+      searchParams?.get(key)?.split(",").includes(value)
+    ) {
+      return true;
+    }
+
+    return false;
+  };
+  const onFilterClick = (key: string, value: string) => {
+    searchParams.get(key)?.split(",").includes(value)
+      ? removeParams(key, value)
+      : setParams(key, value);
+  };
+
+  const { data: brands } = useData<Brand>("shop/brand/");
+  const { data: catgories } = useData<Categoery>("shop/categoery/");
+  const { data: sizes } = useData<Size>("shop/size/");
+  const { data: colors } = useData<Color>("shop/color/");
 
   return (
     <Card
       placeholder={"sidebar"}
-      className=" rounded-none  w-full h-full p-4 shadow-xl  top-0 shadow-blue-gray-900/5 border-r-2 border-gray-200  "
+      className="p-4 shadow-xl z-50  min-h-screen   top-0 shadow-blue-gray-900/5 border-r-2 border-gray-200  "
+      onClick={(e) => {
+        e.stopPropagation();
+      }}
     >
       <div className="mb-2 p-4">
         <Typography
           placeholder={"sidebar heading"}
-          variant="h5"
+          variant="lead"
           color="blue-gray"
         >
           Filters
@@ -103,7 +138,9 @@ const FilterSideBar = () => {
           </ListItem>
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
+              {catgories.map(({ name }) => (
+                <Checkbox crossOrigin={true} defaultChecked label={name} />
+              ))}
             </div>
           </AccordionBody>
         </Accordion>
@@ -140,21 +177,14 @@ const FilterSideBar = () => {
           </ListItem>
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
+              {brands.map(({ name }) => (
+                <Checkbox
+                  crossOrigin={true}
+                  checked={checkedOrNot("brand", name)}
+                  label={name}
+                  onClick={() => onFilterClick("brand", name)}
+                />
+              ))}
             </div>
           </AccordionBody>
         </Accordion>
@@ -192,21 +222,9 @@ const FilterSideBar = () => {
           </ListItem>
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
+              {sizes.map(({ name }) => (
+                <Checkbox crossOrigin={true} defaultChecked label={name} />
+              ))}
             </div>
           </AccordionBody>
         </Accordion>
@@ -244,21 +262,9 @@ const FilterSideBar = () => {
           </ListItem>
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
-              <Checkbox crossOrigin={true} defaultChecked label="Categoery" />
+              {colors.map(({ name }) => (
+                <Checkbox crossOrigin={true} defaultChecked label={name} />
+              ))}
             </div>
           </AccordionBody>
         </Accordion>

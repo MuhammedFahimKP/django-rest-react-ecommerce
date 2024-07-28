@@ -1,11 +1,16 @@
 import { useEffect, useState } from "react";
+
+import { useLocation } from "react-router-dom";
+
 import Navbar from "../../components/user/Navbar";
 import Magnfier from "./Magnifier";
-import apiClient from "../../services/api-client";
+import apiClient, { ApiClientError } from "../../services/api-client";
 import { useParams } from "react-router-dom";
 import { FaIndianRupeeSign } from "react-icons/fa6";
-
-interface VariantResponse {
+import NotFound from "../../components/NotFound";
+import DelayComponent from "../../components/DelayComponent";
+import { TbHeartPlus } from "react-icons/tb";
+interface Variant {
   id: string;
   img: {
     id: string;
@@ -14,14 +19,6 @@ interface VariantResponse {
     img_2: string;
     img_3: string;
   };
-  product: {
-    id: string;
-    name: string;
-    brand: string;
-    categoery: string;
-    discription: string;
-    slug: string;
-  };
 
   color: string;
   size: string;
@@ -29,140 +26,196 @@ interface VariantResponse {
   price: string;
 }
 
+interface Product {
+  id: string;
+  created: string;
+  updated: string;
+  name: string;
+  slug: string;
+  img: string;
+  discription: string;
+  categoery: string;
+  brand: string;
+}
+
+interface SingleProductResponse extends Product {
+  colors: string[] | [];
+  variants: Variant[] | [];
+}
+
 const SingleProduct = () => {
   const { slug } = useParams();
 
-  const [varaints, setVariants] = useState<VariantResponse[] | []>([]);
+  const location = useLocation();
+
+  const [currentColor, setCurrentColor] = useState<string | null>(null);
+  const [product, setProduct] = useState<Product | null>(null);
+  const [varaints, setVariants] = useState<Variant[] | null>(null);
   const [colors, setColors] = useState<string[] | []>([]);
   const [sizes, setSizes] = useState<string[] | []>([]);
-  const [currentColor, setCurrentColor] = useState("");
+
+  const [colorChanged, setColorsChanged] = useState(false);
   const [currentVariantIndex, setCurrentVariantIndex] = useState(0);
   const [activeImg, setActiveImage] = useState("");
-  const [cart, setCart] = useState(false);
+
+  const getParams = () => {
+    if (location.state?.color && currentColor === null) {
+      return {
+        color: location.state?.color,
+      };
+    } else if (currentColor !== null) {
+      return {
+        color: currentColor,
+      };
+    }
+
+    return {};
+  };
 
   useEffect(() => {
+    const controller = new AbortController();
+    setColorsChanged(false);
     apiClient
-      .get<VariantResponse[]>("shop/variations/", {
-        params: {
-          slug: slug,
-          color: currentColor,
-        },
+      .get<SingleProductResponse>(`shop/single/${slug}/`, {
+        params: getParams(),
+        signal: controller.signal,
       })
       .then((res) => {
-        setVariants(res.data);
-        setCurrentColor(res.data[0].color);
+        console.log(res);
+        res.data.variants.length !== 0 &&
+          (() => {
+            setVariants(res.data.variants);
+            setColors(res.data.colors);
+            setActiveImage(res.data.variants[0].img.img_1);
+            sizes.length === 0 &&
+              res.data.variants.map((item: Variant) => {
+                setSizes((prev) => [...prev, item.size]);
+              });
+            setCurrentColor(res.data.variants[0].color);
+          })();
+        product === null &&
+          setProduct({
+            brand: res.data.brand,
+            categoery: res.data.categoery,
+            created: res.data.created,
+            discription: res.data.discription,
+            id: res.data.id,
+            img: res.data.img,
+            name: res.data.name,
+            slug: res.data.slug,
+            updated: res.data.updated,
+          });
 
-        const set = new Set<string>();
-        const itemSize = new Array<string>();
-        res.data.map((item: VariantResponse) => {
-          set.add(item.color);
-          if (item.color === currentColor) {
-            console.log("hai");
-            itemSize.push(item.size);
-          }
-        });
-
-        setColors(Array.from(set));
-        setSizes(itemSize);
-
-        setActiveImage(varaints[currentVariantIndex].img.img_1);
-
-        varaints.map((item: VariantResponse) => {});
+        console.log(varaints);
+        console.log(sizes);
+        console.log(currentVariantIndex);
+        console.log(res.data.variants);
       })
-      .catch((err) => {});
-  }, [currentColor]);
 
-  const [amount, setAmount] = useState(1);
-  return (
+      .catch((err) => {});
+
+    return () => controller.abort();
+  }, [colorChanged === true && colorChanged]);
+
+  const [cart, setCart] = useState(false);
+
+  const [error, setError] = useState<null | string>(null);
+
+  return error === "NOT Found" || varaints?.length === 0 ? (
+    <DelayComponent delay={1000}>
+      <NotFound />
+    </DelayComponent>
+  ) : (
     <>
       <div className="lg:h-[72px] h-16 bg-black mb-0 sticky top-0 z-50 w-full">
         <Navbar onOpen={() => setCart(!cart)} />
       </div>
 
-      <div className="max-w-7xl mx-auto p-8">
-        <div className="flex flex-col  justify-between lg:flex-row gap-16 lg:items-center ">
-          <div className="flex flex-col gap-6 lg:w-2/4">
-            {activeImg != "" && <Magnfier src={activeImg} />}
+      <div className="max-w-7xl mx-auto lg:p-8">
+        <div className="flex flex-col   justify-between lg:flex-row gap-16 lg:items-center ">
+          <div className="flex flex-col gap-6 ">
+            {activeImg != "" && (
+              <Magnfier
+                classes="w-[400px] h-[500px]   object-fill bg-clip-border rounded-xl"
+                src={activeImg}
+              />
+            )}
             <div className="flex flex-row justify-center gap-9  h-24 px-auto">
               <img
                 src={
-                  varaints.length != 0
-                    ? varaints[currentVariantIndex].img?.img_1
+                  varaints && varaints.length != 0
+                    ? varaints[currentVariantIndex]?.img?.img_1
                     : ""
                 }
                 alt=""
                 className="w-20 h-24 rounded-md cursor-pointer"
                 onClick={() =>
-                  setActiveImage(varaints[currentVariantIndex].img?.img_1)
+                  varaints &&
+                  varaints.length !== 0 &&
+                  setActiveImage(varaints[currentVariantIndex]?.img?.img_1)
                 }
               />
               <img
                 src={
-                  varaints.length != 0
-                    ? varaints[currentVariantIndex].img?.img_2
-                    : ""
-                }
-                alt=""
-                className="w-20 h-24    rounded-md cursor-pointer"
-                onClick={() =>
-                  setActiveImage(varaints[currentVariantIndex].img?.img_2)
-                }
-              />
-              <img
-                src={
-                  varaints.length != 0
-                    ? varaints[currentVariantIndex].img?.img_3
+                  varaints && varaints.length != 0
+                    ? varaints[currentVariantIndex]?.img?.img_2
                     : ""
                 }
                 alt=""
                 className="w-20 h-24 rounded-md cursor-pointer"
                 onClick={() =>
-                  setActiveImage(varaints[currentVariantIndex].img?.img_3)
+                  varaints &&
+                  varaints.length !== 0 &&
+                  setActiveImage(varaints[currentVariantIndex]?.img?.img_2)
+                }
+              />
+              <img
+                src={
+                  varaints && varaints.length != 0
+                    ? varaints[currentVariantIndex]?.img?.img_3
+                    : ""
+                }
+                alt=""
+                className="w-20 h-24 rounded-md cursor-pointer"
+                onClick={() =>
+                  varaints &&
+                  varaints.length !== 0 &&
+                  setActiveImage(varaints[currentVariantIndex]?.img?.img_3)
                 }
               />
             </div>
           </div>
           {/* ABOUT */}
-          <div className="flex flex-col gap-4 lg:w-2/4 ">
+          <div className="flex flex-col gap-4 lg:w-2/4 p-8 ">
             <div>
               <span className=" text-purple-500-600 font-semibold">
-                {varaints.length > 0 &&
-                  varaints[currentVariantIndex].product.brand}
+                {product && product.brand}
               </span>
-              <h1 className="text-3xl font-bold">
-                {varaints.length > 0 &&
-                  varaints[currentVariantIndex].product?.name}
-              </h1>
+              <h1 className="text-3xl font-bold">{product && product.name}</h1>
             </div>
-            <p className="text-gray-700">
-              {varaints.length > 0 &&
-                varaints[currentVariantIndex].product?.discription}
-            </p>
-            <h6 className="text-2xl font-semibold flex flex-row items-center ">
-              <FaIndianRupeeSign />
-              {varaints.length > 0 && varaints[currentVariantIndex].price}
-            </h6>
-            <div className="flex flex-col  gap-12">
-              {/* <div className="flex flex-row items-center">
-                <button
-                  className="bg-gray-200 py-2 px-5 rounded-lg text-violet-800 text-3xl"
-                  onClick={() => setAmount((prev) => prev - 1)}
-                >
-                  -
-                </button>
-                <span className="py-4 px-6 rounded-lg">{amount}</span>
-                <button
-                  className="bg-gray-200 py-2 px-4 rounded-lg text-violet-800 text-3xl"
-                  onClick={() => setAmount((prev) => prev + 1)}
-                >
-                  +
-                </button>
-              </div>
-              <button className="bg-purple-700 text-white font-semibold py-3 px-16 rounded-xl h-full">
-                Add to Cart
-              </button> */}
+            <p className="text-gray-700">{product && product.discription}</p>
 
-              <div className="flex items-center ">
+            <div className="flex flex-col  gap-2">
+              {/* <div className="flex flex-row items-center">
+              <button
+                className="bg-gray-200 py-2 px-5 rounded-lg text-violet-800 text-3xl"
+                onClick={() => setAmount((prev) => prev - 1)}
+              >
+                -
+              </button>
+              <span className="py-4 px-6 rounded-lg">{amount}</span>
+              <button
+                className="bg-gray-200 py-2 px-4 rounded-lg text-violet-800 text-3xl"
+                onClick={() => setAmount((prev) => prev + 1)}
+              >
+                +
+              </button>
+            </div>
+            <button className="bg-purple-700 text-white font-semibold py-3 px-16 rounded-xl h-full">
+              Add to Cart
+            </button> */}
+
+              <div className="flex items-center  justify-center lg:justify-normal">
                 {colors.map((clr: string) => (
                   <div
                     className={
@@ -173,6 +226,11 @@ const SingleProduct = () => {
                   >
                     <div
                       className="size-7 rounded-md "
+                      onClick={() => {
+                        setCurrentColor(clr);
+                        setColorsChanged(true);
+                        setSizes([]);
+                      }}
                       style={{
                         backgroundColor: `${clr}`,
                       }}
@@ -180,26 +238,28 @@ const SingleProduct = () => {
                   </div>
                 ))}
               </div>
-              <div className="flex items-center  gap-2">
+              <div className="flex items-center justify-center lg:justify-normal  gap-2">
                 {sizes.map((size: string) => (
                   <button
                     value={size}
                     className={
-                      "font-bebas bg-black rounded-md  px-4 py-2 text-white " +
+                      "font-bebas  rounded-md  px-4 py-2  " +
                       `${
+                        varaints &&
                         varaints.length != 0 &&
                         varaints[currentVariantIndex].size === size
-                          ? `opacity-75`
-                          : ""
+                          ? "text-white bg-black"
+                          : `bg-gray-200 text-black`
                       } `
                     }
                     onClick={() => {
-                      for (const variant in varaints) {
-                        if (varaints[parseInt(variant)].size === size) {
-                          setCurrentVariantIndex(parseInt(variant));
-                          console.log(varaints[variant].id);
-                        }
-                      }
+                      varaints &&
+                        varaints.map((item: Variant, index) => {
+                          if (item.size === size) {
+                            setCurrentVariantIndex(index);
+                          }
+                          return index;
+                        });
                     }}
                   >
                     {size}
@@ -207,24 +267,36 @@ const SingleProduct = () => {
                 ))}
               </div>
 
-              <div className="flex">
+              <h6 className="text-xl text-center font-semibold flex flex-row items-center  justify-center lg:justify-start ">
+                <FaIndianRupeeSign />
+                {varaints &&
+                  varaints.length > 0 &&
+                  varaints[currentVariantIndex]?.price}
+              </h6>
+
+              <div className="flex gap-2">
                 <button
-                  className="w-full text-white text-2xl font-bebas py-4 bg-black rounded-md "
+                  className="w-full text-white  font-bebas py-2 bg-black rounded-md gap-1 "
                   onClick={() => {
-                    apiClient
-                      .post("shop/cart/", {
-                        product: varaints[currentVariantIndex].id,
-                        quantity: 1,
-                      })
-                      .then((res) => {
-                        alert(res.data);
-                      })
-                      .catch((err) => {
-                        alert(err);
-                      });
+                    varaints &&
+                      varaints.length > 0 &&
+                      apiClient
+                        .post("shop/cart/", {
+                          product: varaints[currentVariantIndex]?.id,
+                          quantity: 1,
+                        })
+                        .then((res) => {
+                          alert(res.data);
+                        })
+                        .catch((err) => {
+                          alert(err);
+                        });
                   }}
                 >
                   Add To Cart
+                </button>
+                <button className=" text-black hover:text-red-600 flex items-center justify-center w-32 font-bebas py-2 bg-gray-200 rounded-md ">
+                  <TbHeartPlus className="size-6" />
                 </button>
               </div>
             </div>

@@ -13,6 +13,7 @@ import {
 import Navbar from "../../components/user/Navbar";
 
 import ShippingAdressContainer from "../../components/user/ShippingAdressContainer";
+import IsUserAuthenticated from "../../components/IsUserAuthenticated";
 
 const Checkout = () => {
   const [open, setOpen] = React.useState(0);
@@ -86,4 +87,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default IsUserAuthenticated(Checkout);

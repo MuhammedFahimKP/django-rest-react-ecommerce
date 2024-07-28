@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import type { ProductResponseData } from "../../types";
-
-import apiClient, { ApiClientResponse } from "../../services/api-client";
+import { useEffect } from "react";
+import { useWindowDimensions } from "../../hooks";
+import type { ProductResponseData } from "../../@types";
 
 import ProductCard from "../../components/user/ProductCard";
+
+import { useSearchParams } from "react-router-dom";
 
 import Navbar from "../../components/user/Navbar";
 import BottmNavbar from "../../components/user/BottmNavbar";
@@ -21,32 +22,50 @@ import { useStoreProduct } from "../../hooks";
 // }
 
 const Shop = () => {
-  const [product, setProduct] = useState<ProductResponseData[] | []>([]);
+  const { data, currentPage, error, loading, pages, next, prev } =
+    useStoreProduct(6);
 
-  const { data, currentPage, error, loding, pages } = useStoreProduct(6);
+  const [productFilterParams, setProductFilterParams] = useSearchParams({});
 
-  console.log(data);
-  console.log(error);
-  console.log(loding);
-  console.log(pages);
-  console.log(currentPage);
+  const setFilterParams = (key: string, value: string) =>
+    setProductFilterParams((prevParam: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParam);
 
-  useEffect(() => {
-    const controller = new AbortController();
+      if (newParams.has(key)) {
+        // If the key exists, append the new value with a comma
+        const existingValue = newParams.get(key);
+        newParams.set(key, `${existingValue},${value}`);
+      } else {
+        // If the key does not exist, add the key-value pair
+        newParams.set(key, value);
+      }
 
-    apiClient
-      .get<ProductResponseData[]>("shop/product/", {
-        signal: controller.signal,
-      })
-      .then((res: ApiClientResponse) => {
-        setProduct(res.data);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+      return newParams;
+    });
+  const removeFilterParams = (key: string, value: string) =>
+    setProductFilterParams((prevParams: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParams);
 
-    return () => controller.abort();
-  }, []);
+      if (newParams.has(key)) {
+        // Get the existing values for the key
+        const existingValue = newParams.get(key);
+        const valuesArray = existingValue?.split(",");
+
+        // Remove the specified value
+        const newValuesArray = valuesArray
+          ? valuesArray.filter((param) => param !== value)
+          : null;
+
+        // If the new array is empty, remove the key; otherwise, update it
+        if (newValuesArray && newValuesArray.length > 0) {
+          newParams.set(key, newValuesArray.join(","));
+        } else {
+          newParams.delete(key);
+        }
+      }
+
+      return newParams;
+    });
 
   return (
     <div className="h-[100vh]">
@@ -59,23 +78,29 @@ const Shop = () => {
           className="fixed top-20 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
           aria-label="Sidebar"
         >
-          <FilterSideBar />
+          <FilterSideBar
+            removeParams={removeFilterParams}
+            setParams={setFilterParams}
+            searchParams={productFilterParams}
+          />
         </aside>
         <div className="pl-2 ml-64">
-          <div className="flex flex-col  w-full static h-[100vh]    bg-red-700  pt-14  px-2">
-            <div className="bg-red-300 flex items-center normal gap-14 ">
+          <div className="flex flex-col  w-full static    bg-red-700  pt-14  px-2">
+            <div className="bg-red-300 flex flex-col-reverse items-center  py-4 normal gap-2 ">
               <h1 className="text-3xl font-pacifico">Results </h1>
               <SearchBox />
             </div>
 
             <div className="grid grid-cols-2  lg:grid-cols-3 place-items-center bg-red-400  min-w-sm   mx-auto mb-5 mt-5 gap-2 lg:gap-5 ">
-              {product.map((item: ProductResponseData, index) => (
+              {data.map((item: ProductResponseData) => (
                 <ProductCard
-                  key={`shop-product-${index}`}
+                  key={`shop-product-${item.id}`}
+                  id={item.id}
                   brand={item.brand}
                   categoery={item.categoery}
                   discription={item.discription}
-                  variants={item.variants}
+                  colors={item.colors}
+                  min_price={item.min_price}
                   name={item.name}
                   img={item.img}
                   slug={item.slug}

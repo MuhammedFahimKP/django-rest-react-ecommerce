@@ -1,4 +1,6 @@
 from rest_framework import serializers
+from rest_framework.request import Request
+
 from accounts.serializers import UserViewSerailizer
 from accounts.exceptions import AlreadyExist
 from .utils import get_or_none,get_or_create
@@ -14,8 +16,8 @@ from .models import (
     ProductVariant,
     Cart,
     CartItem,
-    WishList,
-    WishListItem,
+    # WishList,
+    # WishListItem,
 
 )
 
@@ -109,8 +111,7 @@ class ColorSerializer(serializers.ModelSerializer):
 
 class SizeSerializer(serializers.ModelSerializer):
 
-    name = serializers.CharField(max_length=14,min_length=1)
-
+   
     class Meta:
 
         model  = Size
@@ -125,8 +126,7 @@ class ProductVariantImageSerializer(serializers.ModelSerializer):
     class Meta:
         model  = ProductVariantImages
         fields = [
-            'id',
-            'img_id',
+        
             'img_1',
             'img_2',
             'img_3',
@@ -169,10 +169,40 @@ class ProductVariantSerailizer(serializers.ModelSerializer):
 class ProductSerilizer(serializers.ModelSerializer):
 
     name      = serializers.CharField(max_length=50,min_length=5)
-    categoery = CategoerySerializer(read_only=True)
-    variants  = ProductVariantSerailizer(read_only=True,many=True)
     categoery = serializers.SerializerMethodField()
     brand     = serializers.SerializerMethodField()
+    colors    = serializers.SerializerMethodField()
+    min_price = serializers.SerializerMethodField()
+    
+    
+    def get_colors(self,obj):
+        variants = obj.variants.all()
+        
+        colors = set()
+        
+        for variant in variants:
+            
+            colors.add(variant.color.name)
+            
+        return colors
+    
+    
+    def get_min_price(self,obj):
+        
+        variants = obj.variants.all()
+        
+        min_price = variants[0].price
+        
+        for variant  in variants :
+            
+            if variant.price < min_price:
+                
+                min_price =variant.price
+            
+        return min_price
+            
+    
+    
     
     
    
@@ -195,13 +225,16 @@ class ProductSerilizer(serializers.ModelSerializer):
 
         model  = Product
         fields = [
+            'id',
             'name',
             'categoery',
             'brand',
             'img',
-            'variants',
+            'colors',
+            'min_price',
             'discription',
             'slug',
+            
             
         ]
 
@@ -211,10 +244,13 @@ class CartItemListSerailizer(serializers.ModelSerializer):
     
     name = serializers.SerializerMethodField()
     color = serializers.SerializerMethodField()
+    brand = serializers.SerializerMethodField()
+    # categoery = serializers.SerializerMethodField()
     img  = serializers.SerializerMethodField()
     size = serializers.SerializerMethodField()
     price = serializers.SerializerMethodField()
     stock = serializers.SerializerMethodField()
+
     quantity = serializers.IntegerField(required=True)
 
     url = serializers.HyperlinkedIdentityField(
@@ -235,6 +271,11 @@ class CartItemListSerailizer(serializers.ModelSerializer):
         return obj.product.size.name
     
     
+    def get_brand(self,obj) :
+        return obj.product.product.brand.name
+    
+
+    
     def get_price(self,obj):
         return int(obj.product.price)
     
@@ -252,7 +293,7 @@ class CartItemListSerailizer(serializers.ModelSerializer):
     
     class Meta:
         
-        fields = ['id','name','quantity','stock','subtotal','size','color','url' ,'img','price']
+        fields = ['id','name','quantity','stock','subtotal','size','color','url' ,'img','price','brand']
         model  = CartItem
         read_only_fields = ['img']
     
@@ -452,66 +493,66 @@ class LatestArrivalsSerailizer(serializers.ModelSerializer):
             
         ]
 
-class WhishListItemProductSerailizer(serializers.ModelSerializer):
+# class WhishListItemProductSerailizer(serializers.ModelSerializer):
     
-    class Meta :
+#     class Meta :
         
-        model = Product
+#         model = Product
         
-        fields = [
-            'id',
-            'name',
-            'slug',
-            'img',
-            'brand',
-            'categoery',
-            'discription',
-        ]
+#         fields = [
+#             'id',
+#             'name',
+#             'slug',
+#             'img',
+#             'brand',
+#             'categoery',
+#             'discription',
+#         ]
     
         
-class WishListItemCreateSerializer(serializers.ModelSerializer):
+# class WishListItemCreateSerializer(serializers.ModelSerializer):
 
-    product  = serializers.PrimaryKeyRelatedField(many=False,queryset=Product.objects.all())
+#     product  = serializers.PrimaryKeyRelatedField(many=False,queryset=Product.objects.all())
 
 
-    class Meta:
+#     class Meta:
 
-        model  = WishListItem
-        fields = [
-            'product',
-        ]
+#         model  = WishListItem
+#         fields = [
+#             'product',
+#         ]
 
-    def validate(self,data):
+#     def validate(self,data):
 
-        request      = self.context['request']
-        user         = request.user
+#         request      = self.context['request']
+#         user         = request.user
 
         
-        product      = data['product']
-        wishlist     = get_or_create(class_model=WishList,user=user)
-        data['wishlist'] = wishlist
-        whish_items  =  WishListItem.objects.filter(wishlist=wishlist,product=product)
+#         product      = data['product']
+#         wishlist     = get_or_create(class_model=WishList,user=user)
+#         data['wishlist'] = wishlist
+#         whish_items  =  WishListItem.objects.filter(wishlist=wishlist,product=product)
         
-        if  whish_items.exists():           
-            raise AlreadyExist({'product':'product already  exist in whishlist'})
+#         if  whish_items.exists():           
+#             raise AlreadyExist({'product':'product already  exist in whishlist'})
         
-        return data
+#         return data
     
     
-    def create(self, validated_data):
-        instance = WishListItem.objects.create(**validated_data)
-        return instance
+#     def create(self, validated_data):
+#         instance = WishListItem.objects.create(**validated_data)
+#         return instance
     
-class WishListItemsListSerailizer(serializers.ModelSerializer):
+# class WishListItemsListSerailizer(serializers.ModelSerializer):
     
-    product  = WhishListItemProductSerailizer(many=False)
+#     product  = WhishListItemProductSerailizer(many=False)
     
-    class Meta:
-        model = WishListItem
+#     class Meta:
+#         model = WishListItem
         
-        fields = [
-            'product'
-        ]    
+#         fields = [
+#             'product'
+#         ]    
     
     
 
@@ -573,3 +614,89 @@ class ProductVariationListSerailizer(serializers.ModelSerializer):
             'price',
         ]
         
+        
+class SingleProductVariantSerailer(serializers.ModelSerializer):
+    
+    color    = serializers.SerializerMethodField()
+    size     = serializers.SerializerMethodField()
+    
+    img      = ProductVariantImageSerializer()
+    
+    
+    def get_color(self,obj):
+        return obj.color.name
+    
+    def get_size(self,obj) :
+        return obj.size.name
+    
+    class Meta :
+        
+        model = ProductVariant
+        exclude = ['product']
+    
+    
+            
+        
+class SingleProductSerializer(serializers.ModelSerializer):
+    
+    colors   = serializers.SerializerMethodField()
+    variants = serializers.SerializerMethodField()
+    
+    brand     = serializers.SerializerMethodField()
+    categoery = serializers.SerializerMethodField()
+    
+    
+    def get_categoery(self,obj):
+        return obj.categoery.name
+    
+    def get_brand(self,obj):
+        return obj.brand.name
+    
+    
+
+    def get_colors(self,obj):
+        
+        colors = ProductVariant.objects.filter(product=obj.id).values_list('color__name' ,flat=True).distinct()
+        
+        return colors
+
+    
+    def get_variants(self,obj):
+        
+    
+        request:Request = self.context.get('request')
+        
+        color   = request.query_params.get('color')
+        
+        variants = []
+        
+        if color:
+           color =  Color.objects.filter(name__icontains=color)
+           color = color.first()
+           
+           variants = ProductVariant.objects.filter(color=color,product=obj.id)
+           
+           
+        else:    
+            firstproduct = ProductVariant.objects.filter(product=obj.id)
+            
+            if firstproduct.exists():
+                firstproduct = firstproduct.first()
+                variants     = ProductVariant.objects.filter(color=firstproduct.color,product=obj.id)
+           
+           
+            
+        data = SingleProductVariantSerailer(variants,many=True,context=self.context).data     
+        
+        return data
+        
+        
+        
+    
+    
+    
+    
+    
+    class Meta :
+        model   = Product     
+        fields  = '__all__'       

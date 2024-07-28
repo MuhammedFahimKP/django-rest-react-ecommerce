@@ -54,6 +54,9 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     
+    #pillow configration to support avif image type 
+    'pillow_avif',
+    
     #project apps
 
     'accounts',
@@ -65,6 +68,9 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'rest_framework_simplejwt.token_blacklist',
+    
+    
+    
     
     
     
@@ -82,6 +88,7 @@ INSTALLED_APPS = [
     
     #api docs
     'drf_spectacular',
+    
      
     
 ]
@@ -107,6 +114,8 @@ MIDDLEWARE = [
   
     
 ]
+
+ALLOWED_UPLOAD_IMAGES = ['avif', 'jpg', 'jpeg', 'png', 'gif']
 
 INTERNAL_IPS = [
     # ...

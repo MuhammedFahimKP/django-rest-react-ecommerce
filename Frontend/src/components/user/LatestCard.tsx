@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import type { LatestArrival as Props } from "../../types";
+import type { LatestArrival as Props } from "../../@types";
 
 import { TbHeartPlus } from "react-icons/tb";
 import { TiEye } from "react-icons/ti";

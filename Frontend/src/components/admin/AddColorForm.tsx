@@ -12,7 +12,7 @@ import * as Yup from "yup";
 import apiClient, { ApiClientError } from "../../services/api-client";
 
 import { Toaster, toast } from "react-hot-toast";
-import { AdminColor } from "../../types";
+import { AdminColor } from "../../@types";
 
 interface ColorAddForm {
   name: string;

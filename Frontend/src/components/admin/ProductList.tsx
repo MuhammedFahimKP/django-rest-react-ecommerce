@@ -68,7 +68,7 @@ import {
   CardFooter,
 } from "@material-tailwind/react";
 
-import { AdminProduct } from "../../types";
+import { AdminProduct } from "../../@types";
 import ProductRow from "../../ui/admin/ProductRow";
 
 import AdminProductRowSkeleton from "../skeletons/AdminProductRowSkeleton";

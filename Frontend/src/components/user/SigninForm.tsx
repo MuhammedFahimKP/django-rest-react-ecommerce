@@ -8,7 +8,7 @@ import * as Yup from "yup";
 
 import { useNavigate } from "react-router-dom";
 
-import { UserSignInData } from "../../types";
+import { UserSignInData } from "../../@types";
 
 import { setUser, setAuthTokens } from "../../slices/authenticationSlice";
 import { RootState } from "../../store";

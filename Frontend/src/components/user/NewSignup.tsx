@@ -11,7 +11,7 @@ import apiClient, {
   ApiClientError,
   ApiClientResponse,
 } from "../../services/api-client";
-import { UserSignUpData as FormValues } from "../../types";
+import { UserSignUpData as FormValues } from "../../@types";
 
 import Form from "../../ui/user/Form";
 import InputContainer from "../../ui/user/InputContainer";

@@ -1,7 +1,7 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { useFormik } from "formik";
 import { useParams } from "react-router-dom";
-import type { ProductForm, AdminBrand, AdminCategory } from "../../types";
+import type { ProductForm, AdminBrand, AdminCategory } from "../../@types";
 
 import apiClient, { ApiClientError } from "../../services/api-client";
 import ImageUploader from "../../ui/admin/ImageUploader";

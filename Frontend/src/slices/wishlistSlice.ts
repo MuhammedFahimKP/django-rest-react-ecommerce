@@ -1,5 +1,5 @@
 import { PayloadAction, createSlice } from "@reduxjs/toolkit";
-import { WishlistItem } from "../types";
+import { WishlistItem } from "../@types";
 import { deleteWishlistItem, getWishlist } from "../thunks";
 import { ApiClientError } from "../services/api-client";
 

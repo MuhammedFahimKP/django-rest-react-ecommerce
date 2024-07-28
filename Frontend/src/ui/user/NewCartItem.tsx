@@ -1,6 +1,6 @@
 import { useDispatch } from "react-redux";
 
-import type { CartItem as Props } from "../../types";
+import type { CartItem as Props } from "../../@types";
 import QuantityBtn from "./QuantityBtn";
 import { toast } from "react-hot-toast";
 import ErrorAlert from "../alerts/ErrorAlert";

@@ -1,6 +1,7 @@
 from decimal import Decimal
 import razorpay
 from django.conf import settings
+import razorpay.errors
 
 
 razorpay_client = razorpay.Client(auth=(settings.RAZOR_PAY_KEY,settings.RAZOR_PAY_SECRETE_KEY))
@@ -14,8 +15,8 @@ class RazorPay:
         
         data = {
             
-            'amount':float(amount),
-            'currency':currency
+            'amount':float(amount) *100,
+            'currency':currency,
         }
     
         
@@ -33,6 +34,18 @@ class RazorPay:
             'razorpay_signature': signature
         }
         
-        check = razorpay_client.utility.verify_payment_signature(data)
+        try :
+            check = razorpay_client.utility.verify_payment_signature(data)
+            return check 
         
-        return check 
+        except razorpay.errors.SignatureVerificationError:
+            pass
+        
+        return False
+             
+        
+    
+
+
+def calculate_gst(amount:float) -> float:
+    return amount * 0.12    

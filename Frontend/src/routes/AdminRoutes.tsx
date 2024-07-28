@@ -6,6 +6,7 @@ import AddVaraitonPage from "../pages/admin/AddVaraitonPage";
 import EditProduct from "../pages/admin/EditProduct";
 import ProductViewPage from "../pages/admin/ProductViewPage";
 import VariationViewPage from "../pages/admin/VariationViewPage";
+import CreateProduct from "../pages/admin/CreateProduct.tsx";
 
 const AdminHome = lazy(() => import("../pages/admin/Home.tsx"));
 
@@ -29,7 +30,7 @@ const routes = createBrowserRouter([
           </Suspense>
         ),
         children: [
-          { path: "add/", element: <AddProduct /> },
+          { path: "add/", element: <CreateProduct /> },
           {
             path: "view/:id/",
             element: <ProductViewPage />,

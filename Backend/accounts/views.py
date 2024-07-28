@@ -8,6 +8,7 @@ from rest_framework_simplejwt.tokens import RefreshToken
 from .thread import EmailThread
 # from .models import ShippingAddress
 # Create your views here.
+
 from rest_framework import generics,status,permissions
 from .serializers import (
     
@@ -17,8 +18,10 @@ from .serializers import (
     GoogleSiginSerializer,
     UserUpdateSerializer,
     ShippingAddressSerializer,
+    ChangePasswordSerializer,
 
 )
+from .task import print_numbers,sendrandom
 
 from rest_framework.response import Response
 
@@ -250,6 +253,39 @@ class UserActivaionApiView(generics.GenericAPIView):
          # other wise it will send a 400 http response with serializer error
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
     
+
+
+
+class UserChangePasswordAPIView(generics.GenericAPIView) :
+    serializer_class = ChangePasswordSerializer
+    
+    def patch(self,request):
+        
+        serializer = self.get_serializer_class()
+        
+        serializer = serializer(data=request.data,context={'request':request})
+        
+        if  serializer.is_valid(raise_expection=True):
+            
+            password  = serializer.data['new_password']
+            
+            user = request.user 
+
+            user.set_password(password)
+            
+            user.save()
+            
+    
+        
+            return Response({'password':'changed'},status=status.HTTP_200_OK)
+        
+        return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+        
+
+    
+    
+    
+    
     
 class ShippingAddressListCreateApiView(JWTPermission,generics.GenericAPIView):
     
@@ -316,7 +352,24 @@ class ShippingAddressDeleteUpdateRetrieveApiView(JWTPermission,generics.Retrieve
     
     
     
+class HaiAPIview(generics.GenericAPIView):
     
+    def get(self,request):
+        
+        sendrandom()
+        # print_numbers.delay()
+        
+        
+        
+        return Response({
+            'hai':'hello'
+            
+        },status=status.HTTP_200_OK)
+        
+            
+            
+        
+        
     
     
     

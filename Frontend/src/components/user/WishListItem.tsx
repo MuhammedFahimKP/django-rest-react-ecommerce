@@ -1,4 +1,4 @@
-import { WishlistItem as Props } from "../../types";
+import { WishlistItem as Props } from "../../@types";
 
 const WishListItem = ({ id, product }: Props) => {
   return (
