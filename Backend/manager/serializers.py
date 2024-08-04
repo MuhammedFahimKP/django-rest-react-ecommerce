@@ -4,6 +4,12 @@ from shop.models import Categoery,Product,Brand,ProductVariant,ProductVariantIma
 from shop.utils import get_or_create,get_or_none
 from accounts.exceptions import AlreadyExist
 
+from checkouts.models import Order
+
+
+from checkouts.serializer import OrderItemSerializer
+from accounts.serializers import ShippingAddressSerializer
+
 
 
 
@@ -562,5 +568,54 @@ class AdminColorVariationSerializer(serializers.ModelSerializer):
         
 
 
+class AdminOrderListSerailizer(serializers.ModelSerializer):
+    
+    
+    user              = serializers.SerializerMethodField()  
+    expected_delivery = serializers.SerializerMethodField()
+    
+    
+    def get_expected_delivery(self,obj):
+        return obj.expected_delivery
+    
+    
+    
+    def get_user(self,obj):
+        return obj.user.email
+    
+    class Meta:
+        model = Order 
+        exclude = ['address'] 
+        
+class AdminOrderRetriveSerializer(serializers.ModelSerializer):
+    
+    
+    orders = OrderItemSerializer(read_only=True,many=True)
+    expected_delivery = serializers.SerializerMethodField()
+    address  = ShippingAddressSerializer(read_only=True,many=False)
+    
+    
+    def get_expected_delivery(self,obj):
+        return obj.expected_delivery
 
+    
+    
+    
+    class Meta:
+        
+        model = Order 
+        exclude = ['updated']    
+
+
+class AdminOrderUpdateSerializer(serializers.Serializer) :
+    
+    status = serializers.ChoiceField(choices=Order.status_choices)
+    
+    class Meta:
+        
+        fields = ['status']    
+    
+    
+    
+    
 

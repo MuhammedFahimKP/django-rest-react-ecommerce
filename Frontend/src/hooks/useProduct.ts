@@ -3,6 +3,7 @@ import { getState } from "../store";
 import type { AdminProduct, ProductResponseData } from "../@types";
 
 import usePaginatedData from "./usePaginatedData";
+import { ApiCLientRequestConfig } from "../services/api-client";
 
 export default function useProduct(deps: any[], delay?: number) {
   const params = getState().adminProductSearchSlice;
@@ -18,10 +19,32 @@ export default function useProduct(deps: any[], delay?: number) {
   );
 }
 
-const usePaginatedAdminProduct = (limit: number, delay: number) =>
-  usePaginatedData<AdminProduct>("admin/product/", limit, delay);
+const usePaginatedAdminProduct = (
+  limit: number,
+  delay: number,
+  requestConfig?: ApiCLientRequestConfig,
+  deps?: any[]
+) =>
+  usePaginatedData<AdminProduct>(
+    "admin/product/",
+    limit,
+    delay,
+    requestConfig,
+    deps
+  );
 
-const useStoreProduct = (limit: number, delay?: number) =>
-  usePaginatedData<ProductResponseData>("shop/", limit, delay ? delay : 0);
+const useStoreProduct = (
+  limit: number,
+  delay?: number,
+  requestConfig?: ApiCLientRequestConfig,
+  deps?: any[]
+) =>
+  usePaginatedData<ProductResponseData>(
+    "shop/",
+    limit,
+    delay ? delay : 0,
+    requestConfig,
+    deps
+  );
 
 export { useStoreProduct, usePaginatedAdminProduct };

@@ -9,18 +9,9 @@ import apiClient from "../../services/api-client";
 import ProductList from "../../components/admin/ProductList";
 import SortSelector from "../../ui/admin/SortSelector";
 
-import {
-  setBrand,
-  setCategory,
-  setName,
-} from "../../slices/admin/productSearchSlice";
-
 import { AdminProductSortData } from "../../utils/constants";
-import { getAllSearchParams } from "../../utils/other-utils";
 
-import { useDispatch } from "react-redux";
-import { MdNewReleases, MdOutlineAdd } from "react-icons/md";
-import { setProduct } from "../../slices/currentProductSlice";
+import { MdOutlineAdd } from "react-icons/md";
 
 interface AdminBrandResponse {
   id: string;

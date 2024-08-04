@@ -38,10 +38,10 @@ urlpatterns = [
     path('size/',views.SizesListingAPIView.as_view(),name="sizes-listing-user"),
 
     # wishlistitems getting and creating view
-    # path('wishlist/',views.WishListItemsListCreateApiView.as_view(),name="wish-items-create-and-update-view"),
+    path('wishlist/',views.WishListItemsListCreateApiView.as_view(),name="wish-items-create-and-update-view"),
 
-    # single wishlist item getting and updating and delete view
-    # path('wishlist/<str:pk>/',views.WishListItemReteriveUpdateDestroyAPIView.as_view(),name="wish-item-retrive-update-delete"),
+   
+    path('wishlist/<str:pk>/',views.WishListItemReteriveDestroyAPIView.as_view(),name="wish-item-retrive-update-delete"),
 
 
 ]

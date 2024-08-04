@@ -134,3 +134,13 @@ body {
     visibility: hidden;
   }
 }
+
+.portrait {
+  height: 50vh !important;
+  min-width: 100%;
+  object-fit: cover;
+}
+
+.modal {
+  z-index: 999 !important;
+}

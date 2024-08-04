@@ -1,12 +1,21 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
-const SearchBox = () => {
+interface Props {
+  onChange: (value: string) => void;
+}
+
+const SearchBox = ({ onChange }: Props) => {
   return (
-    <div className="flex rounded-full bg-white  px-2 w-full max-w-sm overflow-hidden">
+    <div className="flex rounded-full bg-white border border-gray-200 shadow-md  px-2 w-full max-w-sm overflow-hidden">
       <input
         type="text"
-        className="w-full bg-white flex bg-transparent pl-2 text-[#cccccc] outline-0 font-bebas rounded-full"
-        placeholder="Search Movies "
+        onChange={(e: ChangeEvent<HTMLInputElement>) =>
+          setTimeout(() => {
+            onChange(e.target.value);
+          }, 2000)
+        }
+        className="w-full bg-white flex bg-transparent pl-2 text-black outline-0 font-sans rounded-full"
+        placeholder="Search Products"
       />
       <button type="submit" className="relative p-2 bg-white rounded-full">
         <svg

@@ -10,6 +10,10 @@ import { FaIndianRupeeSign } from "react-icons/fa6";
 import NotFound from "../../components/NotFound";
 import DelayComponent from "../../components/DelayComponent";
 import { TbHeartPlus } from "react-icons/tb";
+import SuccessAlert from "../../ui/alerts/SuccessAlert";
+import toast from "react-hot-toast";
+import ErrorAlert from "../../ui/alerts/ErrorAlert";
+import NetworkErrorAlert from "../../ui/alerts/NetworkErrorAlert";
 interface Variant {
   id: string;
   img: {
@@ -70,6 +74,27 @@ const SingleProduct = () => {
     }
 
     return {};
+  };
+
+  const handleWishListItem = () => {
+    apiClient
+      .post("shop/wishlist/", { product: varaints?.[currentVariantIndex].id })
+      .then((res) =>
+        toast.custom((t) => (
+          <SuccessAlert toast={t} successText="Item Added To Wishlist" />
+        ))
+      )
+      .catch((err) => {
+        if (err?.message === "Network Error") {
+          toast.custom((t) => <NetworkErrorAlert toast={t} />);
+        }
+
+        if (err?.response?.status === 409) {
+          toast.custom((t) => (
+            <ErrorAlert toast={t} errorText={"Item Already in WishList"} />
+          ));
+        }
+      });
   };
 
   useEffect(() => {
@@ -286,16 +311,28 @@ const SingleProduct = () => {
                           quantity: 1,
                         })
                         .then((res) => {
-                          alert(res.data);
+                          toast.custom((t) => (
+                            <SuccessAlert
+                              toast={t}
+                              successText="Item Added To Cart"
+                            />
+                          ));
                         })
                         .catch((err) => {
-                          alert(err);
+                          if (err?.message === "Network Error") {
+                            toast.custom((t) => (
+                              <NetworkErrorAlert toast={t} />
+                            ));
+                          }
                         });
                   }}
                 >
                   Add To Cart
                 </button>
-                <button className=" text-black hover:text-red-600 flex items-center justify-center w-32 font-bebas py-2 bg-gray-200 rounded-md ">
+                <button
+                  onClick={handleWishListItem}
+                  className=" text-black hover:text-red-600 flex items-center justify-center w-32 font-bebas py-2 bg-gray-200 rounded-md "
+                >
                   <TbHeartPlus className="size-6" />
                 </button>
               </div>

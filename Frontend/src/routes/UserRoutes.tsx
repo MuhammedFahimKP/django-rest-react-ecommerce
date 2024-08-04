@@ -11,6 +11,7 @@ import Cart from "../pages/user/Cart.tsx";
 import ShopPage from "../pages/user/ShopPage.tsx";
 import OrderHistory from "../pages/user/OrderHistory.tsx";
 import SingleOrderPage from "../pages/user/SingleOrderPage.tsx";
+import Address from "../pages/user/Address.tsx";
 
 export function lazyImport<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
@@ -79,6 +80,10 @@ const routePatterns = [
       {
         path: "profile/",
         element: <ProfileSettings />,
+      },
+      {
+        path: "address/",
+        element: <Address />,
       },
     ],
   },

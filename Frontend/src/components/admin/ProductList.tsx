@@ -156,14 +156,17 @@ interface Props {
 export default function SortableTable({ filterParams }: Props) {
   const [limit] = useState(4);
 
-  const { data, currentPage, next, prev, updateFilters, pages, loading } =
-    usePaginatedAdminProduct(3, 1000);
+  const { data, currentPage, next, prev, pages, loading } =
+    usePaginatedAdminProduct(
+      3,
+      1000,
+      {
+        params: getAllSearchParams(filterParams),
+      },
+      [filterParams]
+    );
 
   const [loadingArray] = useState(makeArrayFromRange(limit));
-
-  useEffect(() => {
-    updateFilters(getAllSearchParams(filterParams));
-  }, [filterParams]);
 
   return (
     <div className="cursor-pointer h-full">
@@ -251,14 +254,14 @@ export default function SortableTable({ filterParams }: Props) {
             color="blue-gray"
             className="font-normal"
           >
-            Page {currentPage} of {pages}
+            Page {pages > 0 ? currentPage : 0} of {pages}
           </Typography>
           <div className="flex gap-2">
             <Button
               placeholder={undefined}
               variant="outlined"
               size="sm"
-              onClick={prev}
+              onClick={() => currentPage > 1 && prev()}
             >
               Previous
             </Button>

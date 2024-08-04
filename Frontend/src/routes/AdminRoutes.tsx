@@ -1,12 +1,14 @@
 import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
-
-import AddProduct from "../pages/admin/AddProduct";
 import AddVaraitonPage from "../pages/admin/AddVaraitonPage";
 import EditProduct from "../pages/admin/EditProduct";
 import ProductViewPage from "../pages/admin/ProductViewPage";
 import VariationViewPage from "../pages/admin/VariationViewPage";
 import CreateProduct from "../pages/admin/CreateProduct.tsx";
+import Orders from "../pages/admin/Orders.tsx";
+import SingleOrderView from "../pages/admin/SingleOrderView.tsx";
+
+import { NotFoundProvider } from "../context";
 
 const AdminHome = lazy(() => import("../pages/admin/Home.tsx"));
 
@@ -18,7 +20,9 @@ const routes = createBrowserRouter([
     path: "admin/",
     element: (
       <Suspense>
-        <AdminHome />
+        <NotFoundProvider>
+          <AdminHome />
+        </NotFoundProvider>
       </Suspense>
     ),
     children: [
@@ -41,6 +45,12 @@ const routes = createBrowserRouter([
 
           { path: "variation/:pid/add/", element: <AddVaraitonPage /> },
         ],
+      },
+      {
+        path: "orders/",
+        element: <Orders />,
+
+        children: [{ path: ":id/", element: <SingleOrderView /> }],
       },
     ],
   },

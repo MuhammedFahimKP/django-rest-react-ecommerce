@@ -2,7 +2,7 @@ from django_filters.rest_framework import DjangoFilterBackend
 from django.db.models import Prefetch
 
 from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter,SearchFilter
 
 
 
@@ -20,8 +20,8 @@ from .models import (
      Categoery,
      Color,
      
-    # WishList,
-    # WishListItem,
+    WishList,
+    WishListItem,
      Product,
      ProductVariant,
      ProductVariantImages,
@@ -47,6 +47,9 @@ from .serializers import (
     ProductVariationListSerailizer,
     SingleProductSerializer,
     SizeSerializer,
+    WishListItemCreateSerializer,
+    WishListItemsListSerailizer,
+    
 )
 from .filters import ProductFilterSet,ProductVariantFilterSet
 
@@ -134,7 +137,7 @@ class CartItemsListCreateApiView(generics.ListCreateAPIView):
 
             headers = self.get_success_headers(serializer.data)
             
-            print('hai')
+           
             
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
         return Response(serializer.errors,status=404)
@@ -200,91 +203,92 @@ class CartItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView
     
    
 
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
-# class WishListItemsListCreateApiView(generics.ListCreateAPIView):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class WishListItemsListCreateApiView(generics.ListCreateAPIView):
     
-#     """
+    """
 
-#     used jwt authentication class and  to ftech cartitems of current user
+    used jwt authentication class and  to ftech cartitems of current user
     
-#     """
+    """
 
-
-    
-    
-#     serializer_class = None
-    
-#     queryset         = WishListItem.objects.all()
 
     
     
-#     def get_serializer_class(self):
+    serializer_class = None
+    
+    queryset         = WishListItem.objects.all()
+
+    
+    
+    def get_serializer_class(self):
         
-#         if self.request.method == 'POST':
+        if self.request.method == 'POST':
             
-#             return WishListItemCreateSerializer
+            return WishListItemCreateSerializer
             
         
-#         return WishListItemsListSerailizer
+        return WishListItemsListSerailizer
 
 
-#     def create(self,request):
+    def create(self,request):
 
-#         serializer = self.get_serializer(data=request.data)
+        serializer = self.get_serializer(data=request.data)
         
 
 
 
 
 
-#         if serializer.is_valid(raise_exception=True):
-#             self.perform_create(serializer)
-#             headers = self.get_success_headers(serializer.data)
-#             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-#         return Response(serializer.errors,status=404)
+        if serializer.is_valid(raise_exception=True):
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        return Response(serializer.errors,status=404)
     
 
 
 
             
-#     def get_queryset(self,*args, **kwargs):
+    def get_queryset(self,*args, **kwargs):
             
-#             #getting the wishlist  of current user if user does not have wishlist it return a None
+            #getting the wishlist  of current user if user does not have wishlist it return a None
 
             
-#             """
+            """
 
-#             user have wishlist then filtering the wishlistitems are related to wishlist 
-#             otherwise returns empty list
+            user have wishlist then filtering the wishlistitems are related to wishlist 
+            otherwise returns empty list
 
-#             """
+            """
 
-#             wishlist = get_or_none(class_model=WishList,user=self.request.user)
+            wishlist = get_or_none(class_model=WishList,user=self.request.user)
 
-#             if wishlist is not None :
-#                 qs = super().get_queryset(*args,**kwargs)
-#                 return qs.filter(wishlist=wishlist)
+            if wishlist is not None :
+                qs = super().get_queryset(*args,**kwargs)
+                return qs.filter(wishlist=wishlist)
         
-#             qs = WishListItem.objects.none()
-#             return  qs
+            qs = WishListItem.objects.none()
+            return  qs
                 
 
 
-# @authentication_classes([JWTAuthentication])
-# @permission_classes([IsAuthenticated])
-# class WishListItemReteriveUpdateDestroyAPIView(generics.RetrieveUpdateDestroyAPIView):
+@authentication_classes([JWTAuthentication])
+@permission_classes([IsAuthenticated])
+class WishListItemReteriveDestroyAPIView(generics.RetrieveDestroyAPIView):
 
-#      serializer_class = WishListItemsListSerailizer
-#      queryset         = WishListItem.objects.all()
-#      lookup_field     = 'pk'     
+     serializer_class = WishListItemsListSerailizer
+     queryset         = WishListItem.objects.all()
+     lookup_field     = 'pk'     
+     
 
      
-#      """
+     """
 
-#             getinging  the cartitem updating the
-#             using put 
-#      """
+            getinging  the cartitem updating the
+            using put 
+     """
 
 
 
@@ -304,12 +308,12 @@ class ListProductAPIView(generics.ListAPIView):
     """
     
     
-    filter_backends  = [DjangoFilterBackend,OrderingFilter]    
+    filter_backends  = [DjangoFilterBackend,OrderingFilter,SearchFilter]    
     
     filterset_class  =  ProductFilterSet  
     ordering_fields  = ['created','updated','is_active','variants__price']   
     
-    
+    search_fields = ['name', 'variants__size__name','brand__name','categoery__name','variants__color__name']
     """
     
     pagination_class for sort the product 

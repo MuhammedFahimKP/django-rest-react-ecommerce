@@ -1,20 +1,20 @@
-import React from "react";
+import React, { useContext } from "react";
 
 import { RouterProvider } from "react-router-dom";
 
 import routes from "./routes";
-// import SessionTimeOut from "./components/SessionTimeOut";
+
+import { ToastContext } from "./context";
+
 import { Toaster } from "react-hot-toast";
 
 const RouteWrapper = () => {
-  console.log(JSON.stringify(routes.routes));
-
+  const toastContext = useContext(ToastContext);
   return (
     <React.Fragment>
       <RouterProvider router={routes} />
-      <Toaster />
 
-      {/* <SessionTimeOut /> */}
+      {toastContext?.anotherToast === false && <Toaster />}
     </React.Fragment>
   );
 };

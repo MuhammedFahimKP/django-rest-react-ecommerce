@@ -33,7 +33,12 @@ class MyUser(AbstractBaseUser,PermissionsMixin):
     email          = models.EmailField(unique=True,db_index=True)
     first_name     = models.CharField(max_length=150)
     last_name      = models.CharField(max_length=150,null=True)
-
+    
+    google_img     = models.CharField(max_length=500,null=True,default=None)
+    
+    avatar_img     = models.ImageField(upload_to='avatar/',blank=True,null=True,default=None)
+    
+    
 
 
  

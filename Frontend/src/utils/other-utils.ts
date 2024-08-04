@@ -44,8 +44,43 @@ const getDateAndTime = (date: string | Date) => {
     hour12: true, // 24-hour format
   });
 
+  console.log(dateAndTime[0], dateAndTime[1]);
+
   return `on ${dateAndTime[0]} at ${dateAndTime[1]} `;
 };
+
+const getDateTimeFromTimeStamp = (date: string | Date | null) => {
+  const newDate = date ? new Date(date) : null;
+
+  return newDate
+    ? newDate.toLocaleString("en-GB", {
+        year: "numeric",
+        month: "2-digit",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true, // 24-hour format
+      })
+    : null;
+};
+
+export function generateYearsFromStart(startYear: number): number[] {
+  const currentYear = new Date().getFullYear();
+  return Array.from(
+    { length: currentYear - startYear + 1 },
+    (_, i) => startYear + i
+  );
+}
+
+export function makeObjFromArray<T extends string | number>(
+  array: T[]
+): { [key in T]: T } {
+  return array.reduce((obj, item) => {
+    obj[item] = item;
+    return obj;
+  }, {} as { [key in T]: T });
+}
 
 export function SignupValidator(key: string, value: string) {
   if (key === "email" && value !== "") {
@@ -134,4 +169,9 @@ export function getAllSearchParams(params: URLSearchParams) {
   return paramsObj;
 }
 
-export { errorFieldName, getDateAndDay, getDateAndTime };
+export {
+  errorFieldName,
+  getDateAndDay,
+  getDateAndTime,
+  getDateTimeFromTimeStamp,
+};

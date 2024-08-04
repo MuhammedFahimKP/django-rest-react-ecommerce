@@ -16,14 +16,23 @@ import {
 } from "@material-tailwind/react";
 
 import { ChevronDownIcon } from "@heroicons/react/24/outline";
+import { getAllSearchParams } from "../../utils/other-utils";
 
 interface Props {
   setParams: (key: string, value: string) => void;
   removeParams: (key: string, value: string) => void;
+  clearItem: (key: string) => void;
+  resetAll: () => void;
   searchParams: URLSearchParams;
 }
 
-const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
+const FilterSideBar = ({
+  setParams,
+  removeParams,
+  searchParams,
+  clearItem,
+  resetAll,
+}: Props) => {
   interface Opener {
     brand: boolean;
     categoery: boolean;
@@ -104,6 +113,15 @@ const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
           Filters
         </Typography>
       </div>
+
+      {Object.keys(getAllSearchParams(searchParams)).length > 1 && (
+        <button
+          className="my-5  font-ubuntu px-4 py-2 bg-white text-black"
+          onClick={resetAll}
+        >
+          Reset Filters
+        </button>
+      )}
       <List placeholder={"sidebar-menu"}>
         <Accordion
           placeholder={"sidebar-menu-accordian"}
@@ -139,8 +157,22 @@ const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
               {catgories.map(({ name }) => (
-                <Checkbox crossOrigin={true} defaultChecked label={name} />
+                <Checkbox
+                  crossOrigin={true}
+                  checked={checkedOrNot("category", name)}
+                  label={name}
+                  onClick={() => onFilterClick("category", name)}
+                />
               ))}
+
+              {catgories.length > 1 && (
+                <button
+                  onClick={() => clearItem("category")}
+                  className="px-4 py-2 text-black bg-gray-200"
+                >
+                  Remove All
+                </button>
+              )}
             </div>
           </AccordionBody>
         </Accordion>
@@ -185,6 +217,15 @@ const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
                   onClick={() => onFilterClick("brand", name)}
                 />
               ))}
+
+              {brands.length > 1 && (
+                <button
+                  onClick={() => clearItem("brand")}
+                  className="px-4 py-2 text-black bg-gray-200 "
+                >
+                  Remove All
+                </button>
+              )}
             </div>
           </AccordionBody>
         </Accordion>
@@ -223,8 +264,22 @@ const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
               {sizes.map(({ name }) => (
-                <Checkbox crossOrigin={true} defaultChecked label={name} />
+                <Checkbox
+                  crossOrigin={true}
+                  checked={checkedOrNot("size", name)}
+                  label={name}
+                  onClick={() => onFilterClick("size", name)}
+                />
               ))}
+
+              {sizes.length > 1 && (
+                <button
+                  onClick={() => clearItem("size")}
+                  className="px-4 py-2 text-black bg-gray-200 "
+                >
+                  Remove All
+                </button>
+              )}
             </div>
           </AccordionBody>
         </Accordion>
@@ -263,8 +318,22 @@ const FilterSideBar = ({ setParams, removeParams, searchParams }: Props) => {
           <AccordionBody className="py-1  overflow-y-scroll max-h-72 mt-4 mb-4  no-scrollbar  bg-gray-200 rounded-md  ">
             <div className="grid gird-cols-1  mt-2 ">
               {colors.map(({ name }) => (
-                <Checkbox crossOrigin={true} defaultChecked label={name} />
+                <Checkbox
+                  crossOrigin={true}
+                  checked={checkedOrNot("color", name)}
+                  label={name}
+                  onClick={() => onFilterClick("color", name)}
+                />
               ))}
+
+              {colors.length > 1 && (
+                <button
+                  onClick={() => clearItem("color")}
+                  className="px-4 py-2 text-black bg-gray-200 "
+                >
+                  Remove All
+                </button>
+              )}
             </div>
           </AccordionBody>
         </Accordion>

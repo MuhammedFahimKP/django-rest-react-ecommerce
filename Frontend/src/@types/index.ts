@@ -68,8 +68,26 @@ export interface CartResponse {
   itemErrors: { [key: string]: string };
 }
 
-export interface WishListProductItem extends LatestArrival {
-  discription: string;
+export interface WishListProductItem {
+  id: string;
+  img: {
+    img_1: string;
+    img_2: string;
+    img_3: string;
+  };
+
+  product: {
+    id: string;
+    name: string;
+    brand: string;
+    img: string;
+    categoery: string;
+  };
+
+  color: string;
+  size: string;
+  quantity: number;
+  price: number;
 }
 export interface WishlistItem {
   id: string;
@@ -123,7 +141,7 @@ export interface Order {
   id: string;
   created: string | Date;
   expected_delivery: string | null | Date;
-  payment: "ROZOR PAY" | "COD";
+  payment: "RAZOR PAY" | "COD";
   payment_status: "Pending" | "Paid";
   status: "Placed" | "Delivered" | "Cancelled";
   total_amount: number;
@@ -202,7 +220,39 @@ const j = {
   payment_status: "Pending",
 };
 
+const k = {
+  id: "1781e6ce-3e7f-4972-85b2-f7ab81f116f0",
+  user: "fahimmuhammedfahimkp@gmail.com",
+  expected_delivery: "2024-08-09T15:39:48.159532Z",
+  created: "2024-07-21T15:39:48.159532Z",
+  updated: "2024-07-21T15:40:06.009759Z",
+  total_amount: "0.00",
+  status: "Placed",
+  payment: "RAZOR PAY",
+  payment_status: "Paid",
+  payment_transation_id: "pay_ObKp5QgIcdoYAf",
+};
+
 // admin side
+
+export interface AdminOrdersModel {
+  id: string;
+  user: string;
+  expected_delivery: string | Date | null;
+  created: string | Date | null;
+  updated: string;
+  total_amount: string;
+  status: "Placed" | "Delivered" | "Cancelled";
+  payment: "RAZOR PAY" | "COD";
+  payment_transation_id: string;
+
+  payment_status: "Pending" | "Paid";
+}
+
+export interface AdminSingleOrderModel extends AdminOrdersModel {
+  orders: OrderItem[];
+  address: ShippingAddress;
+}
 
 interface AdminModelData {
   id: string;

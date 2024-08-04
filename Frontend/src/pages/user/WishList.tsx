@@ -7,11 +7,18 @@ import { WishlistItem } from "../../@types";
 import { getWishlist } from "../../thunks";
 import Navbar from "../../components/user/Navbar";
 import Footer from "../../components/user/Footer";
+import CartItemSkeleton from "../../components/skeletons/CartItemSkeleton";
 import WishListItem from "../../components/user/WishListItem";
+import EmpytBag from "../../ui/user/EmpytBag";
+import { makeArrayFromRange } from "../../utils/other-utils";
 
 const WishList = () => {
-  const { items } = useSelector((state: RootState) => state.wishlistSlice);
+  const { items, error, loading } = useSelector(
+    (state: RootState) => state.wishlistSlice
+  );
   const dispatch = useDispatch<AppDispact>();
+
+  const skeletonArray = makeArrayFromRange(5);
 
   useEffect(() => {
     dispatch(getWishlist());
@@ -19,45 +26,27 @@ const WishList = () => {
 
   return (
     <Fragment>
-      <div className="lg:h-20  h-16 bg-black mb-0 sticky top-0 z-50 w-full">
-        <Navbar onOpen={() => false} />
+      <div className="lg:h-[72px] h-16 bg-black mb-0 sticky top-0 z-50 w-full">
+        <Navbar onOpen={() => null} />
       </div>
-      <section className="py-24 relative font-ubuntu">
-        <div className="w-full max-w-7xl px-4 md:px-5 lg-6 mx-auto">
-          <h2 className="title font-manrope font-bold text-4xl leading-10 mb-8 text-center text-black">
-            WishList
-          </h2>
-          {items.map((whishlistItem: WishlistItem) => (
-            <WishListItem
-              key={whishlistItem.id}
-              id={whishlistItem.id}
-              product={whishlistItem.product}
-            />
-          ))}
+      <div className="min-h-screen font-ubuntu pt-5">
+        <h1 className="mb-5  ml-6 text-2xl ">Wishlist </h1>
+        {error === null && loading === false && items.length === 0 && (
+          <EmpytBag context="Wishlist Is Empty" />
+        )}
+        <div className="mx-auto max-w-5xl justify-center px-6 md:flex md:space-x-6 xl:px-0">
+          <div className="rounded-lg md:w-2/3">
+            {loading &&
+              skeletonArray.map((_, index) => (
+                <CartItemSkeleton key={"sekelton-" + index + "-cart-item"} />
+              ))}
 
-          <div className="flex flex-col md:flex-row items-center md:items-center justify-between lg:px-6 pb-6 border-b border-gray-200 max-lg:max-w-lg max-lg:mx-auto">
-            <h5 className="text-gray-900 font-manrope font-semibold text-2xl leading-9 w-full max-md:text-center max-md:mb-4">
-              Subtotal
-            </h5>
-            <div className="flex items-center justify-between gap-5 ">
-              <button className="rounded-full py-2.5 px-3 bg-indigo-50 text-indigo-600 font-semibold text-xs text-center whitespace-nowrap transition-all duration-500 hover:bg-indigo-100">
-                Promo Code?
-              </button>
-              <h6 className="font-manrope font-bold text-3xl lead-10 text-indigo-600">
-                $440
-              </h6>
-            </div>
-          </div>
-          <div className="max-lg:max-w-lg max-lg:mx-auto">
-            <p className="font-normal text-base leading-7 text-gray-500 text-center mb-5 mt-6">
-              Shipping taxes, and discounts calculated at checkout
-            </p>
-            <button className="rounded-full py-4 px-6 bg-indigo-600 text-white font-semibold text-lg w-full text-center transition-all duration-500 hover:bg-indigo-700 ">
-              Checkout
-            </button>
+            {items.map((item: WishlistItem) => (
+              <WishListItem id={item.id} product={item.product} />
+            ))}
           </div>
         </div>
-      </section>
+      </div>
       <Footer />
     </Fragment>
   );

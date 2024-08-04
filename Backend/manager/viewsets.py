@@ -1,4 +1,5 @@
 
+from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import EmptyResultSet
 
@@ -15,9 +16,17 @@ from rest_framework.filters import OrderingFilter
 
 
 
+
+
+
+
 from django_filters.rest_framework.backends import DjangoFilterBackend
 
-from ecom.mixins import JWTPermission
+
+from checkouts.models import Order,OrderItems
+from checkouts.filters import OrderFilter
+
+from ecom.mixins import JWTPermission 
 
 from .serializers import (   
 
@@ -32,6 +41,9 @@ from .serializers import (
     AdminProductVarationSerializer,
     AdminProductVariantSerializer,
     AdminProductVarintListSerializer,
+    AdminOrderListSerailizer,
+    AdminOrderRetriveSerializer,
+    AdminOrderUpdateSerializer
 )
 from shop.models import (
     Categoery,
@@ -55,6 +67,14 @@ class CustomPageNumberPagination(PageNumberPagination):
 
     page_size_query_param = 'limit'
     page_query_param = 'page'
+    
+    
+
+
+
+    
+    
+    
     
 
     
@@ -285,7 +305,124 @@ class AdminProductViewSet(viewsets.ModelViewSet):
     
     
     
+class AdminOrderAPIViewSet(viewsets.ModelViewSet):
+    
+    # permission_classes = [AdminOnly]
+    queryset           = Order.objects.select_related('user').all()
+    lookup_field       = 'pk'
+    serializer_class   = None
+    lookup_value_regex = r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'
+    http_method_names  = ['get','patch','delete']
+    filterset_class    = OrderFilter
+    filter_backends    = [DjangoFilterBackend,OrderingFilter]
+    pagination_class   = CustomPageNumberPagination
+    
+    
+    
+    
+    
+    
+    def get_object(self,pk:str):
+        
+        try:
+            instance = Order.objects.prefetch_related( 'user','address', Prefetch('orders',queryset=OrderItems.objects.select_related(
+                    'product'  # 'product_variant' FK from OrderItems, 'product' FK from ProductVariant
+                ).select_related(
+                    'product__product',
+                    'product__product__brand',
+                    'product__product__categoery',
+                    'product__img',  # Assuming 'img' is a related field
+                    'product__size',  # Assuming 'size' is a related field
+                    'product__color'  # Assuming 'color' is a related field
+                ))).get(id=pk)
+            
+            return instance
+        
+        except Order.DoesNotExist:    
+            
+            raise NotFound()
+        
 
+        
+        
+    
+    def get_serializer_class(self):
+        
+        
+        if self.action == 'partial_update':
+            
+            return AdminOrderUpdateSerializer
+    
+        
+        if self.action =='retrieve':
+            
+    
+            
+            return AdminOrderRetriveSerializer
+        
+        
+        return AdminOrderListSerailizer    
+   
+    
+    
+    def partial_update(self, request, *args, **kwargs):
+        
+        
+        pk = kwargs.get('pk')
+         
+         
+        if pk :
+            
+            instance   = self.get_object(pk)
+            serializer = self.get_serializer_class()
+            serializer = serializer(data=request.data)
+            
+            if serializer.is_valid(raise_exception=True) :
+                
+                _status = serializer.data['status']
+                
+                if _status == 'Delivered'  and  instance.status == 'place' and instance.payment == 'RAZOR PAY' and instance.payment_status == 'Pending' :
+                    
+                    return Response({'payment':'payment not done'},status=status.HTTP_422_UNPROCESSABLE_ENTITY)
+                
+                if instance.status == 'Placed' and _status in ['Delivered', 'Cancelled']:
+                    
+                    instance.status = _status 
+                    
+                    instance.save()
+                    
+                    return Response({'status':instance.status},status=status.HTTP_200_OK if _status == 'Delivered' else status.HTTP_202_ACCEPTED ) 
+                
+                return Response({'status':'give a valid status accoridng to current order status'},status=status.HTTP_400_BAD_REQUEST)
+            
+            return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+            
+        return Response({'detail':'not found'},status=status.HTTP_404_NOT_FOUND)
+        
+         
+    
+    def retrieve(self, request, *args, **kwargs):
+        
+        pk = kwargs.get('pk')
+        
+        
+        #getting the
+        
+        if pk :
+            
+            instance   = self.get_object(pk)
+            serializer = self.get_serializer_class()
+            serializer = serializer(instance,context={'request':self.request})
+            
+            
+
+            return  Response(serializer.data,status=status.HTTP_200_OK)      
+
+        return Response({'detail':'not found'},status=status.HTTP_404_NOT_FOUND)
+    
+    
+    
+    
 
 
 class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
@@ -310,7 +447,7 @@ class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
     def post(self,request,token):
         serializer = self.get_serializer_class()
 
-        print('hai')
+    
 
         serializer = serializer(data=request.data)
 

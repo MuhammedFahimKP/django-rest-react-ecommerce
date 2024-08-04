@@ -16,8 +16,8 @@ from .models import (
     ProductVariant,
     Cart,
     CartItem,
-    # WishList,
-    # WishListItem,
+    WishList,
+    WishListItem,
 
 )
 
@@ -68,7 +68,6 @@ class CategoerySerializer(serializers.ModelSerializer[Categoery]):
      
         
 
-      
         
 
 
@@ -388,7 +387,7 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
 
             data['cart'] = cart   
             
-        print(data)    
+        
 
 
         return data
@@ -406,6 +405,7 @@ class CartCreateUpdateItemSerializer(serializers.ModelSerializer):
             instance = instance[0]
             
             quantity = validated_data['quantity']
+            
             
             
             
@@ -510,49 +510,40 @@ class LatestArrivalsSerailizer(serializers.ModelSerializer):
 #         ]
     
         
-# class WishListItemCreateSerializer(serializers.ModelSerializer):
+class WishListItemCreateSerializer(serializers.ModelSerializer):
 
-#     product  = serializers.PrimaryKeyRelatedField(many=False,queryset=Product.objects.all())
+    product  = serializers.PrimaryKeyRelatedField(many=False,queryset=ProductVariant.objects.all())
 
 
-#     class Meta:
+    class Meta:
 
-#         model  = WishListItem
-#         fields = [
-#             'product',
-#         ]
+        model  = WishListItem
+        fields = [
+            'product',
+        ]
 
-#     def validate(self,data):
+    def validate(self,data):
 
-#         request      = self.context['request']
-#         user         = request.user
+        request      = self.context['request']
+        user         = request.user
 
         
-#         product      = data['product']
-#         wishlist     = get_or_create(class_model=WishList,user=user)
-#         data['wishlist'] = wishlist
-#         whish_items  =  WishListItem.objects.filter(wishlist=wishlist,product=product)
+        product      = data['product']
+        wishlist     = get_or_create(class_model=WishList,user=user)
+        data['wishlist'] = wishlist
+        whish_items  =  WishListItem.objects.filter(wishlist=wishlist,product=product)
         
-#         if  whish_items.exists():           
-#             raise AlreadyExist({'product':'product already  exist in whishlist'})
+        if  whish_items.exists():           
+            raise AlreadyExist({'product':'product already  exist in whishlist'})
         
-#         return data
+        return data
     
     
-#     def create(self, validated_data):
-#         instance = WishListItem.objects.create(**validated_data)
-#         return instance
+    def create(self, validated_data):
+        instance = WishListItem.objects.create(**validated_data)
+        return instance
     
-# class WishListItemsListSerailizer(serializers.ModelSerializer):
-    
-#     product  = WhishListItemProductSerailizer(many=False)
-    
-#     class Meta:
-#         model = WishListItem
-        
-#         fields = [
-#             'product'
-#         ]    
+
     
     
 
@@ -700,3 +691,81 @@ class SingleProductSerializer(serializers.ModelSerializer):
     class Meta :
         model   = Product     
         fields  = '__all__'       
+     
+     
+class WishListParentProductSerializer(serializers.ModelSerializer):        
+
+
+    
+    categoery  = serializers.SerializerMethodField()
+    brand      = serializers.SerializerMethodField()
+    
+    def get_categoery(self,obj):
+        return obj.categoery.name
+    
+    
+    def get_brand(self,obj):
+        return obj.brand.name
+    
+    
+    
+    class Meta:
+        
+        model = Product
+        
+        fields = [  
+            'id',
+            'name'  ,  
+            'slug' ,
+            'categoery',    
+            'img',         
+            'brand',       
+            'discription'
+        ]  
+    
+
+class WishListProductSerializer(serializers.ModelSerializer) :
+    
+    
+    product = WishListParentProductSerializer(read_only=True,many=False)
+    img     = ProductVariantImageSerializer(read_only=True,many=False)
+    size    = serializers.SerializerMethodField()
+    color   = serializers.SerializerMethodField()
+    
+    
+    def get_size(self,obj):
+        return obj.size.name
+    
+    
+    
+    
+    def get_color(self,obj):
+        return obj.color.name
+
+    
+    
+    class Meta:
+        
+        fields = [
+            'id',
+            'product',
+            'img',
+            'size',
+            'color',
+            'price',
+        ]
+        model  = ProductVariant
+
+
+class WishListItemsListSerailizer(serializers.ModelSerializer):
+    
+    product  = WishListProductSerializer(many=False)
+    
+    class Meta:
+        model = WishListItem
+        
+        fields = [
+            'id',
+            'product'
+        ]          
+        

@@ -4,6 +4,7 @@ import useVariation from "./useVariation";
 import useWindowDimensions from "./useWindow";
 import usePaginatedData from "./usePaginatedData";
 import useNetworkStatus from "./useNetwork";
+import usePaginatedOrder from "./useOrders";
 
 import useProduct, {
   useStoreProduct,
@@ -18,6 +19,7 @@ export {
   useWindowDimensions,
   usePaginatedData,
   usePaginatedAdminProduct,
+  usePaginatedOrder,
   useNetworkStatus,
   useStoreProduct,
   useProduct,

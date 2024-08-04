@@ -7,10 +7,13 @@ from .viewsets import (
     AdminSizeViewset,
     AdminProductViewSet,
     AdminProductVariantViewSet,
+    AdminOrderAPIViewSet,
 )
 
 
 router = DefaultRouter()
+
+
 
 router.register(
     'categoery',
@@ -56,6 +59,12 @@ router.register(
 
 
 
+router.register(
+    'orders',
+    AdminOrderAPIViewSet,
+    basename='orders',
+
+)
 
 
 

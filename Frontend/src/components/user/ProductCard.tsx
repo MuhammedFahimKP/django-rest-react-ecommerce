@@ -14,17 +14,13 @@ const ProductCard = ({
   console.log(slug);
 
   return (
-    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl duration-500 overflow-hidden w-40 md:w-72 rounded-2xl">
+    <div className="bg-white shadow-md hover:scale-105 hover:shadow-xl group duration-500 overflow-hidden w-72 md:w-80 rounded-2xl  ">
       <Link to={`/single/${slug}/`}>
-        <img
-          src={img}
-          alt="Product image"
-          className="h-44 md:h-80  w-40  md:w-72  object-fill"
-        />
+        <img src={img} alt="Product image" className="portrait" />
       </Link>
-      <div className="px-4 py-3 w-40 md:w-72">
+      <div className="px-4 py-3 w-72">
         <span className="text-gray-400 mr-3 uppercase text-xs">{brand}</span>
-        <p className="text-sm  md:text-lg font-bold text-black truncate block capitalize">
+        <p className="text-sm  md:text-lg font-bold text-black group-hover:text-pretty truncate block capitalize">
           {name}
         </p>
         <span className="text-gray-400 mr-3 uppercase text-xs">

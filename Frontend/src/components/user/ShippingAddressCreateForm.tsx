@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, useEffect } from "react";
+import React, { ChangeEvent, useContext } from "react";
 
 import { useFormik } from "formik";
 
@@ -14,10 +14,13 @@ import { Dialog } from "@material-tailwind/react";
 
 import ErrorText from "../../ui/user/ErrorText";
 
-import toast from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 
 import SuccessAlert from "../../ui/alerts/SuccessAlert";
 import apiClient, { ApiClientError } from "../../services/api-client";
+
+import { ToastContext } from "../../context";
+import ErrorAlert from "../../ui/alerts/ErrorAlert";
 
 interface Props {
   open: boolean;
@@ -30,6 +33,7 @@ const ShippingAddressCreateForm = ({
   open,
   handleOpen,
 }: Props) => {
+  const toastContext = useContext(ToastContext);
   const validationSchema = yup.object().shape({
     pin_code: yup
       .string()
@@ -87,10 +91,10 @@ const ShippingAddressCreateForm = ({
   };
 
   function handleFormSubmit(values: Partial<ShippingAddress>, actions: any) {
+    toastContext?.addAnotherToast();
     apiClient
       .post("users/shipping-address/", values)
       .then((res) => {
-        console.log(res.data);
         toast.custom((t) => (
           <SuccessAlert successText="Address Created" toast={t} />
         ));
@@ -104,8 +108,9 @@ const ShippingAddressCreateForm = ({
         });
       })
       .catch((err: ApiClientError) => {
-        console.log(err);
-      });
+        toast.custom((t) => <ErrorAlert toast={t} errorText={err?.message} />);
+      })
+      .finally(() => toastContext?.removeAnotherToast());
   }
 
   const {
@@ -328,6 +333,7 @@ const ShippingAddressCreateForm = ({
             </form>
           </div>
         </div>
+        <Toaster />
       </Dialog>
     </>
   );

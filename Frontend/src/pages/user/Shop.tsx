@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useWindowDimensions } from "../../hooks";
 import type { ProductResponseData } from "../../@types";
 
@@ -10,8 +10,9 @@ import Navbar from "../../components/user/Navbar";
 import BottmNavbar from "../../components/user/BottmNavbar";
 import FilterSideBar from "../../components/user/FilterSideBar";
 import SearchBox from "../../components/user/SearchBox";
-import PageButton from "../../components/user/PageButton";
+import PaginationBtn from "../../ui/user/PaginationBtn";
 import { useStoreProduct } from "../../hooks";
+import { getAllSearchParams } from "../../utils/other-utils";
 
 // interface ShopParams {
 //   name: string;
@@ -22,10 +23,54 @@ import { useStoreProduct } from "../../hooks";
 // }
 
 const Shop = () => {
-  const { data, currentPage, error, loading, pages, next, prev } =
-    useStoreProduct(6);
-
   const [productFilterParams, setProductFilterParams] = useSearchParams({});
+  const [showFilter, setShowFilter] = useState(false);
+
+  const { width } = useWindowDimensions();
+  const limit = 6;
+  const { data, currentPage, pages, next, prev } = useStoreProduct(
+    6,
+    0,
+    { params: getAllSearchParams(productFilterParams) },
+    [productFilterParams]
+  );
+
+  useEffect(() => {
+    if (width < 900) {
+      setShowFilter(false);
+    } else {
+      setShowFilter(true);
+    }
+  }, [width]);
+
+  const clearParams = (key: string) =>
+    setProductFilterParams((prevParam: URLSearchParams) => {
+      const newParams = new URLSearchParams(prevParam);
+      newParams.delete(key);
+
+      return newParams;
+    });
+
+  const resetAll = () => {
+    const newParams = new URLSearchParams();
+    setProductFilterParams(newParams);
+  };
+
+  const setSearchValues = (value: string) => {
+    setProductFilterParams((prevParams) => {
+      const newParams = new URLSearchParams(prevParams);
+
+      if (value === "") {
+        if (newParams.has("search")) {
+          newParams.delete("search");
+        }
+      } else {
+        newParams.set("search", value);
+      }
+
+      return newParams;
+    });
+  };
 
   const setFilterParams = (key: string, value: string) =>
     setProductFilterParams((prevParam: URLSearchParams) => {
@@ -69,29 +114,44 @@ const Shop = () => {
 
   return (
     <div className="h-[100vh]">
-      <div className="lg:h-20  h-16 bg-black mb-0 sticky top-0 z-50 w-full">
+      <div className="lg:h-20   h-16 bg-black mb-0  fixed top-0 z-50 w-full">
         <Navbar onOpen={() => false} />
       </div>
       <>
-        <aside
-          id="default-sidebar"
-          className="fixed top-20 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
-          aria-label="Sidebar"
-        >
-          <FilterSideBar
-            removeParams={removeFilterParams}
-            setParams={setFilterParams}
-            searchParams={productFilterParams}
-          />
-        </aside>
-        <div className="pl-2 ml-64">
-          <div className="flex flex-col  w-full static    bg-red-700  pt-14  px-2">
-            <div className="bg-red-300 flex flex-col-reverse items-center  py-4 normal gap-2 ">
-              <h1 className="text-3xl font-pacifico">Results </h1>
-              <SearchBox />
+        {showFilter && (
+          <aside
+            id="default-sidebar"
+            className="absolute  lg:fixed   top-20 left-0 z-40 w-64 h-screen transition-transform -translate-x-full sm:translate-x-0"
+            aria-label="Sidebar"
+          >
+            <FilterSideBar
+              resetAll={resetAll}
+              clearItem={clearParams}
+              removeParams={removeFilterParams}
+              setParams={setFilterParams}
+              searchParams={productFilterParams}
+            />
+          </aside>
+        )}
+        <div className="lg:pl-2 lg:ml-64 mt-20">
+          <div className="flex flex-col  w-full static     pt-14  px-2">
+            <div className="bg-white flex flex-col-reverse items-start  mx-14 py-4 normal gap-4 ">
+              <h1 className="pl-4 text-3xl font-pacifico">
+                Results {pages * data.length}
+              </h1>
+              <SearchBox onChange={setSearchValues} />
             </div>
 
-            <div className="grid grid-cols-2  lg:grid-cols-3 place-items-center bg-red-400  min-w-sm   mx-auto mb-5 mt-5 gap-2 lg:gap-5 ">
+            <div className="my-2">
+              <PaginationBtn
+                currentPage={currentPage}
+                onNext={next}
+                onPrev={prev}
+                totalPages={pages}
+              />
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 place-items-center  min-w-sm   md:mx-auto mb-5 mt-5 gap-2 lg:gap-5 ">
               {data.map((item: ProductResponseData) => (
                 <ProductCard
                   key={`shop-product-${item.id}`}
@@ -106,10 +166,6 @@ const Shop = () => {
                   slug={item.slug}
                 />
               ))}
-            </div>
-
-            <div className="bg-blue-400 flex  justify-end">
-              <PageButton />
             </div>
           </div>
         </div>

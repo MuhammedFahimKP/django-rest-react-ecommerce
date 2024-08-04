@@ -1,10 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import {
-  Avatar,
-  IconButton,
-  Typography,
-  Tooltip,
-} from "@material-tailwind/react";
+import { IconButton, Typography, Tooltip } from "@material-tailwind/react";
 import type { AdminProduct } from "../../@types";
 import { PencilIcon } from "@heroicons/react/24/outline";
 

@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useData } from "../../hooks";
 import { OrderFetchResponse, OrderItem as OrderItemProps } from "../../@types";
 import { getDateAndDay, getDateAndTime } from "../../utils/other-utils";
+import OrderStatus from "../../components/user/OrderStatus";
 
 const OrderItem = ({ id, product, quantity }: OrderItemProps) => {
   return (
@@ -62,7 +63,7 @@ const Order = ({
   }, [created, expected_delivery]);
   return (
     <div
-      className={`w-full md:w-2/3 lg:1/2 rounded-lg border-2  border-gray-400 font-ubuntu  py-4 text-sm md:text-md ${
+      className={`w-full md:w-2/3 lg:1/2 rounded-lg border-2  border-gray-200 font-ubuntu  py-4 text-sm md:text-md ${
         status === "Cancelled" && "opacity-60"
       }`}
     >
@@ -73,23 +74,11 @@ const Order = ({
         </div>
 
         <div className="flex flex-col lg:items-center lg:flex-row gap-2 lg:gap-0  px-4 justify-between ">
-          {expeted && status === "Placed" ? (
-            <p className="text-sm text-sky-600">
-              delivery expect on {expeted[0] + " " + expeted[1]}
-            </p>
-          ) : (
-            expected_delivery && (
-              <p className="text-sm text-sky-600">
-                delivered {getDateAndTime(expected_delivery)}
-              </p>
-            )
-          )}
-
-          {status === "Cancelled" && expected_delivery && (
-            <p className="text-sm text-red-600">
-              delivered on {getDateAndDay(expected_delivery)}
-            </p>
-          )}
+          <OrderStatus
+            expected_delivery={expected_delivery}
+            expeted={expeted}
+            status={status}
+          />
           {_created && (
             <p className="text-sm">
               orderd on{" "}

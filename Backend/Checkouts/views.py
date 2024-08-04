@@ -6,16 +6,26 @@ from decimal import Decimal
 
 from django.db.models import Prefetch
 
+from django_filters.rest_framework import DjangoFilterBackend
+
 
 from rest_framework import generics,status
 from rest_framework.response import Response 
 
 from rest_framework.request import Request
 
+from rest_framework.filters import OrderingFilter
+
 from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework.permissions import IsAuthenticated
 
 from rest_framework.decorators import authentication_classes,permission_classes
+
+
+from .filters import OrderFilter
+
+
+
 
 
 
@@ -24,6 +34,8 @@ from ecom.mixins import JWTPermission as JWTAUTHENTICATION
 from shop.models import Cart,CartItem,Product,ProductVariant,ProductVariantImages
 
 from accounts.models import ShippingAddress
+
+from  manager.viewsets  import  CustomPageNumberPagination
 
 
 from .models import Order,OrderItems
@@ -108,21 +120,30 @@ class CalculateTotalAmountAPIView(generics.GenericAPIView) :
 @authentication_classes([JWTAuthentication])
 @permission_classes([IsAuthenticated])
 class OrderCreateListApiView(generics.GenericAPIView):
+    
+    filterset_class  = OrderFilter
+    filter_backends  = [DjangoFilterBackend,OrderingFilter]
+    ordering_fields  = ['created','-created','status','-status','payment','-payment']
+    pagination_class = CustomPageNumberPagination
+    
+    
+    
     queryset         = Order.objects.prefetch_related(
-        Prefetch(
-        'orders', 
         
-        queryset=OrderItems.objects.select_related(
-            'product'  # 'product_variant' FK from OrderItems, 'product' FK from ProductVariant
-        ).select_related(
-            'product__product',
-            'product__product__brand',
-            'product__product__categoery',
-            'product__img',  # Assuming 'img' is a related field
-            'product__size',  # Assuming 'size' is a related field
-            'product__color'  # Assuming 'color' is a related field
-        )
-    ),
+        Prefetch(
+            'orders', 
+            
+                queryset=OrderItems.objects.select_related(
+                    'product'  # 'product_variant' FK from OrderItems, 'product' FK from ProductVariant
+                ).select_related(
+                    'product__product',
+                    'product__product__brand',
+                    'product__product__categoery',
+                    'product__img',  # Assuming 'img' is a related field
+                    'product__size',  # Assuming 'size' is a related field
+                    'product__color'  # Assuming 'color' is a related field
+                )
+        ),
     ).all()
     
     
@@ -164,16 +185,28 @@ class OrderCreateListApiView(generics.GenericAPIView):
             serializer      = serializer(order_instance,many=False,context={'request' : request})
             
             
-            
+
             return Response(serializer.data , status=status.HTTP_200_OK)
           
         
-        query_set  = self.get_queryset()
-        
+        queryset  = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer_class()
         
-        serializer = serializer(query_set,many=True,context={'request' : request})
         
+        
+        
+
+        # Apply pagination
+        
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer_class()
+            serializer = serializer(page,many=True,context={'request' : request})
+            return self.get_paginated_response(serializer.data)
+
+        
+        
+        serializer = serializer(queryset,many=True,context={'request' : request})
         
         data       = serializer.data 
         

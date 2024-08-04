@@ -148,7 +148,7 @@ class OrderItemProductSerailizer(serializers.ModelSerializer):
 class OrderItemSerializer(serializers.ModelSerializer):
     
     
-    product = OrderItemProductSerailizer(read_only=True,many=False)
+    product = OrderItemProductSerailizer(read_only=True,many=False,context={})
     
     
     
@@ -204,19 +204,19 @@ class OrderProductSerailizer(ProductVariantSerailizer):
         
         
 
-class OrderItemSerializer(serializers.ModelSerializer):
+# class OrderItemSerializer(serializers.ModelSerializer):
     
     
-    product = OrderProductSerailizer()
+#     product = OrderProductSerailizer()
 
-    class Meta:
+#     class Meta:
       
-      model  = OrderItems
-      fields = [
-          'id',
-          'product',
-          'quantity'
-      ]
+#       model  = OrderItems
+#       fields = [
+#           'id',
+#           'product',
+#           'quantity'
+#       ]
 
             
 class AdrressOrderListSerializer(ShippingAddressSerializer):

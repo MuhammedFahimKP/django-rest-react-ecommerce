@@ -31,6 +31,7 @@ const useData = <T>(
           })
           .catch((err) => {
             if (err instanceof ApiClientCanceledError) return;
+            alert(err);
             if ((err as ApiClientError)?.status) {
               setError(err.status);
             }

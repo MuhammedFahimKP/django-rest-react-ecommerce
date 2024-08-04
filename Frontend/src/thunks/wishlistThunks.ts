@@ -20,24 +20,9 @@ const getWishlist = createAsyncThunk<WishlistItem[] | [], void>(
 const deleteWishlistItem = createAsyncThunk(
   "deleteWishlist",
   async (id: string, thunkAPI) => {
-    const deleteReq = await apiClient.delete(wishlistUrl + `/${id}/`);
+    const deleteReq = await apiClient.delete(wishlistUrl + `${id}/`);
     deleteReq.status === 204 && thunkAPI.dispatch(removeWishlistItem(id));
     return deleteReq.data;
-  }
-);
-
-const addToCart = createAsyncThunk(
-  "addWishlistItemToCart",
-
-  async ({ id, prdId }: { id: string; prdId: string }, thunkAPI) => {
-    thunkAPI.dispatch(removeWishlistItem(id));
-
-    const cartReq = await apiClient.post("shop/cart/", { product: prdId });
-    cartReq.status &&
-      (await (await apiClient.delete(wishlistUrl + `/${id}/`)).status) ===
-        204 &&
-      thunkAPI.dispatch(removeWishlistItem(id));
-    return {};
   }
 );
 
