@@ -308,6 +308,8 @@ class ListProductAPIView(generics.ListAPIView):
     """
     
     
+    
+    
     filter_backends  = [DjangoFilterBackend,OrderingFilter,SearchFilter]    
     
     filterset_class  =  ProductFilterSet  

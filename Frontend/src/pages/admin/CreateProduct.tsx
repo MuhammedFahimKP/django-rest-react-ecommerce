@@ -1,27 +1,22 @@
-import { useEffect, useState, type ChangeEvent } from "react";
+import { useState, type ChangeEvent } from "react";
 
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { useFormik } from "formik";
 import type { AdminBrand, AdminCategory, ProductForm } from "../../@types";
-import apiClient, {
-  ApiClientError,
-  ApiClientResponse,
-} from "../../services/api-client";
+import apiClient, { ApiClientError } from "../../services/api-client";
 import { FaSave } from "react-icons/fa";
-import { ImBin } from "react-icons/im";
+
 import { useData } from "../../hooks";
 
 import { genrateImageUrl } from "../../utils/image";
 import { RootState } from "../../store";
-import toast, { Toaster } from "react-hot-toast";
+import toast from "react-hot-toast";
 import ErrorText from "../../ui/user/ErrorText";
 import * as Yup from "yup";
 
 import SuccessAlert from "../../ui/alerts/SuccessAlert";
-import ErrorAlert from "../../ui/alerts/ErrorAlert";
 import ImageUploaderWithImage from "../../components/admin/ImageUploaderWithImage";
-import { setProduct } from "../../slices/currentProductSlice";
 
 // interface Varation {
 //   id: string;
@@ -82,7 +77,6 @@ const CreateProduct = () => {
     validationSchema,
     enableReinitialize: true,
   });
-  const navigate = useNavigate();
 
   const [img, setImg] = useState(
     "https://raw.githubusercontent.com/MuhammedFahimKP/gameStore/main/src/assets/no-image-placeholder.webp"
@@ -134,7 +128,7 @@ const CreateProduct = () => {
 
   return (
     <>
-      <section className="container mx-auto px-4 md:px-6 py-8">
+      <section className="container  mx-auto px-4 md:px-6 py-8">
         <form
           className="flex flex-col lg:flex-row lg:items-center gap-6  "
           onSubmit={formike.handleSubmit}

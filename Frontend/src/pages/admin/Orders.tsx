@@ -2,15 +2,12 @@ import { useOutlet, useSearchParams } from "react-router-dom";
 
 import DropDownBtn from "../../ui/user/DropDownBtn";
 
-import { MdOutlineAdd } from "react-icons/md";
-
 import OrdersList from "../../components/admin/OrdersList";
 import { useState, useEffect } from "react";
-import { usePaginatedOrder } from "../../hooks";
+
 import {
   makeObjFromArray,
   generateYearsFromStart,
-  getAllSearchParams,
 } from "../../utils/other-utils";
 
 const Orders = () => {
@@ -50,14 +47,19 @@ const Orders = () => {
   };
 
   return (
-    <div className="w-5/6 bg-red-500 min-h-screen">
-      <div className="flex flex-col   h-[35%]  lg:h-48  bg-[#f5f7fa] px-8 py-0 text-black ">
+    <div className="w-full   min-h-screen">
+      <div
+        className="flex
+       flex-col   h-[35%]  lg:h-48  bg-[#f5f7fa] px-8 py-0 text-black "
+      >
         <div className="mt-4 flex items-center justify-between lg:mt-8 h-fit   mb-10  ">
-          <h1 className="font-ptsans font-bold text-xl  lg:text-4xl">Orders</h1>
+          <h1 className="font-ptsans font-bold text-4xl  lg:text-4xl">
+            Orders
+          </h1>
         </div>
         {/* product count section  */}
 
-        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full md:w-auto">
+        <div className="flex flex-col md:flex-row gap-4 w-full md:w-auto mb-4 lg:mb-0">
           <DropDownBtn
             showTitle={true}
             selectedItem={orderFilters.get("payment")}

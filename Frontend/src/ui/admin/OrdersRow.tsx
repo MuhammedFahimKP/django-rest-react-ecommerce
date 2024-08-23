@@ -54,14 +54,6 @@ const OrdersRow = ({
     <tr key={id} onClick={() => navigate(`${id}/`)}>
       <td className={classes}>
         <div className="flex items-center gap-3">
-          {/* <Avatar
-          placeholder={undefined}
-          src={img}
-          alt={name}
-          size="md"
-          className="rounded-none"
-        /> */}
-
           <Typography
             placeholder={undefined}
             variant="small"

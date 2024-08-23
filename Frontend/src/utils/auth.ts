@@ -1,5 +1,5 @@
 import { store } from "../store";
-import { setUser, setAuthTokens } from "../slices/authenticationSlice";
+import { logedIn } from "../slices/authenticationSlice";
 import apiClient, {
   ApiClientError,
   ApiClientResponse,
@@ -15,9 +15,13 @@ function handleGoogleAuth(id: string): null | State {
     .then((res: ApiClientResponse) => {
       if (res.status === 200) {
         console.log(res);
-        store.dispatch(setUser(res.data.user));
+
         store.dispatch(
-          setAuthTokens({ access: res.data.access, refresh: res.data.refresh })
+          logedIn({
+            access: res.data.access,
+            refresh: res.data.refresh,
+            user: res.data.user,
+          })
         );
         routes.navigate("/");
       }

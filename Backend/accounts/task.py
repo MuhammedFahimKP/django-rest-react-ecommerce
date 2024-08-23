@@ -2,51 +2,37 @@ from __future__ import absolute_import,unicode_literals
 
 from django.core.mail import send_mail
 from django.conf import settings
-from celery import shared_task
-
-from ecom import celery_app
+from django.template.loader import render_to_string
 
 
 
+from ecom.celery import app
 
-@celery_app.task()
-def send_mails(self, message,recipent,subject):
-    recipient_list = [recipent]
-    mail_subject = subject
-    send_mail(
-        subject = mail_subject,
-        message=message,
-        from_email=settings.EMAIL_HOST_USER,
-        recipient_list=recipient_list,
-        fail_silently=False,
-        )
-    return "Done"
+from utils.crypto import Crypto
+
+from .utils import create_activation_link
 
 
-@celery_app.task()
-def print_numbers():
-        
-    send_mail(
-            subject='gahs',
-             message='halo suhail',
-             from_email=settings.EMAIL_HOST_USER,
-             recipient_list=[
-                 'fahimmuhammmedfahimkp@gmail.com'
-             ],
-            fail_silently=False
-    )
-
-@celery_app.task()    
-def sendrandom():  
+@app.task
+def send_activation_email(user_id,to):
     
-    send_mail(
-            subject='dfkdjfjk',
-             message='hal dhshjfjhsd',
-             from_email=settings.EMAIL_HOST_USER,
-             recipient_list=[
-                 'fahimmuhammmedfahimkp@gmail.com'
-             ],
-            fail_silently=False
-    )  
+    
+    
+    frontend__link = create_activation_link(user_id)
 
-        
+    # Render the email template
+    subject = "Activate Your Account"
+    template_name = "activation.html"
+    context = {
+        "frontend_link": frontend__link,
+    }
+    body = render_to_string(template_name, context)
+
+
+
+   
+    send_mail(subject='Account Activation',message='',html_message=body,from_email=settings.EMAIL_HOST_USER,recipient_list=[to])
+    
+    return 'Done'
+   
+

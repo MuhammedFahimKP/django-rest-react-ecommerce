@@ -7,12 +7,12 @@ import {
   DialogFooter,
 } from "@material-tailwind/react";
 import { IoAddSharp } from "react-icons/io5";
-import { useData } from "../../hooks";
+import { useData } from "../../../hooks";
 
 import * as Yup from "yup";
 import { useSelector } from "react-redux";
-import { RootState } from "../../store";
-import apiClient, { ApiClientError } from "../../services/api-client";
+import { RootState } from "../../../store";
+import apiClient, { ApiClientError } from "../../../services/api-client";
 
 interface SizeVariationAddForm {
   size: string;

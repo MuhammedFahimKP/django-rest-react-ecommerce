@@ -9,7 +9,7 @@ import { getVariation } from "../../slices/admin/producVarationSlice";
 import SizeCard from "../../ui/admin/SizeCard";
 import { useSelector, useDispatch } from "react-redux";
 import { AppDispact, RootState } from "../../store";
-import AddSize from "../../ui/admin/AddSizeCard";
+import AddSize from "../../ui/admin/size/AddSizeCard";
 
 const VariationViewPage = () => {
   const { varid } = useParams();

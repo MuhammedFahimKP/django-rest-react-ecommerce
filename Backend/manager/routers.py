@@ -8,6 +8,7 @@ from .viewsets import (
     AdminProductViewSet,
     AdminProductVariantViewSet,
     AdminOrderAPIViewSet,
+    AdminUserViewSet,
 )
 
 
@@ -67,7 +68,12 @@ router.register(
 )
 
 
-
+router.register(
+    'user',
+     AdminUserViewSet,
+     basename='user'
+     
+)
 
 
 

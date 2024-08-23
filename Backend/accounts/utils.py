@@ -3,6 +3,8 @@ from django.contrib.auth import authenticate
 from django.conf import settings 
 from django.contrib.auth import get_user_model
 
+from django.utils import timezone
+
 from rest_framework.exceptions import AuthenticationFailed,NotFound,NotAuthenticated
 
 from datetime import datetime, timedelta
@@ -12,11 +14,20 @@ from google.oauth2 import id_token
 from google.auth.transport import requests 
 
 
+
 from Crypto.Cipher import AES
 from Crypto.Util.Padding import unpad
 
+from utils.crypto import  Crypto
+
+from utils.exceptions import TimeOUTException
+
+
+from .exceptions import AlreadyExist
 
 from .models import MyUser
+
+import json
 
 import jwt
 
@@ -78,7 +89,7 @@ def login_user(email,password):
 
           
 
-def register_social_user(email,first_name,last_name):
+def register_social_user(email,first_name,last_name,img):
                 
        user = MyUser.objects.filter(email=email)
        if user.exists():
@@ -92,13 +103,15 @@ def register_social_user(email,first_name,last_name):
                      'email':email,
                      'first_name':first_name,
                      'last_name':last_name,
-                     'password': make_password(settings.SOCIAL_AUTH_PASSWORD)
+                     'password': make_password(settings.SOCIAL_AUTH_PASSWORD),
+                     'is_active':True,
+                     'auth_provider':True,
+                     'google_img':img
+
                      
               }
        
               register_user = MyUser.objects.create(**user_data)
-              register_user.auth_provider = 'google'
-              register_user.is_active = True
               register_user.save() 
               return login_user(email=email,password=settings.SOCIAL_AUTH_PASSWORD)
                 
@@ -177,9 +190,63 @@ def get_user_details_and_tokens(user:MyUser):
 
 
 
+
+def create_activation_link(user_id):
+       
+       crypto_instance = Crypto()
+       
+       
+       
+
+       
+       encrypted_data = crypto_instance.url_safe_encrypt(user_id)
+       
+       return settings.FRONTEND_URL + 'activation/' + encrypted_data + '/' 
+       
+       
+
+       
+       
+
+       
+
+def verify_user(decrypted_data) :
+              
+       
+       try:
+              user = MyUser.objects.get(id=decrypted_data) 
+              
+              
+              
+              
+              
+              if user.is_active == True :
+                     
+                     raise AlreadyExist({'user':'already active'})
+              
+              
+              user.is_active = True
+              user.save()
+              
+       
+              
+              return user
+              
+       
+       except MyUser.DoesNotExist :
+              
+              
+              raise NotFound({'user':'not found'})     
+                     
+                        
        
 
 
+              
+
+              
+                     
+       
     
     
               

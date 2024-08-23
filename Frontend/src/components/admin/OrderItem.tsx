@@ -11,7 +11,8 @@ const OrderItem = ({ item }: Props) => {
         <img
           src={item.product.img.img_1}
           alt="Premium Watch image"
-          className="aspect-square  rounded-2xl bg-cover   w-full lg:max-w-[140px]"
+          className="w-24 h-28 object-contain rounded-md"
+          // className="aspect-square w-24 h-34  rounded-2xl bg-cover   w-full lg:max-w-[140px]"
         />
       </div>
       <div className="flex flex-row items-center w-full ">

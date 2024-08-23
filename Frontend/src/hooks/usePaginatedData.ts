@@ -1,17 +1,12 @@
 import { useEffect, useState } from "react";
+import { PaginatedResponseData } from "../@types";
+
 import apiClient, {
   ApiCLientRequestConfig,
   ApiClientCanceledError,
   ApiClientError,
   ApiClientResponse,
 } from "../services/api-client";
-
-interface PaginatedResponseData<T> {
-  count: number;
-  next: string | null;
-  previous: string | null;
-  results: T[] | [];
-}
 
 function usePaginatedData<T>(
   url: string,
@@ -26,30 +21,42 @@ function usePaginatedData<T>(
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [data, setData] = useState<T[] | []>([]);
+  const [pageChange, setPageChange] = useState(false);
 
   const next = () => {
     if (loading === false) {
-      setCurrentPage((prevPage) => (prevPage + 1 > pages ? 1 : prevPage + 1));
+      setCurrentPage((prevPage) => {
+        setPageChange(true);
+        const page = prevPage + 1 > pages ? 1 : prevPage + 1;
+        return page;
+      });
     }
   };
 
   const prev = () => {
     if (loading === false) {
-      setCurrentPage((prevPage) =>
-        [0, 1].includes(prevPage) ? pages : prevPage - 1
-      );
+      setCurrentPage((prevPage) => {
+        setPageChange(true);
+
+        const page = [0, 1].includes(prevPage) ? pages : prevPage - 1;
+
+        return page;
+      });
+    }
+  };
+
+  const setPageAndCurrentPage = () => {
+    setData([]);
+    setLoading(true);
+    if (pageChange !== true) {
+      setPages(0);
+      setCurrentPage(1);
     }
   };
 
   useEffect(
     () => {
-      setData([]);
-
-      setLoading(true);
-      setPages(0);
-      if (pages !== 0) {
-        setCurrentPage(1);
-      }
+      setPageAndCurrentPage();
 
       const requestConfig = {
         ...extraConfig,
@@ -74,7 +81,12 @@ function usePaginatedData<T>(
 
             setError(err.message);
           })
-          .finally(() => setLoading(false));
+          .finally(() => {
+            setLoading(false);
+            if (pageChange === true) {
+              setPageChange(false);
+            }
+          });
       }, delay);
 
       return () => controller.abort();
@@ -89,6 +101,7 @@ function usePaginatedData<T>(
     error,
     currentPage,
     setCurrentPage,
+    setData,
     prev,
     next,
   };

@@ -10,7 +10,7 @@ from celery import Celery
 # this is also used in manage.py
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ecom.settings')
 
-app = Celery('ecom')
+app = Celery('ecom' , broker=settings.CELERY_BROKER_URL)
 
 # Using a string here means the worker don't have to serialize
 # the configuration object to child processes.
@@ -20,6 +20,9 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 
 # Load task modules from all registered Django app configs.
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)
+
+broker_connection_retry_on_startup = True
+
 
 # We used CELERY_BROKER_URL in settings.py instead of:
 # app.conf.broker_url = ''

@@ -8,7 +8,11 @@ interface Props {
 }
 
 const DeliveredBtn = ({ status, payment, paymment_status, onClick }: Props) => {
-  if (["Delivered", "Cancelled"].includes(status) === false) {
+  if (status === "Delivered" || status === "Cancelled") {
+    return null;
+  }
+
+  if (status === "Placed") {
     if (payment === "RAZOR PAY" && paymment_status === "Pending") {
       return null;
     }
@@ -18,7 +22,7 @@ const DeliveredBtn = ({ status, payment, paymment_status, onClick }: Props) => {
     <button
       onClick={onClick}
       className={
-        "rounded-md py-2 px-4  text-sm leading-7 text-white bg-black max-lg:mt-5 shadow-sm shadow-transparent transition-all duration-500 "
+        "rounded-md py-2 px-4 mt-2  text-sm leading-7 text-white bg-black max-lg:mt-5 shadow-sm shadow-transparent transition-all duration-500 "
       }
     >
       Delivered

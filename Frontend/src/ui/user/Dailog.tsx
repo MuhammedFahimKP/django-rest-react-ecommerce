@@ -1,5 +1,5 @@
 import { ReactNode, useEffect } from "react";
-import { useScrollBlock } from "../../hooks/useScroll";
+
 import { AiOutlineClose } from "react-icons/ai";
 type Redirection = {
   path: string;
@@ -15,13 +15,6 @@ interface Props {
 }
 
 const Dailog = ({ icon, children, dismiss, enterLink, exitLink }: Props) => {
-  const { blockScroll, allowScroll } = useScrollBlock();
-
-  useEffect(() => {
-    blockScroll();
-    return () => allowScroll();
-  }, []);
-
   return (
     <div
       id="popup-modal"

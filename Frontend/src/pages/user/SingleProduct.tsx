@@ -131,18 +131,21 @@ const SingleProduct = () => {
             updated: res.data.updated,
           });
 
-        console.log(varaints);
-        console.log(sizes);
-        console.log(currentVariantIndex);
-        console.log(res.data.variants);
+        setCurrentVariantIndex(0);
       })
 
       .catch((err) => {});
 
     return () => controller.abort();
-  }, [colorChanged === true && colorChanged]);
+  }, [colorChanged]);
 
   const [cart, setCart] = useState(false);
+
+  const handleColorChange = (colorName: string) => {
+    setCurrentColor(colorName);
+    setSizes([]);
+    setColorsChanged(true);
+  };
 
   const [error, setError] = useState<null | string>(null);
 
@@ -241,7 +244,7 @@ const SingleProduct = () => {
             </button> */}
 
               <div className="flex items-center  justify-center lg:justify-normal">
-                {colors.map((clr: string) => (
+                {colors?.map((clr: string) => (
                   <div
                     className={
                       `${currentColor === clr ? "border-2 border-black" : ""}` +
@@ -251,11 +254,7 @@ const SingleProduct = () => {
                   >
                     <div
                       className="size-7 rounded-md "
-                      onClick={() => {
-                        setCurrentColor(clr);
-                        setColorsChanged(true);
-                        setSizes([]);
-                      }}
+                      onClick={() => handleColorChange(clr)}
                       style={{
                         backgroundColor: `${clr}`,
                       }}
@@ -264,7 +263,7 @@ const SingleProduct = () => {
                 ))}
               </div>
               <div className="flex items-center justify-center lg:justify-normal  gap-2">
-                {sizes.map((size: string) => (
+                {sizes?.map((size: string) => (
                   <button
                     value={size}
                     className={
@@ -272,7 +271,7 @@ const SingleProduct = () => {
                       `${
                         varaints &&
                         varaints.length != 0 &&
-                        varaints[currentVariantIndex].size === size
+                        varaints[currentVariantIndex]?.size === size
                           ? "text-white bg-black"
                           : `bg-gray-200 text-black`
                       } `

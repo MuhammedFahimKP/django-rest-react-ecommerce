@@ -54,7 +54,7 @@
 
 // export default ProductList;
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import { usePaginatedAdminProduct } from "../../hooks/useProduct";
 
@@ -101,59 +101,11 @@ const TABLE_HEAD = [
   "",
 ];
 
-const TABLE_ROWS = [
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg",
-    name: "John Michael",
-    email: "john@creative-tim.com",
-    job: "Manager",
-    org: "Organization",
-    online: true,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-2.jpg",
-    name: "Alexa Liras",
-    email: "alexa@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: false,
-    date: "23/04/18",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg",
-    name: "Laurent Perrier",
-    email: "laurent@creative-tim.com",
-    job: "Executive",
-    org: "Projects",
-    online: false,
-    date: "19/09/17",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-4.jpg",
-    name: "Michael Levi",
-    email: "michael@creative-tim.com",
-    job: "Programator",
-    org: "Developer",
-    online: true,
-    date: "24/12/08",
-  },
-  {
-    img: "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg",
-    name: "Richard Gran",
-    email: "richard@creative-tim.com",
-    job: "Manager",
-    org: "Executive",
-    online: false,
-    date: "04/10/21",
-  },
-];
-
 interface Props {
   filterParams: URLSearchParams;
 }
 
-export default function SortableTable({ filterParams }: Props) {
+export default function ProductList({ filterParams }: Props) {
   const [limit] = useState(4);
 
   const { data, currentPage, next, prev, pages, loading } =
@@ -172,7 +124,7 @@ export default function SortableTable({ filterParams }: Props) {
     <div className="cursor-pointer h-full">
       <Card placeholder={undefined} className="h-full w-full rounded-none ">
         <CardBody placeholder={undefined} className="overflow-scroll px-0 ">
-          <table className="mt-4 w-full min-w-max table-auto text-left">
+          <table className="mt-1 w-full min-w-max table-auto text-left">
             <thead>
               <tr>
                 {TABLE_HEAD.map((head, index) => (

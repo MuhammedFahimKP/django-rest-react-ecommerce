@@ -1,45 +1,74 @@
 from django.conf import settings
-
-from Crypto.Cipher import AES
-from Crypto.Util.Padding import unpad
-
-from rest_framework.exceptions import JsonResponse
-
-import base64
-
-test_enc = 'TKVLY5quDyY6ZsfHRYT+yakoX8YcnXqFzUk6S2ElitE='
-enc = base64.b64decode(test_enc)
-derived_key = base64.b64decode("'Tt/YxrlwlygfcAx+vXK0ZLo/wVVRGm/Qmv2K5sARL1c='")
+from cryptography.fernet import Fernet,InvalidToken
+from base64 import urlsafe_b64decode,urlsafe_b64encode
+from binascii import Error
 
 
-try:
-     
-    iv = "1020304050607080"
-    cipher = AES.new(derived_key, AES.MODE_CBC, iv.encode('utf-8'))
-    data  = unpad(cipher.decrypt(enc),16)
-    print(data.decode('utf-8'))
 
 
-except (ValueError,KeyError )  as e  :
-    data  = 'Invalid Token'
-    print(e)
+
 
 
 
 
 class Crypto:
     
-    __key = base64.b64decode(settings.CRYPTO_KEY)
-    __iv  = settings.CRYPTO_IV
+    __key = settings.CRYPTO_KEY
     
     
-    def decrypt(cls,message):
+    def __init__(self):
+        self.key = self.__key 
+        self.fernet = Fernet(self.key)
         
-       try :
-           
-           cipher = AES.new(cls.__key,AES.MODE_CBC,cls.__iv.encode('utf-8'))
-           
-           pass
-       except  (ValueError,KeyError):
-           
-           raise     
+        
+    
+    
+    def encrypt(self, message):
+        if isinstance(message, str):
+            message = message.encode()
+        return self.fernet.encrypt(message)    
+        
+        
+    
+    def decrypt(self, encrypted_message):
+        
+        
+        try :
+            
+            data =  self.fernet.decrypt(encrypted_message).decode()
+            
+            return data
+        
+        
+        except (ValueError,InvalidToken) :
+            
+            return None
+        
+    
+    
+    def url_safe_encrypt(self,message):
+        
+        if isinstance(message,str):
+            
+            encrypted_message = urlsafe_b64encode(self.encrypt(message)).decode('utf-8')
+            
+            
+            return encrypted_message
+                
+    
+    
+    def url_safe_decrypt(self,message):
+        
+        try : 
+            
+            encrypted_message = urlsafe_b64decode(message.encode('utf-8'))
+            
+            return self.decrypt(encrypted_message)
+        
+        except (Error,ValueError) :
+
+            return None
+                
+        
+    
+            

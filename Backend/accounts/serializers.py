@@ -5,6 +5,8 @@ from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 from rest_framework_simplejwt.tokens import RefreshToken,TokenError
 from rest_framework.exceptions import AuthenticationFailed,NotFound,NotAuthenticated
 
+from utils.crypto import Crypto
+
 from .models import MyUser,ShippingAddress
 from .utils import (
     Google,
@@ -13,8 +15,10 @@ from .utils import (
     user_exists_or_not,
 )
 from .thread import EmailThread
-from .task import send_mail
+
 from .exceptions import AlreadyExist
+
+import base64
 
 
 
@@ -40,16 +44,19 @@ class UserRegisterSerialzer(serializers.ModelSerializer):
 
     password  = serializers.CharField(max_length=68,min_length=8,write_only=True)
     email     = serializers.EmailField(max_length=68,min_length=8)
+    id        = serializers.CharField(read_only=True)
 
     class Meta:
         model  = MyUser
         fields =  [
+            'id',
             'email',
             'first_name',
             'last_name',
             'password',
             
         ] 
+        
 
 
     def validate(self,attrs):
@@ -159,14 +166,22 @@ class UserSignInSerializer(serializers.ModelSerializer):
         
         user = MyUser.objects.filter(email__iexact=email) 
         
+        
+        
         if user.exists() :
             
             user = user[0]
+            
+            if user.auth_provider == 'google':
+                
+                raise AuthenticationFailed({'auth_method':'use google authentication'})
             
             if user.check_password(password):
                 
                 if not user.is_active:
                     raise AuthenticationFailed({'User':'Not activated'})
+                
+                
                 
                 token = user.tokens
                 
@@ -237,7 +252,8 @@ class GoogleSiginSerializer(serializers.Serializer):
             return register_social_user(
                 email=google_user_data['email'],
                 first_name = google_user_data['given_name'],
-                last_name  = google_user_data.get('family_name',None)
+                last_name  = google_user_data.get('family_name',None),
+                img        = google_user_data.get('picture')
             )
 
              
@@ -294,22 +310,37 @@ class UserEmailActivationSerializer(serializers.Serializer):
 
     access_token = serializers.CharField(min_length=6) 
 
-    def validate_access_token(self,data):
-         
-        access_token =  data
-        print(f"{access_token} this is a token")
-        user_id = verify_token(access_token)
-        print(user_id)
-        if user_id:
-            user = MyUser.objects.get(id=user_id)
-            user.is_active = True
-            user.save()
-            return {
+    def validate(self,data):
         
-                'user':user
-            }
-        else:
-            raise serializers.ValidationError('Invalid Token or Expired Token')
+        
+        token =  data['access_token']
+        
+         
+        validatation_error = {'access_token':'Invalid Token'}   
+        
+        if  len(token) < 80 :
+            
+    
+            
+            raise serializers.ValidationError(validatation_error)
+         
+        
+        crypto_instance = Crypto()
+        
+        decoded_token   = crypto_instance.url_safe_decrypt(token)
+        
+        if decoded_token is None :
+            
+            raise serializers.ValidationError(validatation_error) 
+        
+        
+        data['access_token'] = decoded_token
+        
+        return data    
+        
+        
+         
+        
 
 
 

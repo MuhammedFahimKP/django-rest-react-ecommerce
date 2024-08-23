@@ -41,7 +41,6 @@ const DropDownBtn = ({
           <MenuItem
             key={key}
             onClick={() => {
-              alert(`${key} ${value}`);
               handleParamChange(key);
             }}
             placeholder={`drop-item-list-item-${value}`}

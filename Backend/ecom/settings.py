@@ -224,24 +224,9 @@ USE_TZ = True
 
 
 
-"""
-
-Email Configration
-
-"""
 
 
 
-
-
-
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST =  os.environ.get('EMAIL_HOST')
-EMAIL_FROM =  os.environ.get('EMAIL_FROM')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = os.environ.get('EMAIL_PORT')
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS ')
 
 
 
@@ -249,6 +234,13 @@ EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS ')
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+
+
+
+STATICFILES_DIRS = [
+    BASE_DIR / 'static'
+]
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -323,12 +315,19 @@ email configration
 
 """
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
-EMAIL_HOST = os.environ.get('EMAIL_HOST')  
-EMAIL_FROM = os.environ.get('EMAIL_FROM')
-EMAIL_HOST_USER = os.environ.get('EMAIL_HOST_USER')
-EMAIL_HOST_PASSWORD = os.environ.get('EMAIL_HOST_PASSWORD')
-EMAIL_PORT = os.environ.get('EMAIL_PORT')
-EMAIL_USE_TLS = os.environ.get('EMAIL_USE_TLS')
+EMAIL_HOST = os.environ.get('NEW_EMAIL_HOST')  
+EMAIL_FROM = os.environ.get('NEW_EMAIL_FROM')
+EMAIL_HOST_USER = os.environ.get('NEW_EMAIL_HOST_USER')
+EMAIL_HOST_PASSWORD = os.environ.get('NEW_EMAIL_HOST_PASSWORD')
+EMAIL_PORT = os.environ.get('NEW_EMAIL_PORT')
+EMAIL_USE_TLS = os.environ.get('NEW_EMAIL_USE_TLS')
+
+
+
+
+
+
+
 
 
 # Base url to serve media files
@@ -378,7 +377,6 @@ SPECTACULAR_SETTINGS = {
 
 
 #Crypto Settings 
-DECRYPT_KEY = os.environ.get('DECRYPT_KEY')
+CRYPTO_KEY = os.environ.get('FERNET_KEY') 
 
-CRYPTO_IV  = os.environ.get('CRYPTO_IV')
-CRYPTO_KEY = os.environ.get('CRYPTO_KEY') 
+FRONTEND_URL = os.environ.get('FRONTENT_URL')

@@ -2,6 +2,7 @@
 from django.db.models import Prefetch
 from django.utils.translation import gettext_lazy as _
 from django.core.exceptions import EmptyResultSet
+from django.contrib.auth import get_user_model
 
 from rest_framework.exceptions import NotFound
 from rest_framework import viewsets,response,status
@@ -9,7 +10,7 @@ from rest_framework.parsers import MultiPartParser,FormParser
 from rest_framework.response import Response
 from rest_framework.decorators import action
 from rest_framework.pagination import  LimitOffsetPagination,PageNumberPagination
-from rest_framework.filters import OrderingFilter
+from rest_framework.filters import OrderingFilter,SearchFilter
 
 
 
@@ -28,6 +29,8 @@ from checkouts.filters import OrderFilter
 
 from ecom.mixins import JWTPermission 
 
+
+
 from .serializers import (   
 
     AdminCategoerySerializer,
@@ -43,7 +46,8 @@ from .serializers import (
     AdminProductVarintListSerializer,
     AdminOrderListSerailizer,
     AdminOrderRetriveSerializer,
-    AdminOrderUpdateSerializer
+    AdminOrderUpdateSerializer,
+    AdminUserSerializer,
 )
 from shop.models import (
     Categoery,
@@ -57,11 +61,15 @@ from shop.models import (
 
 from .permissions import AdminOnly
 
-from  .filters import AdminProductFilterSet
+from  .filters import AdminProductFilterSet,AdminUserFilterSet
 
 from .utils import is_valid_uuid
 
 
+
+
+
+USER = get_user_model()
 
 class CustomPageNumberPagination(PageNumberPagination):
 
@@ -83,49 +91,7 @@ class CustomPageNumberPagination(PageNumberPagination):
 
 
 
-class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
-    
-     
-    queryset           = Categoery.objects.all()
-    serializer_class   = AdminCategoerySerializer
-    lookup_field       ='pk'
 
-
-    def destroy(self,request,*args, **kwargs):
-        super().destroy(request,*args,**kwargs)
-        return response.Response({
-            'message':'categoery deleted success fully'    
-        },status=status.HTTP_204_NO_CONTENT)
-    
-
-class AdminBrandViewset(JWTPermission,viewsets.ModelViewSet):
-
-    
-    queryset           = Brand.objects.all()
-    serializer_class   = AdminBrandSerializer
-    lookup_field       = 'pk'
-
-
-class AdminColorViewset(JWTPermission,viewsets.ModelViewSet):
-
-    
-    queryset           = Color.objects.all()
-    serializer_class   = AdminColorSerializer
-    lookup_field       ='pk'
-    
-    
-    
-    
-        
-        
-        
-        
-        
-        
-        
-                
-
-    
 
 
 
@@ -169,13 +135,6 @@ class AdminVariationViewset(JWTPermission,viewsets.ModelViewSet):
     
     
 
-class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
-
-    
-    queryset           = Size.objects.all()
-    serializer_class   = AdminSizeSerializer
-    lookup_field       ='pk'    
-    
 
     
     
@@ -229,7 +188,7 @@ class AdminProductViewSet(viewsets.ModelViewSet):
     
     queryset           = Product.objects.all().prefetch_related('categoery','brand','variants').all()
     parser_classes     = (MultiPartParser, FormParser)
-    filter_backends    = [DjangoFilterBackend,OrderingFilter]
+    filter_backends    = [DjangoFilterBackend,OrderingFilter,SearchFilter]
     filterset_class    = AdminProductFilterSet
     serializer_class   = None
     lookup_field       = 'pk'
@@ -237,10 +196,22 @@ class AdminProductViewSet(viewsets.ModelViewSet):
     ordering_fields  = ['created','updated','is_active','name']   
     pagination_class =  CustomPageNumberPagination
     
+    search_fields = ['name', 'variants__size__name','brand__name','categoery__name','variants__color__name']
+    ordering_fields  = ['created','updated','is_active','variants__price']
     
     
     
+    
+    
+    
+        
+        
+        
+        
+        
+                
 
+    
     
         
     
@@ -303,8 +274,85 @@ class AdminProductViewSet(viewsets.ModelViewSet):
         
         return Response(serializer.errors , status=status.HTTP_400_BAD_REQUEST)
     
+
+
+
+
+    
+
+
+class AdminCategoeryViewset(JWTPermission,viewsets.ModelViewSet):
+    
+     
+    queryset           = Categoery.objects.all()
+    serializer_class   = AdminCategoerySerializer
+    lookup_field       ='pk'
+    
+    pagination_class   =  CustomPageNumberPagination
+    
+    parser_classes     = (MultiPartParser, FormParser)
     
     
+    filter_backends    = [SearchFilter,OrderingFilter] 
+    search_fields      = ['name']
+    ordering_fields    = ['created','updated','-created' , '-updated']
+
+
+    def destroy(self,request,*args, **kwargs):
+        super().destroy(request,*args,**kwargs)
+        return response.Response({
+            'message':'categoery deleted success fully'    
+        },status=status.HTTP_204_NO_CONTENT)
+    
+
+class AdminBrandViewset(JWTPermission,viewsets.ModelViewSet):
+
+    
+    queryset           = Brand.objects.all()
+    serializer_class   = AdminBrandSerializer
+    lookup_field       = 'pk'
+    
+    filter_backends    = [SearchFilter,OrderingFilter] 
+    search_fields      = ['name']
+    ordering_fields    = ['created','updated','-created' , '-updated']
+    
+    
+    
+    
+    pagination_class =  CustomPageNumberPagination
+
+
+class AdminColorViewset(JWTPermission,viewsets.ModelViewSet):
+
+    filter_backends    = [SearchFilter,OrderingFilter] 
+    search_fields      = ['name']
+    ordering_fields    = ['created','updated','-created' , '-updated']
+    
+    
+    queryset           = Color.objects.all()
+    serializer_class   = AdminColorSerializer
+    lookup_field       ='pk'
+    
+    
+    
+    
+        
+    pagination_class =  CustomPageNumberPagination
+
+
+class AdminSizeViewset(JWTPermission,viewsets.ModelViewSet):
+
+    
+    filter_backends    = [SearchFilter,OrderingFilter] 
+    search_fields      = ['name']
+    ordering_fields    = ['created','updated','-created' , '-updated']
+    
+    queryset           = Size.objects.all()
+    serializer_class   = AdminSizeSerializer
+    lookup_field       ='pk'    
+    
+    pagination_class =  CustomPageNumberPagination
+
 class AdminOrderAPIViewSet(viewsets.ModelViewSet):
     
     # permission_classes = [AdminOnly]
@@ -316,6 +364,7 @@ class AdminOrderAPIViewSet(viewsets.ModelViewSet):
     filterset_class    = OrderFilter
     filter_backends    = [DjangoFilterBackend,OrderingFilter]
     pagination_class   = CustomPageNumberPagination
+    ordering_fields    = ['created','updated','-created' , '-updated']
     
     
     
@@ -421,7 +470,46 @@ class AdminOrderAPIViewSet(viewsets.ModelViewSet):
         return Response({'detail':'not found'},status=status.HTTP_404_NOT_FOUND)
     
     
+class AdminUserViewSet(JWTPermission,viewsets.ModelViewSet):
     
+    
+    
+    
+
+    
+    def get_queryset(self):
+        
+        if self.request.user != 'AnonymousUser'  :
+            
+            user = self.request.user
+            
+            qs = super().get_queryset().exclude(id=user.id)
+        
+            return qs
+        
+        return super().get_queryset()
+    
+    
+    
+    serializer_class   = AdminUserSerializer
+    
+    queryset           = USER.objects.all()    
+    
+    filterset_class    = AdminUserFilterSet 
+
+    filter_backends    = [OrderingFilter ,DjangoFilterBackend,SearchFilter]
+    
+    
+    search_fields      = ['email','first_name','last_name'] 
+    
+    
+    pagination_class   = CustomPageNumberPagination
+    
+    
+    
+    lookup_value_regex = r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-4[0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}'
+    
+    ordering_fields    = ['date_joined','-date_joined','last_login' , '-last_login' , 'auth_provider' , '-auth_provider', '-is_active' , '-is_active' ]
     
 
 
@@ -431,6 +519,9 @@ class AdminProductVariantViewSet(JWTPermission,viewsets.ModelViewSet):
     queryset           = ProductVariant.objects.all()
     
     lookup_field       = 'pk'
+    
+    
+    
     
     
     

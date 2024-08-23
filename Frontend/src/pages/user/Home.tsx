@@ -1,14 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, Fragment } from "react";
 
-import { useData } from "../../hooks";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router";
 import { logout } from "../../slices/authenticationSlice";
 
 import { RootState } from "../../store";
 import Navbar from "../../components/user/Navbar";
-import { GrUserAdmin } from "react-icons/gr";
-import Dailog from "../../ui/user/Dailog";
+
+import DashBoard from "../../components/admin/DashBoard";
 
 import ScreenContainer from "../../ui/user/ScreenContainer";
 
@@ -26,6 +25,8 @@ import SessionTimeOut from "../../components/SessionTimeOut";
 
 import LatestArrivals from "../../components/user/LatestArrivals";
 import Category from "../../components/user/Category";
+
+import LoaderWithoutBg from "../../components/user/LoaderWithoutBg";
 
 export const CircleIndicator = () => {
   const { scrollYProgress } = useScroll();
@@ -58,44 +59,42 @@ const Home = () => {
   alert(user_not);
 
   return (
-    <div className="scroller">
-      <ScreenContainer>
-        <Navbar onOpen={onOpenOrClose} />
-
-        <div className="scrollbar-thumb-black scrollbar-thin scrollbar-track-gray-100">
-          <Slider />
-        </div>
-        {/* <Hero /> */}
-
-        {/* <div className=" flex w-full justify-between items-center"></div>
-        <div className="w-full h-screen">
-          <div className="w-full p-6">
-            <button
-              onClick={handleLogout}
-              className="rounded p-2 w-32 bg-red-700 text-white"
-            >
-              Deconnexion
-            </button>
+    <Fragment>
+      <div className="scroller">
+        <ScreenContainer>
+          <Navbar onOpen={onOpenOrClose} />
+          <div className="scrollbar-thumb-black scrollbar-thin scrollbar-track-gray-100  ">
+            <Slider />
           </div>
-          {user ? (
-            <div className="w-full h-full text-center items-center">
-              <p className="self-center my-auto">Welcome, {user.email}</p>
+          {/* <Hero /> */}
+          {/* <div className=" flex w-full justify-between items-center"></div>
+          <div className="w-full h-screen">
+            <div className="w-full p-6">
+              <button
+                onClick={handleLogout}
+                className="rounded p-2 w-32 bg-red-700 text-white"
+              >
+                Deconnexion
+              </button>
             </div>
-          ) : (
-            <p className="text-center items-center">Loading ...</p>
-          )}
-        </div> */}
-        <Category />
-        <LatestArrivals />
-
-        {cartOpen && <CartSec onClose={onOpenOrClose} />}
-
-        <Footer />
-
-        <BottmNavbar />
-      </ScreenContainer>
-      {user_not && <SessionTimeOut />}
-    </div>
+            {user ? (
+              <div className="w-full h-full text-center items-center">
+                <p className="self-center my-auto">Welcome, {user.email}</p>
+              </div>
+            ) : (
+              <p className="text-center items-center">Loading ...</p>
+            )}
+          </div> */}
+          <Category />
+          <LatestArrivals />
+          {cartOpen && <CartSec onClose={onOpenOrClose} />}
+          <Footer />
+          <BottmNavbar />
+        </ScreenContainer>
+        {user_not && <SessionTimeOut />}
+      </div>
+      <LoaderWithoutBg />
+    </Fragment>
   );
 };
 

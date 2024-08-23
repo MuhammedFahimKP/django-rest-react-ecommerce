@@ -7,8 +7,12 @@ import VariationViewPage from "../pages/admin/VariationViewPage";
 import CreateProduct from "../pages/admin/CreateProduct.tsx";
 import Orders from "../pages/admin/Orders.tsx";
 import SingleOrderView from "../pages/admin/SingleOrderView.tsx";
-
+import Brand from "../pages/admin/Brand.tsx";
+import Color from "../pages/admin/Color.tsx";
 import { NotFoundProvider } from "../context";
+import Category from "../pages/admin/Category.tsx";
+import Size from "../pages/admin/Size.tsx";
+import User from "../pages/admin/User.tsx";
 
 const AdminHome = lazy(() => import("../pages/admin/Home.tsx"));
 
@@ -47,10 +51,30 @@ const routes = createBrowserRouter([
         ],
       },
       {
+        path: "user/",
+        element: <User />,
+      },
+      {
         path: "orders/",
         element: <Orders />,
 
         children: [{ path: ":id/", element: <SingleOrderView /> }],
+      },
+      {
+        path: "brand/",
+        element: <Brand />,
+      },
+      {
+        path: "category/",
+        element: <Category />,
+      },
+      {
+        path: "color",
+        element: <Color />,
+      },
+      {
+        path: "size",
+        element: <Size />,
       },
     ],
   },

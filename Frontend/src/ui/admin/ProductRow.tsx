@@ -9,10 +9,10 @@ interface Props extends AdminProduct {
 
 const ProductRow = ({
   id,
-  name,
-  img,
-  categoery,
   brand,
+  categoery,
+  img,
+  name,
   is_active,
   created,
   updated,
@@ -110,10 +110,7 @@ const ProductRow = ({
           {updated}
         </Typography>
       </td>
-      <td
-        className={classes}
-        onClick={(e: any) => navigate("view/" + id + "/")}
-      >
+      <td className={classes} onClick={() => navigate("view/" + id + "/")}>
         <Tooltip content="Edit Product">
           <IconButton placeholder={undefined} variant="text">
             <PencilIcon className="h-4 w-4" />

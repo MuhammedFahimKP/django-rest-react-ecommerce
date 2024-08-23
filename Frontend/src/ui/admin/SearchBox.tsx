@@ -19,8 +19,9 @@ const SearchBox = ({ onSearch }: Props) => {
       <input
         type="text"
         ref={searchBoxRef}
+        onChange={(e) => onSearch(e?.target.value)}
         name=""
-        className="rounded-xl text-lg text-black w-[200px] lg:w-[400px] h-10 px-4 outline-none focus:bg-gray-200 font-ptsans"
+        className="rounded-xl text-lg text-black w-[200px]   lg:w-[400px] h-10 px-4 outline-none focus:bg-gray-200 font-ptsans"
         id=""
         placeholder="Search by Name"
       />

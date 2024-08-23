@@ -14,6 +14,7 @@ import adminProductVariationSlice from "./slices/admin/producVarationSlice";
 import currentProductSlice from "./slices/currentProductSlice";
 import checkoutSlice from "./slices/checkoutSlice";
 import orderSlice from "./slices/orderSlice";
+import adminBrandSlice from "./slices/admin/brandSlice";
 
 const rootReducer = combineReducers({
   auth: authSlice,
@@ -37,6 +38,7 @@ export const store = configureStore({
     currentProductSlice,
     adminProductSearchSlice,
     adminProductVariationSlice,
+    adminBrandSlice,
     checkoutSlice,
     orderSlice,
   },

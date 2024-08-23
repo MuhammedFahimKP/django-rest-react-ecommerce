@@ -16,6 +16,9 @@ Including another URLconf
 """
 
 # from rest_framework_swagger.views import get_swagger_view 
+
+
+from django.shortcuts import render
 from django.contrib import admin
 from django.urls import path,include
 from django.conf import settings
@@ -23,6 +26,20 @@ from django.conf.urls.static import static
 from debug_toolbar import urls
 # schema_view  = get_swagger_view(title="Wild Fab API")
 from drf_spectacular.views import   SpectacularSwaggerView,SpectacularJSONAPIView
+
+
+
+
+def get_index(request) :
+    return render(request,'activation.html',context= {
+        'frontend_link' :'http://localhost:5173/'
+    })
+
+
+
+
+
+
 
 urlpatterns = [
 
@@ -35,6 +52,8 @@ urlpatterns = [
     #     ),
     #     name="swagger-ui",
     # ),
+    
+    path('halo/',get_index),
     path('api/',SpectacularJSONAPIView.as_view(),name="schema"),
     path('',SpectacularSwaggerView.as_view()),
     path('users/',include('accounts.urls')),
@@ -43,5 +62,9 @@ urlpatterns = [
     path('orders/',include('checkouts.urls')),
     path('__debug__/', include('debug_toolbar.urls')),   
     
-]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT)
+]+static(settings.MEDIA_URL,document_root=settings.MEDIA_ROOT) 
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.STATIC_URL , document_root = settings.STATIC_ROOT)
 

@@ -1,5 +1,13 @@
+import time
+from django.contrib.auth import get_user_model
 
 
+from django.db.models import Q
+
+
+
+
+from rest_framework.views import APIView
 from rest_framework import generics,status
 from rest_framework.response import Response
 from rest_framework.exceptions import NotFound
@@ -8,7 +16,10 @@ from rest_framework.pagination import LimitOffsetPagination
 
 
 
-from shop.models import Product,ProductVariantImages,ProductVariant
+from shop.models import Brand,Product,ProductVariantImages,ProductVariant
+
+from checkouts.models import Order
+
 from .serializers import (
     
     AdminProductVarationSerializer,
@@ -16,8 +27,15 @@ from .serializers import (
     AdminSizeVariationCreateSerailizer,
     AdminColorVariationSerializer,
     AdminProductViewSerailizer,
+    AdminOrderListSerailizer,
+    
 )
 from .utils import is_valid_uuid
+
+
+
+
+USER = get_user_model()
 
 
 
@@ -185,3 +203,47 @@ class ProductListAPIView(generics.ListAPIView) :
     serializer_class = AdminProductViewSerailizer
     queryset         = Product.objects.all().prefetch_related('categoery','brand','variants').all()
     pagination_class = LimitOffsetPagination
+
+
+class GetLatestOrdersAPIView(generics.GenericAPIView) :
+    
+    
+    serializer_class =  AdminOrderListSerailizer
+    queryset         =  Order.objects.select_related('user').order_by('-created').all()[0:4]
+    
+    def get(self,request):
+        
+        qs = self.queryset
+        serializer = self.get_serializer(qs,many=True,context={'request':request})            
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    
+   
+   
+class AdminGetCountOfData(APIView):
+    
+    
+    def get(self,request):
+        
+        user_count    = USER.objects.count()
+        product_count = Product.objects.filter(variants__isnull=False).count()
+        brand_count   = Brand.objects.filter(is_active=True).count()
+        orders_count  = Order.objects.filter(Q(status='Placed') | Q(status='Delivered') ).count() 
+        
+        return Response({
+
+                'users':user_count,
+                'products':product_count,
+                'brand_count':brand_count,
+                'orders_count':orders_count
+                
+            
+            },status=status.HTTP_200_OK) 
+        
+
+    
+    
+    
+
+        
+        
+                 

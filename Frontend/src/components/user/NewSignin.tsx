@@ -1,5 +1,32 @@
 import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { useNavigate } from "react-router-dom";
+import { useFormik } from "formik";
+
+import {
+  useGoogleOneTapLogin,
+  type CredentialResponse,
+} from "@react-oauth/google";
+
+import { RootState } from "../../store";
+
+import { logedIn } from "../../slices/authenticationSlice";
+
+import apiClient, {
+  ApiClientResponse,
+  ApiClientError,
+} from "../../services/api-client";
+
+import { handleGoogleAuth } from "../../utils/auth";
+
 import Logo from "../../assets/whiteLogo.svg";
+
+import ErrorText from "../../ui/user/ErrorText";
+
+import * as Yup from "yup";
+
+import { UserSignInData } from "../../@types";
 
 const covers = [
   "https://espanshe.com/cdn/shop/files/Canvas_3.png?v=1684475994&width=575",
@@ -7,6 +34,88 @@ const covers = [
 ];
 
 const NewSignin = () => {
+  const { user } = useSelector(
+    (state: RootState) => state.persistedReducer.auth
+  );
+
+  const signInSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Not a Valid Email")
+      .required("Please Provide a Email"),
+    password: Yup.string().required("Please Provide the password"),
+  });
+
+  const initialValues: UserSignInData = {
+    email: "",
+    password: "",
+  };
+
+  function handleGoogleAuthClick(id_token: string) {
+    if (user === null) {
+      handleGoogleAuth(id_token);
+    }
+    return;
+  }
+
+  useGoogleOneTapLogin({
+    onSuccess: (res: CredentialResponse) =>
+      res.credential && handleGoogleAuthClick(res.credential),
+  });
+
+  const navigate = useNavigate();
+
+  const formike = useFormik<UserSignInData>({
+    initialValues,
+    onSubmit,
+    validationSchema: signInSchema,
+  });
+
+  const errors = formike.errors;
+  const touched = formike.touched;
+  const dispatch = useDispatch<any>();
+
+  function onSubmit(values: UserSignInData, actions: any) {
+    apiClient
+      .post("users/signin/", values)
+      .then((res: ApiClientResponse) => {
+        if (res.status === 200) {
+          actions.resetForm({
+            values: {
+              email: "",
+              password: "",
+            },
+          });
+
+          dispatch(
+            logedIn({
+              refresh: res.data.refresh,
+              access: res.data.access,
+              user: res.data.user,
+            })
+          );
+
+          navigate("/");
+        }
+      })
+      .catch((err: ApiClientError) => {
+        const errorData: any = err.response?.data;
+        if (err.response?.status == 403) {
+          errorData?.passowrd &&
+            formike.setErrors({ password: "incorrect password" });
+
+          errorData?.User && formike.setErrors({ email: "Email Not Verified" });
+
+          errorData?.["auth_method"] &&
+            formike.setErrors({ email: "try with google authentication" });
+        }
+        if (err.response?.status == 404) {
+          formike.setErrors({ email: "User with the mail not found" });
+          console.log("404");
+        }
+        console.log(err);
+      });
+  }
+
   const [currentCoverIndex, setCoverIndex] = useState(0);
 
   function handelCoverChange() {
@@ -36,29 +145,38 @@ const NewSignin = () => {
             <p className="text-sm mt-4 text-[#002D74]">
               If you have an account, please login
             </p>
-            <form className="mt-6" action="#" method="POST">
+            <form className="mt-6" onSubmit={formike.handleSubmit}>
               <div>
                 <label className="block text-gray-700">Email Address</label>
                 <input
                   type="email"
-                  name=""
+                  name="email"
+                  onChange={formike.handleChange}
                   id=""
                   placeholder="Enter Email Address"
                   className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border  focus:bg-white focus:outline-none"
                   autoComplete=""
                 />
+                {errors["email"] && touched["email"] && (
+                  <ErrorText> {errors["email"]}</ErrorText>
+                )}
               </div>
               <div className="mt-4">
                 <label className="block text-gray-700">Password</label>
                 <input
                   type="password"
-                  name=""
+                  onChange={formike.handleChange}
+                  name="password"
                   id=""
                   placeholder="Enter Password"
                   minLength={6}
                   className="w-full px-4 py-3 rounded-lg bg-gray-200 mt-2 border 
             focus:bg-white focus:outline-none"
                 />
+
+                {errors["password"] && touched["password"] && (
+                  <ErrorText> {errors["password"]}</ErrorText>
+                )}
               </div>
               <div className="text-right mt-2">
                 <a

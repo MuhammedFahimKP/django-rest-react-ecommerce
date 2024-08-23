@@ -2,6 +2,7 @@ import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import Suspensed from "./Suspensed.tsx";
+import Home from "../pages/user/Home.tsx";
 import NewCheckout from "../pages/user/NewCheckout.tsx";
 import NotFound from "../components/NotFound";
 import Orders from "../pages/user/Orders.tsx";
@@ -12,6 +13,9 @@ import ShopPage from "../pages/user/ShopPage.tsx";
 import OrderHistory from "../pages/user/OrderHistory.tsx";
 import SingleOrderPage from "../pages/user/SingleOrderPage.tsx";
 import Address from "../pages/user/Address.tsx";
+import Activation from "../pages/user/Activation.tsx";
+
+import UserAuthLogin from "../pages/UserAuthLogin.tsx";
 
 export function lazyImport<T extends ComponentType<any>>(
   importFn: () => Promise<{ default: T }>,
@@ -26,7 +30,6 @@ export function lazyImport<T extends ComponentType<any>>(
   });
 }
 
-const Home = lazyImport(() => import("../pages/user/Home.tsx"));
 const Shop = lazyImport(() => import("../pages/user/Shop.tsx"));
 const SignUp = lazyImport(() => import("../pages/user/SignUp"));
 const Socket = lazyImport(() => import("../components/Socket.tsx"));
@@ -98,11 +101,7 @@ const routePatterns = [
   {
     path: "/",
 
-    element: (
-      <Suspensed>
-        <Home />
-      </Suspensed>
-    ),
+    element: <Home />,
   },
   {
     path: "shop/",
@@ -172,6 +171,10 @@ const routePatterns = [
       </Suspensed>
     ),
   },
+  {
+    path: "test/",
+    element: <UserAuthLogin />,
+  },
 
   {
     path: "check/",
@@ -180,6 +183,10 @@ const routePatterns = [
   {
     path: "cart/",
     element: <Cart />,
+  },
+  {
+    path: "activation/:token/",
+    element: <Activation />,
   },
 ];
 

@@ -1,218 +1,267 @@
-import React, { useState } from "react";
-// 3rd party validators
-import { useFormik } from "formik";
-import * as Yup from "yup";
+import { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 
-import toast, { Toaster } from "react-hot-toast";
-import { useSelector } from "react-redux";
-import { CredentialResponse, useGoogleOneTapLogin } from "@react-oauth/google";
+import { useFormik } from "formik";
+
+import { setAuthState } from "../../slices/authenticationSlice";
+
+import {
+  useGoogleOneTapLogin,
+  type CredentialResponse,
+} from "@react-oauth/google";
+
+import { dispatch, RootState } from "../../store";
 
 import apiClient, {
-  ApiClientError,
   ApiClientResponse,
+  ApiClientError,
 } from "../../services/api-client";
-import { UserSignUpData as FormValues } from "../../@types";
 
-import Form from "../../ui/user/Form";
-import InputContainer from "../../ui/user/InputContainer";
-import Input from "../../ui/user/Input";
-import ErrorText from "../../ui/user/ErrorText";
-import SuceessIcon from "../../ui/user/SuccessIcon";
 import { handleGoogleAuth } from "../../utils/auth";
-import { RootState } from "../../store";
-import { useNavigate } from "react-router-dom";
 
-const initialValues: FormValues = {
-  email: "",
-  first_name: "",
-  last_name: "",
-  password: "",
-  password2: "",
-};
+import Logo from "../../assets/whiteLogo.svg";
 
-interface FormFieldType {
-  name: keyof FormValues;
-  label: string;
-  type: "text" | "password" | "number";
-}
+import ErrorText from "../../ui/user/ErrorText";
 
-const formFeilds: FormFieldType[] = [
-  {
-    name: "email",
-    label: "Email",
-    type: "text",
-  },
-  {
-    name: "first_name",
-    label: "First Name",
-    type: "text",
-  },
-  {
-    name: "last_name",
-    label: "Last Name",
-    type: "text",
-  },
+import * as Yup from "yup";
 
-  {
-    name: "password",
-    label: "Passowrd",
-    type: "password",
-  },
+import { UserSignUpData } from "../../@types";
+import toast from "react-hot-toast";
+import SuccessAlert from "../../ui/alerts/SuccessAlert";
+
+const covers = [
+  "https://espanshe.com/cdn/shop/files/Canvas_3.png?v=1684475994&width=575",
+  "https://espanshe.com/cdn/shop/files/Canvas_10_9295a618-dd8e-4abc-a46d-a6f85d8080d5.png?v=1686306955&width=750",
 ];
 
-const passwordRules =
-  /^(?=.*[0-9])(?=.*[a-z])(?=.*[A-Z])(?=.*\W)(?!.* ).{8,16}$/;
+const NewSignin = () => {
+  const { user } = useSelector(
+    (state: RootState) => state.persistedReducer.auth
+  );
 
-const signupSchema = Yup.object().shape({
-  first_name: Yup.string()
-    .min(2, "Too Short")
-    .max(50, "Too Long")
-    .required("Please Provide a FisrtName"),
+  const signInSchema = Yup.object().shape({
+    email: Yup.string()
+      .email("Invalid email address")
+      .required("Email is required"),
+    first_name: Yup.string()
+      .min(2, "First name must be at least 2 characters")
+      .required("First name is required"),
+    last_name: Yup.string()
+      .min(2, "Last name must be at least 2 characters")
+      .required("Last name is required"),
+    password: Yup.string()
+      .test(
+        "alphanumeric",
+        "Password must contain at least one letter and one number",
+        (value) => {
+          if (!value) return false;
+          const hasLetter = /[a-zA-Z]/.test(value);
+          const hasNumber = /\d/.test(value);
+          return hasLetter && hasNumber;
+        }
+      )
+      .min(8, "Password must be at least 8 characters")
+      .required("Password is required"),
+  });
 
-  last_name: Yup.string()
-    .min(2, "Too Short")
-    .max(50, "Too long")
-    .required("Please Provide a Last Name"),
+  const initialValues: UserSignUpData = {
+    email: "",
+    password: "",
+    first_name: "",
+    last_name: "",
+  };
 
-  email: Yup.string().email("Invalid Email").required("Email Required"),
-
-  password: Yup.string()
-    .matches(passwordRules, {
-      message:
-        "Password Must Contain 1 Special Charater and 1 upper case  1 lower case password  1 number ",
-    })
-    .required("Password Required"),
-});
-
-const NewSignup = () => {
-  const [googleAuthErr, setGoogleAuthError] = useState(false);
-  // useGoogleOneTapLogin({
-  //   onSuccess: (res) => console.log(res),
-  //   onError: (err) => console.log(err),
-  //   googleAccountConfigs: {
-  //     client_id:
-  //       "296061655793-btom7bmad6ugdt93200u7j3uk22ijevl.apps.googleusercontent.com",
-  //   },
-  // });
+  function handleGoogleAuthClick(id_token: string) {
+    if (user === null) {
+      handleGoogleAuth(id_token);
+    }
+    return;
+  }
 
   useGoogleOneTapLogin({
     onSuccess: (res: CredentialResponse) =>
       res.credential && handleGoogleAuthClick(res.credential),
   });
 
-  const user = useSelector(
-    (state: RootState) => state.persistedReducer.auth.user
-  );
-  const navigate = useNavigate();
-  const formike = useFormik<FormValues>({
+  const formike = useFormik<UserSignUpData>({
     initialValues,
     onSubmit,
-    validationSchema: signupSchema,
+    validationSchema: signInSchema,
   });
-  const successalert = (name: string) =>
-    toast.custom((t) => (
-      <div
-        className={`${
-          t.visible ? "animate-enter" : "animate-leave"
-        } max-w-md w-full bg-white shadow-lg rounded-lg pointer-events-auto flex ring-1 ring-black ring-opacity-5`}
-      >
-        <div className="flex-1 w-0 p-4">
-          <div className="flex items-start">
-            <div className="flex-shrink-0 pt-0.5">
-              <SuceessIcon />
-            </div>
-            <div className="ml-3 flex-1">
-              <p className="text-sm font-medium text-gray-900">Success</p>
-              <p className="mt-1 text-sm text-gray-500">
-                Thank you {name} we Send a acctivation link to your mail
-              </p>
-            </div>
-          </div>
-        </div>
-        <div className="flex border-l border-gray-200">
-          <button
-            onClick={() => toast.dismiss(t.id)}
-            className="w-full border border-transparent rounded-none rounded-r-lg p-4 flex items-center justify-center text-sm font-medium text-indigo-600 hover:text-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500"
-          >
-            &times;
-          </button>
-        </div>
-      </div>
-    ));
 
-  const erros = formike.errors;
+  const errors = formike.errors;
   const touched = formike.touched;
 
-  function handleGoogleAuthClick(id_token: string) {
-    handleGoogleAuth(id_token);
-
-    if (user !== null) {
-      navigate("/");
-    } else {
-      setGoogleAuthError(true);
-    }
-  }
-
-  function onSubmit(values: FormValues, actions: any) {
-    console.log(values);
+  function onSubmit(values: UserSignUpData, actions: any) {
     apiClient
-      .post("users/signup/", formike.values)
+      .post("users/signup/", values)
       .then((res: ApiClientResponse) => {
         if (res.status === 201) {
-          console.log(res);
-          successalert(res.data.data.first_name);
           actions.resetForm({
             values: {
               email: "",
+              password: "",
               first_name: "",
               last_name: "",
-              password: "",
             },
           });
+
+          dispatch(setAuthState("ACTIVATION"));
+
+          toast.custom((t) => (
+            <SuccessAlert
+              toast={t}
+              successText="Please Check Email For Activation"
+            />
+          ));
         }
       })
-      .catch((err: ApiClientError) => err);
+      .catch((err: ApiClientError) => {
+        alert("error");
+        if (err.response?.status == 409) {
+          formike.setErrors({ email: "email already taken" });
+        }
+      });
   }
 
+  const [currentCoverIndex, setCoverIndex] = useState(0);
+
+  function handelCoverChange() {
+    currentCoverIndex != covers.length - 1
+      ? setCoverIndex(currentCoverIndex + 1)
+      : setCoverIndex(0);
+
+    setTimestamp(Date.now());
+  }
+
+  const [timestamp, setTimestamp] = useState(Date.now());
+
+  useEffect(() => {
+    const changeImageInterval = setInterval(() => {
+      handelCoverChange();
+    }, 1000);
+
+    return () => clearInterval(changeImageInterval);
+  }, [currentCoverIndex]);
+
   return (
-    <div className="h-screen  flex items-center justify-center">
-      <Form title="SignUp" onSubmit={(e: any) => formike.handleSubmit(e)}>
-        {formFeilds.map((field: FormFieldType, index) => (
-          <React.Fragment key={index}>
-            <Input
-              name={field.name}
-              type={field.type}
-              label={field.label}
-              placeholder={field.label}
-              value={formike.values[field.name]}
-              onChange={formike.handleChange}
-              onBlur={formike.handleBlur}
-            />
-            <div className="mx-1 flex items-center justify-start">
-              {erros[field.name] && touched[field.name] && (
-                <ErrorText>{erros[field.name]}</ErrorText>
-              )}
+    <div className="w-screen h-screen">
+      <section className="min-h-screen flex items-center justify-center">
+        <div className="flex rounded-2xl shadow-2xl  max-w-3xl overflow-hidden">
+          <div className="md:w-1/2 px-5 pt-2">
+            <h2 className="text-2xl font-bold font-ptsans">Signup</h2>
+            <p className="text-sm mt-4 text-[#002D74]">
+              If you don't have an account, please Register
+            </p>
+            <form className="mt-2" onSubmit={formike.handleSubmit}>
+              <div>
+                <label className="block text-gray-700">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  onChange={formike.handleChange}
+                  id=""
+                  value={formike.values.email}
+                  placeholder="Enter Email"
+                  className="w-full px-4 py-2 rounded-lg bg-gray-200 mt-2 border  focus:bg-white focus:outline-none"
+                  autoComplete=""
+                />
+                {errors["email"] && touched["email"] && (
+                  <ErrorText> {errors["email"]}</ErrorText>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-gray-700">First Name</label>
+                <input
+                  type="text"
+                  name="first_name"
+                  value={formike.values.first_name}
+                  onChange={formike.handleChange}
+                  id=""
+                  placeholder="Enter First Name"
+                  className="w-full px-4 py-2 rounded-lg bg-gray-200 mt-2 border  focus:bg-white focus:outline-none"
+                  autoComplete=""
+                />
+                {errors["first_name"] && touched["first_name"] && (
+                  <ErrorText> {errors["first_name"]}</ErrorText>
+                )}
+              </div>
+
+              <div>
+                <label className="block text-gray-700">Last Name</label>
+                <input
+                  type="text"
+                  name="last_name"
+                  onChange={formike.handleChange}
+                  value={formike.values.last_name}
+                  id=""
+                  placeholder="Enter Email Address"
+                  className="w-full px-4 py-2 rounded-lg bg-gray-200 mt-2 border  focus:bg-white focus:outline-none"
+                  autoComplete=""
+                />
+                {errors["last_name"] && touched["last_name"] && (
+                  <ErrorText> {errors["last_name"]}</ErrorText>
+                )}
+              </div>
+
+              <div className="mt-4">
+                <label className="block text-gray-700">Password</label>
+                <input
+                  type="password"
+                  onChange={formike.handleChange}
+                  name="password"
+                  id=""
+                  value={formike.values.password}
+                  placeholder="Enter Password"
+                  minLength={6}
+                  className="w-full px-4 py-2 rounded-lg bg-gray-200 mt-2 border 
+            focus:bg-white focus:outline-none"
+                />
+
+                {errors["password"] && touched["password"] && (
+                  <ErrorText> {errors["password"]}</ErrorText>
+                )}
+              </div>
+              <div className="text-right ">
+                <a
+                  href="#"
+                  className="text-sm font-semibold text-gray-700 hover:text-blue-700 focus:text-blue-700"
+                >
+                  Forgot Password?
+                </a>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-black text-white font-semibold rounded-lg
+          px-4 py-3 mt-6"
+              >
+                Sign Up
+              </button>
+            </form>
+
+            <div className="text-sm flex justify-between items-center mt-3">
+              <p>If you already have an account...</p>
+              <button className="py-2 px-5 ml-3 bg-white border rounded-xl hover:scale-110 duration-300 border-blue-400  ">
+                Sign In
+              </button>
             </div>
-          </React.Fragment>
-        ))}
-        <InputContainer>
-          <p className="text-gray-500  text-sm">
-            Already Have an Acount{" "}
-            <a
-              href="#"
-              className="inline-flex items-center font-medium text-blue-600 dark:text-blue-500 hover:underline"
-            >
-              SignIn
-            </a>
-          </p>
-          {googleAuthErr && (
-            <p className="text-red-600 m-2">{"try to login with email"}</p>
-          )}
-        </InputContainer>
-        <Toaster />
-      </Form>
+          </div>
+          <div className="w-1/2 relative md:block hidden ">
+            <img
+              src={`${covers[currentCoverIndex]}?_=${timestamp}`}
+              className="rounded-sm brightness-75  object-contain  transition-all duration-1000"
+              alt="page img"
+            />
+            <img
+              src={Logo}
+              className="absolute top-0 left-1/2 -translate-x-1/2   h-auto w-52     object-fill"
+            />
+          </div>
+        </div>
+      </section>
     </div>
   );
 };
 
-export default NewSignup;
+export default NewSignin;

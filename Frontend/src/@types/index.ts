@@ -1,6 +1,18 @@
 export type DynamicObj = {
   [key: string]: any;
 };
+
+export type AuthState =
+  | "ACTIVATION"
+  | "NOT LOGGED"
+  | "TIMED OUT"
+  | "FORGET PASS"
+  | "LOGED IN";
+
+export type UserAuthType = "google" | "email";
+
+export type UserRole = "user" | "admin" | "sub admin";
+
 export interface UserSignInData {
   email: string;
   password: string;
@@ -9,7 +21,6 @@ export interface UserSignInData {
 export interface UserSignUpData extends UserSignInData {
   first_name: string;
   last_name: string;
-  password2: string;
 }
 
 export interface UserModelResponse {
@@ -17,7 +28,18 @@ export interface UserModelResponse {
   email: string;
   first_name: string;
   last_name: string;
-  role: "user" | "admin" | "sub admin";
+  role: UserRole;
+  auth_type: UserAuthType;
+  avatar: string;
+}
+
+export interface AdminUserModel extends UserModelResponse {
+  date_joined: string | Date | null;
+  created: string | Date | null;
+  updated: string | Date | null;
+  last_login: string | Date | null;
+  is_logedin: boolean;
+  is_active: boolean;
 }
 
 export interface Product {
@@ -182,76 +204,43 @@ export interface OrderFetchResponse extends Order {
   orders: OrderItem[];
 }
 
-const j = {
-  id: "15d9502d-4a6b-4dcc-82d2-d4cbef1fe1c3",
-  orders: [
-    {
-      id: "a930c438-07bd-45bf-8e61-57e7884f8ef8",
-      product: {
-        product: "Men Navy Advanced Rapid Dry T-shirt",
-        img: {
-          id: "2cfe78f8-9200-4961-a982-618f10883764",
-          img_id:
-            "16e39d92-65b9-4829-8c41-20ba1960ce8b 4fe606ff-54bc-42c6-994c-0126ce311f04",
-          img_1:
-            "http://127.0.0.1:8000/media/prdv1/94412956-cdc5-46e6-ae24-ddf43753bb861646042819162-HRX-by-Hrithik-Roshan-Men-Navy-_kK2aLcX.webp",
-          img_2: "http://127.0.0.1:8000/media/prdv2/hrxblutshirt.jpg",
-          img_3: "http://127.0.0.1:8000/media/prdv3/hrxbluetshirt3.jpg",
-        },
-        size: "S",
-        color: "Navy",
-      },
-      quantity: 1,
-    },
-  ],
-  total_amount: "0.00",
-  created: "2024-07-12 12:26:22",
-  status: "Placed",
-  // address: {
-  //   state: "Kerala",
-  //   place: "Palazhi",
-  //   city: "PatheranKavu",
-  //   pin_code: "673014",
-  //   landmark: "Hilite Bussiness Park",
-  //   phone_no: "8921212828",
-  //   alter_phone_no: "9048005413",
-  // },
-  payment_type: "RAZOR PAY",
-  payment_status: "Pending",
-};
-
-const k = {
-  id: "1781e6ce-3e7f-4972-85b2-f7ab81f116f0",
-  user: "fahimmuhammedfahimkp@gmail.com",
-  expected_delivery: "2024-08-09T15:39:48.159532Z",
-  created: "2024-07-21T15:39:48.159532Z",
-  updated: "2024-07-21T15:40:06.009759Z",
-  total_amount: "0.00",
-  status: "Placed",
-  payment: "RAZOR PAY",
-  payment_status: "Paid",
-  payment_transation_id: "pay_ObKp5QgIcdoYAf",
-};
-
 // admin side
 
-export interface AdminOrdersModel {
+export interface AdminLatestOrder {
   id: string;
   user: string;
+  payment: "RAZOR PAY" | "COD";
+}
+
+export interface AdminOrdersModel extends AdminLatestOrder {
   expected_delivery: string | Date | null;
   created: string | Date | null;
   updated: string;
   total_amount: string;
   status: "Placed" | "Delivered" | "Cancelled";
-  payment: "RAZOR PAY" | "COD";
+
   payment_transation_id: string;
 
   payment_status: "Pending" | "Paid";
 }
 
+export interface PaginatedResponseData<T> {
+  count: number;
+  next: string | null;
+  previous: string | null;
+  results: T[] | [];
+}
+
 export interface AdminSingleOrderModel extends AdminOrdersModel {
   orders: OrderItem[];
   address: ShippingAddress;
+}
+
+export interface AdminDataCount {
+  users: number;
+  products: number;
+  brand_count: number;
+  orders_count: number;
 }
 
 interface AdminModelData {
@@ -262,10 +251,6 @@ interface AdminModelData {
   is_active: boolean;
 }
 
-export interface AdminSize {
-  id: string;
-  name: string;
-}
 export interface AdminProductSearchQuery {
   name: string;
   category: string;
@@ -321,4 +306,8 @@ export type PaymentOptions = "COD" | "RAZOR PAY";
 
 export type AdminColor = AdminModelData;
 export type AdminBrand = AdminModelData;
-export type AdminCategory = AdminModelData;
+export type AdminSize = AdminModelData;
+
+export interface AdminCategory extends AdminModelData {
+  img: string;
+}

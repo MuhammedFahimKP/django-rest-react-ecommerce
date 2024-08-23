@@ -66,13 +66,6 @@ const OrdersList = ({ filteringParams }: Props) => {
               </tr>
             </thead>
             <tbody>
-              {/* {loading &&
-                loadingArray.map((_, index) => (
-                  <AdminProductRowSkeleton
-                    classes={"p-4"}
-                    key={"Admin" + "product" + "skeleton" + index}
-                  />
-                ))} */}
               {data.map(
                 (
                   {

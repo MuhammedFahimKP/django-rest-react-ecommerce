@@ -129,15 +129,15 @@ const Product = () => {
   }, []);
 
   return (
-    <div className="w-5/6 bg-red-500 h-full">
-      <div className="flex flex-col   h-[35%]  lg:h-48  bg-[#f5f7fa] px-8 py-0 text-black ">
+    <div className="w-full  h-full">
+      <div className="flex flex-col     lg:h-48  bg-[#f5f7fa] px-8 py-0 text-black ">
         <div className="mt-4 flex items-center justify-between lg:mt-8 h-fit     ">
           <h1 className="font-ptsans font-bold text-xl  lg:text-4xl">
             Products
           </h1>
-          <button className="bg-black text-white font-bold  hover:opacity-70 transition-all   py-2 px-4 rounded inline-flex items-center justify-between">
+          <button className="bg-black text-white font-bold  hover:opacity-70 transition-all   py-2 px-4 rounded-lg inline-flex items-center justify-between">
             <MdOutlineAdd className="size-5 mb-1 mr-2" />
-            <span>Download</span>
+            <span>Add Product</span>
           </button>
         </div>
         {/* product count section  */}
@@ -170,7 +170,7 @@ const Product = () => {
           <div className="flex items-center justify-center ">
             <SearchBox onSearch={(text: string) => search(text)} />
           </div>
-          <div className="flex items-center justify-normal gap-5">
+          <div className="flex flex-col lg:flex-row  items-center  justify-center  lg:justify-normal gap-5">
             <DropDownMenu title="Brand">
               {brands.map((brand: AdminBrandResponse) => (
                 <MenuItem

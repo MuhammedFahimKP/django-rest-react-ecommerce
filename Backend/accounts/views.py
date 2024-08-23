@@ -1,9 +1,14 @@
 from django.shortcuts import render
+from django.template.loader  import render_to_string
+from django.utils.html import strip_tags
+from django.core.mail import send_mail
 from rest_framework.views import APIView
 from rest_framework.exceptions import AuthenticationFailed
 from .models import MyUser as User,ShippingAddress 
 from ecom.mixins import JWTPermission 
 from rest_framework_simplejwt.tokens import RefreshToken
+from django.conf import settings
+
 
 from .thread import EmailThread
 # from .models import ShippingAddress
@@ -21,11 +26,15 @@ from .serializers import (
     ChangePasswordSerializer,
 
 )
-from .task import print_numbers,sendrandom
 
 from rest_framework.response import Response
 
 
+from .utils import verify_user
+
+
+from .task import send_activation_email
+from  .models import MyUser
 
 
 
@@ -58,12 +67,19 @@ class UserRegisterApiView(generics.GenericAPIView):
 
             user = serializer.data
             
+            
+        
+            
             #calling thread class to send email
+            
+            print(user)
+            
+            
+            send_activation_email.delay(user['id'],user['email'])
 
-            EmailThread(req=self.request,user=user).start()
             
             #returning the response with http 201
-            print(user)
+       
           
             return Response({
                 'data':user,
@@ -137,7 +153,7 @@ class UserSigninAPIView(generics.GenericAPIView):
 
     #allow only post method
     def post(self,request):
-        print(request)
+     
         #passing the data to the serializer
         serialzer = self.serializer_class(data=self.request.data)
          
@@ -239,19 +255,30 @@ class UserActivaionApiView(generics.GenericAPIView):
     
 
     #if serializer valid then it will send a data with http 200
-    def post(self,request,token):
+    def post(self,request):
         serializer = self.serializer_class(data=request.data)
+        
+        
+    
+
 
         if serializer.is_valid(raise_exception=True):
-
-            user = serializer.data
             
 
-            return Response({
-                'message':f'hi {user}  your account activated successfully ',
-            },status=status.HTTP_200_OK) 
-         # other wise it will send a 400 http response with serializer error
+            user_id = serializer.data['access_token']
+    
+            user = verify_user(user_id)
+                
+            if  user:
+                    
+                return Response({
+                    'message':f'hi {user.first_name}  your account activated successfully ',
+                },status=status.HTTP_200_OK) 
+         
         return Response(serializer.errors,status=status.HTTP_400_BAD_REQUEST)
+    
+    
+  
     
 
 
@@ -350,14 +377,40 @@ class ShippingAddressDeleteUpdateRetrieveApiView(JWTPermission,generics.Retrieve
     queryset         = ShippingAddress.objects.all()
     lookup_field     = 'pk'
     
-    
-    
+
+from django.template.loader import get_template    
+from django.contrib.sites.shortcuts import get_current_site
 class HaiAPIview(generics.GenericAPIView):
     
     def get(self,request):
         
-        sendrandom()
-        # print_numbers.delay()
+       
+       
+    
+    
+        # site = get_current_site(request)
+    
+        
+
+
+    # Render the email template
+        # subject = "Activate Your Account"
+        # template = get_template('Activation.html')
+        # context = {
+        #     'STATIC_URL': settings.STATIC_URL,
+        #     'domain' :site.domain
+            
+        # }
+        
+        
+        # html_content = template.render(context)
+
+       
+          
+        # send_mail(subject='Account Activation',message='',html_message=html_content, from_email=settings.EMAIL_HOST_USER,recipient_list=['salmanulfaris.c.k10@gmail.com'])
+        
+        
+        
         
         
         
@@ -369,8 +422,7 @@ class HaiAPIview(generics.GenericAPIView):
             
             
         
-        
-    
+       
     
     
     

@@ -12,6 +12,8 @@ import useProduct, {
 } from "./useProduct";
 import useScrollBlock from "./useScroll";
 
+import { usePaginatedAdminBrand } from "./useBrand";
+
 export {
   useData,
   useSingleData,
@@ -19,6 +21,7 @@ export {
   useWindowDimensions,
   usePaginatedData,
   usePaginatedAdminProduct,
+  usePaginatedAdminBrand,
   usePaginatedOrder,
   useNetworkStatus,
   useStoreProduct,

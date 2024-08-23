@@ -213,6 +213,27 @@ class OrderCreateListApiView(generics.GenericAPIView):
         return Response(data,status=status.HTTP_200_OK)
     
     
+    
+    def delete(self,request,pk):
+        
+        
+        order_isntance = self.get_object(pk=pk)
+        
+        for order in order_isntance.orders:
+            product         =  order.product 
+            product.stock  += order_isntance.product.quantity            
+            product.save()
+             
+            
+        
+        order_isntance.delete()
+        
+        return Response({},status=status.HTTP_204_NO_CONTENT)
+        
+        
+     
+    
+    
     def post(self, request):
         
         serializer = self.get_serializer_class()
@@ -223,12 +244,14 @@ class OrderCreateListApiView(generics.GenericAPIView):
         
         
         
+        
+        
         if serializer.is_valid(raise_exception=True) :
             
             user = request.user
             cart = Cart.objects.filter(user=user)
             if not cart.exists():
-                return Response({'cart':'car is empty'})
+                return Response({'cart':'cart is empty'})
             cart = cart.first()
             cart_items = CartItem.objects.filter(cart=cart)
             
@@ -272,6 +295,7 @@ class OrderCreateListApiView(generics.GenericAPIView):
             gst = calculate_gst(float(total))  
             orginal = total
             total = Decimal(gst) + total
+            order.total_amount = total
             order.save()
             
             
@@ -357,6 +381,24 @@ class OrderCreateListApiView(generics.GenericAPIView):
             
             
         order_instance =  self.get_object(pk) 
+       
+       
+        if  order_instance.status == 'Cancelled' :
+            
+            return Response({'status':'already canceled'},status=status.HTTP_409_CONFLICT)
+        
+        
+        if order_instance.status == 'Delivered'  :
+    
+            return Response({'status':'order is delivered you cant cancel the order'} , status=status.HTTP_400_BAD_REQUEST )
+        
+        for order in order_instance.orders:
+            
+            product        = order_instance.product
+
+            product.stock += order.quantity
+            
+            product.save()
             
             
         order_instance.status = 'Cancelled'

@@ -27,5 +27,4 @@ const NotFoundProvider: React.FC<ProviderProps> = ({
   );
 };
 
-export default NotFoundProvider;
-export { NotFoundContext };
+export { NotFoundContext, NotFoundProvider };

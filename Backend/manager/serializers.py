@@ -1,4 +1,6 @@
 from django.utils.text import slugify
+from django.contrib.auth import get_user_model
+from django.templatetags.static import static
 
 from shop.models import Categoery,Product,Brand,ProductVariant,ProductVariantImages,Size,Color
 from shop.utils import get_or_create,get_or_none
@@ -173,7 +175,10 @@ class AdminCategoerySerializer(CategoerySerializer):
     is_active = serializers.BooleanField(required=False) 
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-    img       = serializers.ImageField(read_only=True)
+    img       = serializers.ImageField()
+    
+    
+    
     
 
 
@@ -183,6 +188,30 @@ class AdminCategoerySerializer(CategoerySerializer):
         current_fields.insert(0,'id') 
         fields         = current_fields + ['is_active','created','updated']
     
+    
+    
+    def create(self, validated_data):
+        
+        category = Categoery.objects.filter(name__exact=validated_data['name'])
+        
+        if category.exists() :
+            
+            raise AlreadyExist({'name':'category with same name already exist'})
+        
+        return super().create(validated_data)
+    
+    def update(self,instance,validated_data):
+        if validated_data['name']:
+            category =  Categoery.objects.filter(name__exact=validated_data['name']).exclude(id=instance.id)
+            
+            
+        
+            if category.exists() :
+                raise AlreadyExist({'name':'category with same  name already exist'})
+            
+        
+        return super().update(instance,validated_data)
+    
 
 
 class AdminBrandSerializer(BrandSerializer):
@@ -190,7 +219,31 @@ class AdminBrandSerializer(BrandSerializer):
     is_active = serializers.BooleanField(required=False)
     created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-
+    
+    
+    
+    def create(self, validated_data):
+        
+        brands = Brand.objects.filter(name__exact=validated_data['name'])
+        
+        if brands.exists() :
+            
+            raise AlreadyExist({'name':'brand with same name already exist'})
+        
+        return super().create(validated_data)
+    
+    def update(self,instance,validated_data):
+        
+        if validated_data['name'] :
+            
+            brands =  Brand.objects.filter(name__exact=validated_data['name']).exclude(id=instance.id)
+        
+            if brands.exists() :
+                raise AlreadyExist({'name':'brand with same name already exist'})
+            
+        return super().update(instance,validated_data)
+        
+    
     class Meta:
         model          = BrandSerializer.Meta.model 
         current_fields = BrandSerializer.Meta.fields.copy()
@@ -298,21 +351,33 @@ class AdminColorSerializer(ColorSerializer):
     updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
     
     
-    
-    
-    def validate(self, data):
+    def create(self, validated_data):
         
-        name = data.get('name')
+        color = Color.objects.filter(name__exact=validated_data['name'])
         
-        if not name is None:
-        
-            color  = Color.objects.filter(name__icontains=name) 
+        if color.exists() :
             
-            if color.exists():
-                
-                raise AlreadyExist({'name' : 'color already exists'})
+            raise AlreadyExist({'name':'color with same name already exist'})
+        
+        return super().create(validated_data)
+    
+    def update(self,instance,validated_data):
+        if validated_data['name']:
+            color =  Color.objects.filter(name__exact=validated_data['name']).exclude(id=instance.id)
+            
 
-        return data
+        
+            if color.exists() :
+                raise AlreadyExist({'name':'color with same name already exist'})
+            
+        
+        return super().update(instance,validated_data)
+    
+    
+    
+    
+    
+    
 
     class Meta:
         model          = ColorSerializer.Meta.model
@@ -321,17 +386,40 @@ class AdminColorSerializer(ColorSerializer):
         fields         = current_fields + ['is_active','created','updated']
 
 
-class AdminSizeSerializer(SizeSerializer):
+class AdminSizeSerializer(serializers.ModelSerializer):
 
-    is_active  = serializers.BooleanField(required=False)
-    created   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
-    updated   = serializers.DateTimeField(format="%Y-%m-%d %H:%M:%S",read_only=True)
+    
+    
+    
+    def create(self, validated_data):
+        
+        size = Size.objects.filter(name__exact=validated_data['name'])
+        
+        if size.exists() :
+            
+            raise AlreadyExist({'size':'size with same name already exist'})
+        
+        return super().create(validated_data)
+    
+    def update(self,instance,validated_data):
+        if validated_data['name']:
+            size =  Size.objects.filter(name__exact=validated_data['name']).exclude(id=instance.id)
+            
+            
+        
+            if size.exists() :
+                raise AlreadyExist({'size':'category with same name already exist'})
+            
+        
+        return super().update(instance,validated_data)
+    
+    
+    
+    
 
     class Meta:
-        model          = SizeSerializer.Meta.model
-        current_fields = SizeSerializer.Meta.fields.copy()
-        current_fields.insert(0,'id')
-        fields         = current_fields + ['is_active','created','updated']
+        model          = Size
+        fields         = ['id','name','created','updated']
         
 
 
@@ -617,5 +705,70 @@ class AdminOrderUpdateSerializer(serializers.Serializer) :
     
     
     
-    
+ 
+USER_MODEL =  get_user_model()   
 
+class AdminUserSerializer(serializers.ModelSerializer):
+    
+    
+    avatar = serializers.SerializerMethodField()
+    
+    role   = serializers.SerializerMethodField()
+    
+    auth_type = serializers.SerializerMethodField()
+    
+    
+    
+    
+    
+    def get_avatar(self,obj):
+        
+        request = self.context.get('request')
+        
+        base_url = request.build_absolute_uri('/') if request else ''
+        if obj.auth_provider == 'google' and obj.google_img is not None :
+            
+            return obj.google_img.url
+        
+        if obj.auth_provider == 'email':
+            
+            
+            try:
+                
+                if request is not None :
+                
+    
+                    img_url = base_url + obj.avatar_img.url
+            
+            
+                    return img_url
+            except ValueError :
+                
+                pass
+            
+            
+        
+        
+
+        return  base_url + 'static/images/avatar.png'
+    
+    
+    def get_role(self,obj):
+        
+        if obj.is_superuser and obj.is_staff:
+            return 'admin'
+        
+        if obj.is_staff:
+            return 'subadmin'
+        
+        return 'user'
+    
+    def get_auth_type(self,obj) :
+        return obj.auth_provider            
+            
+    
+    class Meta:
+        model  = USER_MODEL
+        fields = ['email','first_name','last_name','date_joined','auth_type','is_active','last_login' , 'avatar' , 'role' ,'is_logedin']
+        
+         

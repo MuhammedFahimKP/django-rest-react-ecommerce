@@ -41,7 +41,7 @@ const WishList = () => {
                 <CartItemSkeleton key={"sekelton-" + index + "-cart-item"} />
               ))}
 
-            {items.map((item: WishlistItem) => (
+            {items?.map((item: WishlistItem) => (
               <WishListItem id={item.id} product={item.product} />
             ))}
           </div>

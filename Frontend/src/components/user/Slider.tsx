@@ -56,7 +56,7 @@ const ActiveSlider = () => {
         className="max-w-full"
       >
         {slides.map((item) => (
-          <SwiperSlide className="w-full h-full" key={item}>
+          <SwiperSlide className="w-[100vw] h-full" key={item}>
             <img
               src={item}
               className="object-contain relative z-0 brightness-75"
